@@ -1,28 +1,32 @@
+$.noty.defaults.timeout = 2000;
 $('.actionButton').click(function(){
-  switch ($(this).data("action")) {
-    case 'add':
-      var endpoint = `/api/${$(this).data("endpoint")}/accept/${$(this).data("id")}`;
-      $.ajax({
-          type: "GET",
-          url: endpoint
-      })
-      .done(function( response ) {
-        console.log(response);
-        alert(response.response.message);
-      });
-      break;
-    case 'danger':
-      var endpoint = `/api/${$(this).data("endpoint")}/danger/${$(this).data("id")}`;
-      $.ajax({
-          type: "GET",
-          url: endpoint
-      })
-      .done(function( response ) {
-        console.log(response);
-        alert(response.response.message);
-      });
-      break;
-    default:
-    alert('unknown action');
-  }
+  var parent = $(this).parent().parent();
+  var endpoint = `/api/${$(this).data("object")}/${$(this).data("action")}/${$(this).data("id")}`;
+  $.ajax({
+      type: "GET",
+      url: endpoint
+  })
+  .done(function( response ) {
+    parent.removeClass().toggleClass(response.response.status);
+    notify(response.response.status, response.response.message);
+  })
+  .fail(function(err){
+    console.log(err);
+    notify('danger', `HTTP ERROR [${err.status}] - ${err.statusText}`);
+  });
 });
+function getNotificationType(type){
+  var types = {
+    'success': 'success',
+    'warning': 'warning',
+    'danger': 'error'
+  }
+  return types[type];
+}
+function notify(type, message){
+  console.log(type, getNotificationType(type));
+  return noty({
+    text: message,
+    type: getNotificationType(type)
+    });
+}

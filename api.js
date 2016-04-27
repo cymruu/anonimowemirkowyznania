@@ -43,16 +43,16 @@ apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
   confessionModel.findById(req.params.confession_id, (err, confession)=>{
     if(err) res.send(err);
     if(confession.entryID){
-      res.json({success: false, response: {message: 'It\'s already added', entryID: confession.entryID}});
+      res.json({success: false, response: {message: 'It\'s already added', entryID: confession.entryID, status: 'danger'}});
       return;
     }
     if(confession.status == -1){
-      res.json({success: false, response: {message: 'It\'s marked as dangerous, unmark first'}});
+      res.json({success: false, response: {message: 'It\'s marked as dangerous, unmark first', status: 'danger'}});
       return;
     }
     var entryBody = `#AnonimoweMirkoWyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: ${req.decoded._doc.username} \n **Po co to?** \n Dzięki temu narzędziu możesz dodać wpis pozostając anonimowym.`;
     wykop.request('Entries', 'Add', {post: {body: entryBody, embed: confession.embed}}, (err, response)=>{
-      if(err){res.json({success: false, response: {message: JSON.stringify(err)}}); throw err;}
+      if(err){res.json({success: false, response: {message: JSON.stringify(err), status: 'warning'}}); throw err;}
       confession.entryID = response.id;
       wykop.request('Entries', 'AddComment', {params: [response.id], post: {body: `Zaplusuj ten komentarz, aby otrzymywać powiadomienia o odpowiedziach w tym wątku. [Kliknij tutaj, jeśli chcesz skopiować listę obserwujących](${config.siteURL}/followers/${confession._id})`}}, (err, notificationComment)=>{
         if(err)return console.log(err);
@@ -63,7 +63,7 @@ apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
       confession.addedBy = req.decoded._doc.username;
       confession.save((err)=>{
         if(err) res.json({success: false, response: {message: err}});;
-        res.json({success: true, response: {message: 'Entry added', entryID: response.id}});
+        res.json({success: true, response: {message: 'Entry added', entryID: response.id, status: 'success'}});
       });
     });
   });
@@ -72,9 +72,10 @@ apiRouter.route('/confession/danger/:confession_id').get((req, res)=>{
   confessionModel.findById(req.params.confession_id, (err, confession)=>{
     if(err) return console.log(err);
     confession.status==-1?confession.status=0:confession.status=-1;
+    var status = confession.status==0?'warning':'danger';
     confession.save((err)=>{
       if(err) res.json({success: false, response: {message: err}});
-      res.json({success: true, response: {message: 'Zaaktualizowano status'}});
+      res.json({success: true, response: {message: 'Zaaktualizowano status', status: status}});
     });
   });
 });
@@ -88,11 +89,11 @@ apiRouter.route('/reply/accept/:reply_id').get((req, res)=>{
   replyModel.findById(req.params.reply_id).populate('parentID').exec((err, reply)=>{
     if(err) return console.log(err);
     if(reply.commentID){
-      res.json({success: false, response: {message: 'It\'s already added', commentID: reply.commentID}});
+      res.json({success: false, response: {message: 'It\'s already added', commentID: reply.commentID, status: 'danger'}});
       return;
     }
     if(reply.status == -1){
-      res.json({success: false, response: {message: 'It\'s marked as dangerous, unmark first'}});
+      res.json({success: false, response: {message: 'It\'s marked as dangerous, unmark first', status: 'danger'}});
       return;
     }
     var authorized = '';
@@ -103,13 +104,13 @@ apiRouter.route('/reply/accept/:reply_id').get((req, res)=>{
     wykopController.getFollowers(reply.parentID.entryID, reply.parentID.notificationCommentId, (followers)=>{
       if(followers.length > 1)entryBody+=`\nWołam obserwujących: \n${followers}`;
       wykop.request('Entries', 'AddComment', {params: [reply.parentID.entryID], post: {body: entryBody, embed: reply.embed}}, (err, response)=>{
-        if(err){res.json({success: false, response: {message: JSON.stringify(err)}}); return;}
+        if(err){res.json({success: false, response: {message: JSON.stringify(err), status: 'warning'}}); return;}
         reply.commentID = response.id;
         reply.status = 1;
         reply.addedBy = req.decoded._doc.username;
         reply.save((err)=>{
           if(err) res.json({success: false, response: {message: err}});
-          res.json({success: true, response: {message: 'Reply added', commentID: response.id}});
+          res.json({success: true, response: {message: 'Reply added', commentID: response.id, status: 'success'}});
         });
       });
     });
@@ -120,9 +121,10 @@ apiRouter.route('/reply/danger/:reply_id').get((req, res)=>{
     if(err) return console.log(err);
     var message = '';
     reply.status==-1?reply.status=0:reply.status=-1;
+    var status = reply.status==0?'warning':'danger';
     reply.save((err)=>{
       if(err) res.json({success: false, response: {message: err}});
-      res.json({success: true, response: {message: 'Status zaaktualizowany'}});
+      res.json({success: true, response: {message: 'Status zaaktualizowany', status: status}});
     });
   });
 });

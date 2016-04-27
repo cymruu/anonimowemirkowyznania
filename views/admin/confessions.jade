@@ -27,8 +27,8 @@ block content
             a(href="http://wykop.pl/wpis/#{confession.entryID}", target="_blank") #{confession.entryID}
           td #{confession.addedBy}
           td
-            button.btn.btn-success.actionButton&attributes({'data-action':'add', 'data-id':confession.id, 'data-endpoint':'confession'}) Dodaj
-            span.label.label-small.label-danger.actionButton&attributes({'data-action':'danger', 'data-id':confession.id, 'data-endpoint':'confession'}) DANGER
+            button.btn.btn-success.actionButton&attributes({'data-action':'accept', 'data-id':confession.id, 'data-object':'confession'}) Dodaj
+            span.label.label-small.label-danger.actionButton&attributes({'data-action':'danger', 'data-id':confession.id, 'data-object':'confession'}) DANGER
 block script
   script(type="text/javascript")
     include ./scripts/panel.js

@@ -30,8 +30,8 @@ block content
             a(href="http://wykop.pl/wpis/#{reply.parentID.entryID}", target="_blank") #{reply.parentID.entryID}
           td #{reply.addedBy}
           td
-            button.btn.btn-success.actionButton&attributes({'data-action':'add', 'data-id':reply.id, 'data-endpoint':'reply'}) Dodaj
-            span.label.label-small.label-danger.actionButton&attributes({'data-action':'danger', 'data-id':reply.id, 'data-endpoint':'reply'}) Nieodpowiednia
+            button.btn.btn-success.actionButton&attributes({'data-action':'accept', 'data-id':reply.id, 'data-object':'reply'}) Dodaj
+            span.label.label-small.label-danger.actionButton&attributes({'data-action':'danger', 'data-id':reply.id, 'data-object':'reply'}) Nieodpowiednia
 block script
   script(type="text/javascript")
     include ./scripts/panel.js
