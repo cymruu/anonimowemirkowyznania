@@ -11,7 +11,6 @@ $('.actionButton').click(function(){
     notify(response.response.status, response.response.message);
   })
   .fail(function(err){
-    console.log(err);
     notify('danger', `HTTP ERROR [${err.status}] - ${err.statusText}`);
   });
 });
@@ -24,9 +23,9 @@ function getNotificationType(type){
   return types[type];
 }
 function notify(type, message){
-  console.log(type, getNotificationType(type));
-  return noty({
-    text: message,
-    type: getNotificationType(type)
-    });
+  return alert(message);
+  // return noty({
+  //   text: message,
+  //   type: getNotificationType(type)
+  //   });
 }
