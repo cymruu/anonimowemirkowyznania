@@ -60,11 +60,15 @@ app.get('/connect', (req, res)=>{
     });
   });
 });
-app.get('/reply/:confessionid', (req, res)=>{
-  confessionModel.findById(req.params.confessionid, (err, confession)=>{
-  if(err)return res.sendStatus(404);
-  res.render('reply', {confession: confession});
-  });
+app.get('/reply/:confessionid?', (req, res)=>{
+  if(!req.params.confessionid){
+    res.render('reply', {})
+  }else{
+    confessionModel.findById(req.params.confessionid, (err, confession)=>{
+    if(err)return res.sendStatus(404);
+    res.render('reply', {confession: confession});
+    });
+  }
 });
 app.post('/reply/:confessionid', (req, res)=>{
   confessionModel.findById(req.params.confessionid, (err, confession)=>{
