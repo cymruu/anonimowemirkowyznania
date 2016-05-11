@@ -29,6 +29,12 @@ app.set('view engine', 'jade');
 app.get('/', (req, res)=>{
   res.render('index');
 });
+app.get('/voters/:entryID', (req, res)=>{
+  wykopController.analyzeVoters(req.params.entryID, (err, voters)=>{
+    if(err)return res.json(err);
+    res.json(voters);
+  });
+});
 app.get('/ip', (req, res)=>{
   res.json([req.ip, req.ips]);
 });
