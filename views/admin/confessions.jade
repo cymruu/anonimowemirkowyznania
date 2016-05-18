@@ -18,7 +18,8 @@ block content
           default
             -var rowClass = 'warning'
         tr(class=rowClass)
-          td #{confession._id}
+          td 
+           a(href="details/#{confession._id}") #{confession._id}
           td #{confession.text}
           td
            a(href="#{confession.embed}", target="_blank") #{confession.embed.slice(0,32)}

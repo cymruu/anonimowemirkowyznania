@@ -63,6 +63,12 @@ adminRouter.use((req, res, next)=>{
 adminRouter.get('/', (req, res)=>{
   res.json({success:true, response:{message:'authorized'}});
 });
+adminRouter.get('/details/:confession_id', (req, res)=>{
+  confessionModel.findById(req.params.confession_id).populate({path:'actions',options:{sort: {_id: -1}}, populate: {path: 'user', select: 'username'}}).exec((err, confession)=>{
+    if(err) return res.send(err);
+    res.render('./admin/details.jade', {user: req.decoded._doc, confession});
+  });
+});
 adminRouter.get('/confessions', (req, res)=>{
   confessionModel.find().sort({_id: -1}).limit(100).exec((err, confessions)=>{
     if(err) res.send(err);

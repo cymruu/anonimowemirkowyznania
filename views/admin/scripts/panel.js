@@ -1,4 +1,3 @@
-// $.noty.defaults.timeout = 2000;
 $('.actionButton').click(function(){
   var parent = $(this).parent().parent();
   var endpoint = `/api/${$(this).data("object")}/${$(this).data("action")}/${$(this).data("id")}`;
@@ -24,8 +23,4 @@ function getNotificationType(type){
 }
 function notify(type, message){
   return alert(message);
-  // return noty({
-  //   text: message,
-  //   type: getNotificationType(type)
-  //   });
 }

@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
 var wykop = require('./wykop.js');
 var wykopController = require('./controllers/wykop.js');
+var actionController = require('./controllers/actions.js');
 var config = require('./config.js');
 var confessionModel = require('./models/confession.js');
 var replyModel = require('./models/reply.js');
@@ -50,14 +51,17 @@ apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
       res.json({success: false, response: {message: 'It\'s marked as dangerous, unmark first', status: 'danger'}});
       return;
     }
-    var entryBody = `#AnonimoweMirkoWyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: ${req.decoded._doc.username} \n **Po co to?** \n Dzięki temu narzędziu możesz dodać wpis pozostając anonimowym.`;
+    var entryBody = `#anonimowytest \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: ${req.decoded._doc.username} \n **Po co to?** \n Dzięki temu narzędziu możesz dodać wpis pozostając anonimowym.`;
     wykop.request('Entries', 'Add', {post: {body: entryBody, embed: confession.embed}}, (err, response)=>{
       if(err){res.json({success: false, response: {message: JSON.stringify(err), status: 'warning'}}); throw err;}
       confession.entryID = response.id;
       wykop.request('Entries', 'AddComment', {params: [response.id], post: {body: `Zaplusuj ten komentarz, aby otrzymywać powiadomienia o odpowiedziach w tym wątku. [Kliknij tutaj, jeśli chcesz skopiować listę obserwujących](${config.siteURL}/followers/${confession._id})`}}, (err, notificationComment)=>{
         if(err)return console.log(err);
         confession.notificationCommentId = notificationComment.id;
-        confession.save();
+      });
+      actionController(req.decoded._doc._id, 1, function(err, actionId){
+        if(err)return;
+        confession.actions.push(actionId);
       });
       confession.status = 1;
       confession.addedBy = req.decoded._doc.username;
@@ -70,12 +74,17 @@ apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
 });
 apiRouter.route('/confession/danger/:confession_id').get((req, res)=>{
   confessionModel.findById(req.params.confession_id, (err, confession)=>{
-    if(err) return console.log(err);
+    if(err) return res.json(err);
     confession.status==-1?confession.status=0:confession.status=-1;
     var status = confession.status==0?'warning':'danger';
-    confession.save((err)=>{
-      if(err) res.json({success: false, response: {message: err}});
-      res.json({success: true, response: {message: 'Zaaktualizowano status', status: status}});
+    var actionType = confession.status==0?3:2;
+    actionController(req.decoded._doc._id, actionType, function(err, actionId){
+      if(err)return err;
+      confession.actions.push(actionId);
+      confession.save((err)=>{
+        if(err) res.json({success: false, response: {message: err}});
+        res.json({success: true, response: {message: 'Zaaktualizowano status', status: status}});
+      });
     });
   });
 });
@@ -108,6 +117,11 @@ apiRouter.route('/reply/accept/:reply_id').get((req, res)=>{
         reply.commentID = response.id;
         reply.status = 1;
         reply.addedBy = req.decoded._doc.username;
+        actionController(req.decoded._doc._id, 8, function(err, actionId){
+          if(err)return;
+          reply.parentID.actions.push(actionId);
+          reply.parentID.save();
+        });
         reply.save((err)=>{
           if(err) res.json({success: false, response: {message: err}});
           res.json({success: true, response: {message: 'Reply added', commentID: response.id, status: 'success'}});
@@ -122,8 +136,14 @@ apiRouter.route('/reply/danger/:reply_id').get((req, res)=>{
     var message = '';
     reply.status==-1?reply.status=0:reply.status=-1;
     var status = reply.status==0?'warning':'danger';
+    var actionType = reply.status==0?3:2;
     reply.save((err)=>{
       if(err) res.json({success: false, response: {message: err}});
+      actionController(req.decoded._doc._id, actionType, function(err, actionId){
+        if(err)return;
+        reply.parentID.actions.push(actionId);
+        reply.parentID.save();
+      });
       res.json({success: true, response: {message: 'Status zaaktualizowany', status: status}});
     });
   });

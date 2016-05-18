@@ -13,6 +13,7 @@ var confessionModel = require('./models/confession.js');
 var replyModel = require('./models/reply.js');
 var userModel = require('./models/user.js');
 var wykopController = require('./controllers/wykop.js');
+var actionController = require('./controllers/actions.js');
 var crypto = require('crypto');
 
 const _port = 1337;
@@ -44,9 +45,13 @@ app.post('/', (req, res)=>{
   confession.IPAdress = req.ip;
   confession.embed = req.body.embed;
   confession.auth = crypto.randomBytes(5).toString('hex');
-  confession.save((err)=>{
-    if(err) res.send(err);
-      res.render('index', {success: true, confession: confession});
+  actionController(null, 0, function(err, actionId){
+      if(err)return;
+      confession.actions.push(actionId);
+      confession.save((err)=>{
+        if(err) res.send(err);
+          res.render('index', {success: true, confession: confession});
+      });
   });
 });
 app.get('/login', (req, res)=>{
@@ -80,6 +85,11 @@ app.post('/reply/:confessionid', (req, res)=>{
   confessionModel.findById(req.params.confessionid, (err, confession)=>{
     if(err)return res.sendStatus(404);
     if(confession){
+    actionController(null, 4, function(err, actionId){
+        if(err)return;
+        confession.actions.push(actionId);
+        confession.save();
+    });
     var reply = new replyModel();
     reply.text = req.body.text;
     reply.IPAdress = req.ip;

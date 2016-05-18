@@ -1,0 +1,24 @@
+extends ./base.jade
+block content
+  .panel.panel-default
+    .panel-heading
+      |Wpis
+      .pull-right
+        span.label.label-small.label-success.actionButton&attributes({'data-action':'accept', 'data-id':confession.id, 'data-object':'confession'}) Dodaj
+        span.label.label-small.label-danger.actionButton&attributes({'data-action':'danger', 'data-id':confession.id, 'data-object':'confession'}) Nieodpowiednia
+    .panel-body
+      |#{confession.text}
+      img(src="#{confession.embed}").img-responsive
+  .list-group
+    each action, index in confession.actions
+      a.list-group-item
+        h4.list-group-item-heading A:#{index} T:#{action.type}
+        p.list-group-item-text
+        |#{action.action} 
+        if action.user
+          | przez
+          em #{action.user.username} 
+        | #{action.time}
+block script
+  script(type="text/javascript")
+    include ./scripts/panel.js
