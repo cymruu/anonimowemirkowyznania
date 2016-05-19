@@ -5,7 +5,10 @@ block content
       |Wpis
       .pull-right
         span.label.label-small.label-success.actionButton&attributes({'data-action':'accept', 'data-id':confession.id, 'data-object':'confession'}) Dodaj
-        span.label.label-small.label-danger.actionButton&attributes({'data-action':'danger', 'data-id':confession.id, 'data-object':'confession'}) Nieodpowiednia
+        if !confession.entryID
+          span.label.label-small.label-danger.actionButton&attributes({'data-action':'danger', 'data-id':confession.id, 'data-object':'confession'}) Nieodpowiednia
+        else
+          span.label.label-big.label-danger.actionButton&attributes({'data-action':'delete', 'data-id':confession.id, 'data-object':'confession'}) Usuń z mikrobloga!
     .panel-body
       |#{confession.text}
       img(src="#{confession.embed}").img-responsive
