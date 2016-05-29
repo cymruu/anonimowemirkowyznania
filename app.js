@@ -22,6 +22,7 @@ app.enable('trust proxy');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(express.static('public'));
 app.use('/api', apiRouter);
 app.use('/admin', adminRouter);
 
@@ -73,11 +74,15 @@ app.get('/connect', (req, res)=>{
 });
 app.get('/reply/:confessionid?', (req, res)=>{
   if(!req.params.confessionid){
-    res.render('reply', {})
+    return res.sendStatus(400);
   }else{
     confessionModel.findById(req.params.confessionid, (err, confession)=>{
-    if(err)return res.sendStatus(404);
-    res.render('reply', {confession: confession});
+      if(err)return res.sendStatus(404);
+      wykopController.getParticipants(confession.entryID, (err, participants)=>{
+        if(err) participants=[];
+        confession.participants = participants;
+        res.render('reply', {confession: confession});
+      });
     });
   }
 });

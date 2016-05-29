@@ -69,6 +69,24 @@ wykopController = {
       }
       return cb(followers);
     });
+  },
+  /**
+   * get entry participants
+   * @param  {int}   entryID entryID
+   * @param  {Function} cb      callback
+   */
+  getParticipants: function(entryID, cb){
+    wykop.request('Entries', 'Index', {params: [entryID]}, (err, entry)=>{
+      var participants = [];
+      if(err) return cb(err);
+      participants.push(entry.author);
+      for(var i in entry.comments){
+        if(participants.indexOf(entry.comments[i].author)==-1){
+        participants.push(entry.comments[i].author);
+        }
+      }
+      cb(null, participants);
+    });
   }
 }
 module.exports = wykopController;

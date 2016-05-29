@@ -10,9 +10,16 @@ block content
     h1 Dodaj komentarz do 
       a(href='http://wykop.pl/wpis/#{confession.entryID}', target='_blank') tego wyznania
     form#reply(method="post")
-      textarea.form-control(type="text", name="text", placeholder="Wpisz tutaj swoj komentarz" rows=10)
+      textarea.form-control#text(type="text", name="text", placeholder="Wpisz tutaj swoj komentarz" rows=10)
       br
       input.form-control(type="text", name="alias", placeholder="Pseudonim (wpisz kod potwierdzający, a zostaniesz oznaczony jako OP)" maxlength=32)
       br
       input.form-control(type="url", name="embed", placeholder="URL do obrazka", maxlength=3000)
       button.btn.btn-large.btn-success(type="submit") Wyślij
+      if confession.participants
+        div.panel.panel-default
+          div.panel-heading Uczestnicy dyskusji
+          div.panel-body
+            each participant, index in confession.participants
+              span.label.label-info.participant(data-username="#{participant}") #{participant} 
+  script(src='/js/main.js')

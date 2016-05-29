@@ -13,6 +13,15 @@ mongoose.connect(config.mongoURL, (err)=>{
   if(err) throw err;
 });
 /* api router */
+apiRouter.get('/', (req, res)=>{
+  res.json({success: true, response: {message: 'API is working!'}});
+});
+apiRouter.get('/participants/:entry_id', (req, res)=>{
+  wykopController.getParticipants(req.params.entry_id, (err, participants)=>{
+    if(err)return res.json(err);
+    res.json(participants);
+  });
+});
 apiRouter.use((req, res, next)=>{
   var token = req.cookies.token || req.body.token || req.query.token || req.headers['x-access-token'];
   if (token) {
@@ -30,9 +39,6 @@ apiRouter.use((req, res, next)=>{
       response: {message: 'No token provided.'}
     });
   }
-});
-apiRouter.get('/', (req, res)=>{
-  res.json({success: true, response: {message: 'API is working!'}});
 });
 apiRouter.route('/confession').get((req, res)=>{
   confessionModel.find((err, confessions)=>{
