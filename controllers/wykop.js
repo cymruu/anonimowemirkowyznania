@@ -51,7 +51,6 @@ wykopController = {
     });
   },
   getFollowers: function(entryID, notificationCommentId, cb){
-    console.log(entryID, notificationCommentId);
     var followers = [];
     if(!notificationCommentId){
       return cb(followers);
@@ -68,7 +67,6 @@ wykopController = {
           }
         }
       }
-      console.log(followers);
       return cb(followers);
     });
   },

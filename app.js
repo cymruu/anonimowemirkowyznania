@@ -119,7 +119,6 @@ app.get('/followers/:confessionid', (req, res)=>{
   confessionModel.findById(req.params.confessionid, (err, confession)=>{
     if(err)return res.sendStatus(404);
     if(confession){
-      console.log(confession);
     wykopController.getFollowers(confession.entryID, confession.notificationCommentId, (followers)=>{
       res.send('! '+followers.join(' '));
     });
