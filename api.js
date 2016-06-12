@@ -117,7 +117,7 @@ apiRouter.route('/reply/accept/:reply_id').get((req, res)=>{
     }
     var entryBody = `**${reply.alias}**: ${reply.text}\n\nTo jest anonimowy komentarz.${authorized}\nZaakceptował: ${req.decoded._doc.username}`;
     wykopController.getFollowers(reply.parentID.entryID, reply.parentID.notificationCommentId, (followers)=>{
-      if(followers.length > 0)entryBody+=`\n! Wołam obserwujących: \n${followers.map(function(f){return '@'+f;}).join(' ,')}`;
+      if(followers.length > 0)entryBody+=`\n! Wołam obserwujących: ${followers.map(function(f){return '@'+f;}).join(' ,')}`;
       wykop.request('Entries', 'AddComment', {params: [reply.parentID.entryID], post: {body: entryBody, embed: reply.embed}}, (err, response)=>{
         if(err){res.json({success: false, response: {message: JSON.stringify(err), status: 'warning'}}); return;}
         reply.commentID = response.id;
