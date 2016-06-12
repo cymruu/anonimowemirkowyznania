@@ -51,7 +51,8 @@ wykopController = {
     });
   },
   getFollowers: function(entryID, notificationCommentId, cb){
-    var followers = '!';
+    console.log(entryID, notificationCommentId);
+    var followers = [];
     if(!notificationCommentId){
       return cb(followers);
     }
@@ -62,11 +63,12 @@ wykopController = {
         if (current.id == notificationCommentId){
           if(current.voters){
             for(i in current.voters){
-              followers+=`@${current.voters[i].author} `;
+              followers.push(current.voters[i].author);
             }
           }
         }
       }
+      console.log(followers);
       return cb(followers);
     });
   },

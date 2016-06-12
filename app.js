@@ -119,12 +119,9 @@ app.get('/followers/:confessionid', (req, res)=>{
   confessionModel.findById(req.params.confessionid, (err, confession)=>{
     if(err)return res.sendStatus(404);
     if(confession){
+      console.log(confession);
     wykopController.getFollowers(confession.entryID, confession.notificationCommentId, (followers)=>{
-      if(followers.length > 1){
-      res.send(followers.substr(1));
-      }else{
-        res.json({success:false, response:{message: "Nikt nie obserwuje tego wątku"}});
-      }
+      res.send('! '+followers.join(' '));
     });
   }else{
     res.sendStatus(404);

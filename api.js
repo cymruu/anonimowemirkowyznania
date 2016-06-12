@@ -63,16 +63,16 @@ apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
       confession.entryID = response.id;
       wykop.request('Entries', 'AddComment', {params: [response.id], post: {body: `Zaplusuj ten komentarz, aby otrzymywać powiadomienia o odpowiedziach w tym wątku. [Kliknij tutaj, jeśli chcesz skopiować listę obserwujących](${config.siteURL}/followers/${confession._id})`}}, (err, notificationComment)=>{
         if(err)return console.log(err);
-        confession.notificationCommentId = notificationComment.id;
-      });
       actionController(req.decoded._doc._id, 1, function(err, actionId){
         if(err)return err;
         confession.actions.push(actionId);
         confession.status = 1;
         confession.addedBy = req.decoded._doc.username;
+        confession.notificationCommentId = notificationComment.id;
         confession.save((err)=>{
           if(err) res.json({success: false, response: {message: err}});;
           res.json({success: true, response: {message: 'Entry added', entryID: response.id, status: 'success'}});
+          });
         });
       });
     });
