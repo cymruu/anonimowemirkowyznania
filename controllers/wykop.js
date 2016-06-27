@@ -87,6 +87,12 @@ wykopController = {
       }
       cb(null, participants);
     });
+  },
+  deleteEntry: function(entryID, cb){
+    wykop.request('Entries', 'Delete', {params: [entryID]}, (err, response)=>{
+      if(err) return cb(err);
+      return cb(null, response);
+    });
   }
 }
 module.exports = wykopController;

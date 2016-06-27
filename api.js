@@ -49,7 +49,7 @@ apiRouter.route('/confession').get((req, res)=>{
 apiRouter.route('/confession/accept/:confession_id').get((req, res)=>{
   confessionModel.findById(req.params.confession_id, (err, confession)=>{
     if(err) res.send(err);
-    if(confession.entryID){
+    if(confession.entryID && confession.status==1){
       res.json({success: false, response: {message: 'It\'s already added', entryID: confession.entryID, status: 'danger'}});
       return;
     }
@@ -91,6 +91,23 @@ apiRouter.route('/confession/danger/:confession_id').get((req, res)=>{
         if(err) res.json({success: false, response: {message: err}});
         res.json({success: true, response: {message: 'Zaaktualizowano status', status: status}});
       });
+    });
+  });
+});
+apiRouter.route('/confession/delete/:confession_id').get((req, res)=>{
+  confessionModel.findById(req.params.confession_id, (err, confession)=>{
+    if(err) return res.json(err);
+    wykopController.deleteEntry(confession.entryID, (err, result)=>{
+      if(err) return res.json({success: false, response: {message: err.error.message}});
+        actionController(req.decoded._doc._id, 5, function(err, actionId){
+          if(err)return err;
+          confession.actions.push(actionId);
+          confession.status = -1;
+          confession.save((err)=>{
+            if(err) res.json({success: false, response: {message: err}});
+            res.json({success: true, response: {message: `Usunięto wpis ID: ${result.id}`}});
+          });
+        });
     });
   });
 });

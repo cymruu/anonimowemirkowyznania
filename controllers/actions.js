@@ -5,7 +5,7 @@ var actionTypes = {
   2: 'Oznaczono jako treść niebezpieczna',
   3: 'Oznaczono jako treść bezpieczna',
   4: 'Dodano odpowiedź',
-  5: 'Usunięto z wykopu', //TODO
+  5: 'Usunięto z wykopu',
   6: 'Tag #anonimowemirkowyznania usunięty',
   7: 'Tag #anonimowemirkowyznania dodany',
   8: 'Zaakceptowano nową odpowiedź'
