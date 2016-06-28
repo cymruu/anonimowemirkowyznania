@@ -39,9 +39,18 @@ wykopController = {
     });
   },
   deleteEntry: function(entryID, cb){
-    wykop.request('Entries', 'Delete', {params: [entryID]}, (err, response)=>{
+    var archiveModel = require('../models/archive.js');
+    wykop.request('Entries', 'Index', {params: [entryID]}, (err, entry)=>{
       if(err) return cb(err);
-      return cb(null, response);
+      var archive = new archiveModel();
+      archive.entry = entry;
+      archive.save((err)=>{
+        if(err) return cb(err);
+        wykop.request('Entries', 'Delete', {params: [entryID]}, (err, response)=>{
+          if(err) return cb(err);
+          return cb(null, response);
+        });
+      });
     });
   }
 }

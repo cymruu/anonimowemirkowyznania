@@ -9,10 +9,3 @@ var actionSchema = new Schema({
 });
 
 module.exports = mongoose.model('actions', actionSchema);
-
-/**
- * napisac usuwanie i logowanie, zeby bylo wiadomo, kto co i kiedy usuwa i ogolnie robi
- * najlepiej w jakims kontrolerze do ogarniania logow ogolnie
- * type: 0 - logowanie, 2 dodawanie na mirko, 3 usuwanie ! ale to juz w jakims osoobnym pliku ustawic
- *
- */

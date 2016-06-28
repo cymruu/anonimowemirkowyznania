@@ -26,7 +26,8 @@ adminRouter.post('/login', (req, res)=>{
       res.cookie('token', token);
       res.redirect('/admin/confessions');
     }else{
-      return res.render('./admin/login.jade', {user: {}, error: 'Błędne hasło'});    }
+      return res.render('./admin/login.jade', {user: {}, error: 'Błędne hasło'});
+    }
   });
 });
 adminRouter.get('/logout', (req, res)=>{
