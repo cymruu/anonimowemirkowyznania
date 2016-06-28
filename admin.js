@@ -4,6 +4,7 @@ var adminRouter = express.Router();
 var mongoose = require('mongoose');
 var config = require('./config.js');
 var confessionModel = require('./models/confession.js');
+var auth = require('./controllers/authorization.js');
 var replyModel = require('./models/reply.js');
 var userModel = require('./models/user.js');
 //authoriztion
@@ -17,8 +18,7 @@ adminRouter.post('/login', (req, res)=>{
     if(err) throw err;
 
     if(!user){
-      res.json({success:false, response:{message: 'user not found'}});
-      return;
+      return res.render('./admin/login.jade', {user: {}, error: 'Nie znaleziono uzytkownia'});
     }
     if(user.password == req.body.password){
       //success login
@@ -26,45 +26,19 @@ adminRouter.post('/login', (req, res)=>{
       res.cookie('token', token);
       res.redirect('/admin/confessions');
     }else{
-      res.json({success:false, response:{message: 'wrong password'}});
-      return;
-    }
+      return res.render('./admin/login.jade', {user: {}, error: 'Błędne hasło'});    }
   });
 });
 adminRouter.get('/logout', (req, res)=>{
   res.clearCookie('token');
-  res.json({success:true, response:{message: 'logged out successfully'}});
+  return res.render('./admin/login.jade', {user: {}, error: 'Wylogowano'});
 });
-adminRouter.use((req, res, next)=>{
-  var token = req.cookies.token || req.body.token || req.query.token || req.headers['x-access-token'];
-  if (token) {
-    jwt.verify(token, config.secret, function(err, decoded) {
-  if (err){
-      return res.json({ success: false, message: 'Failed to authenticate token. Please login again' });
-    }else{
-      req.decoded = decoded;
-      if(req.decoded._doc.authorized){
-        next();
-      }else{
-        return res.status(403).send({
-          success: false,
-          response: {message: 'You\'re not authorized. Please login'}
-        });
-      }
-    }
-  });
-  }else{
-    return res.status(403).send({
-      success: false,
-      response: {message: 'No token provided.'}
-    });
-  }
-  });
+adminRouter.use(auth);
 adminRouter.get('/', (req, res)=>{
-  res.json({success:true, response:{message:'authorized'}});
+  res.redirect('/admin/confessions');
 });
 adminRouter.get('/details/:confession_id', (req, res)=>{
-  confessionModel.findById(req.params.confession_id).populate({path:'actions',options:{sort: {_id: -1}}, populate: {path: 'user', select: 'username'}}).exec((err, confession)=>{
+  confessionModel.findById(req.params.confession_id).populate({path:'actions', options:{sort: {_id: -1}}, populate: {path: 'user', select: 'username'}}).exec((err, confession)=>{
     if(err) return res.send(err);
     res.render('./admin/details.jade', {user: req.decoded._doc, confession});
   });

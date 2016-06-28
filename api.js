@@ -1,10 +1,10 @@
 var express = require('express');
 var apiRouter = express.Router();
 var mongoose = require('mongoose');
-var jwt = require('jsonwebtoken');
 var wykop = require('./wykop.js');
 var wykopController = require('./controllers/wykop.js');
 var actionController = require('./controllers/actions.js');
+var auth = require('./controllers/authorization.js');
 var config = require('./config.js');
 var confessionModel = require('./models/confession.js');
 var replyModel = require('./models/reply.js');
@@ -22,24 +22,7 @@ apiRouter.get('/participants/:entry_id', (req, res)=>{
     res.json(participants);
   });
 });
-apiRouter.use((req, res, next)=>{
-  var token = req.cookies.token || req.body.token || req.query.token || req.headers['x-access-token'];
-  if (token) {
-    jwt.verify(token, config.secret, function(err, decoded) {
-  if (err){
-      return res.json({ success: false, message: 'Failed to authenticate token.' });
-    }else{
-      req.decoded = decoded;
-      next();
-    }
-  });
-  }else{
-    return res.status(403).json({
-      success: false,
-      response: {message: 'No token provided.'}
-    });
-  }
-});
+apiRouter.use(auth);
 apiRouter.route('/confession').get((req, res)=>{
   confessionModel.find((err, confessions)=>{
     if(err) res.send(err);

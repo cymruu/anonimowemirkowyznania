@@ -31,12 +31,6 @@ app.set('view engine', 'jade');
 app.get('/', (req, res)=>{
   res.render('index');
 });
-app.get('/voters/:entryID', (req, res)=>{
-  wykopController.analyzeVoters(req.params.entryID, (err, voters)=>{
-    if(err)return res.json(err);
-    res.json(voters);
-  });
-});
 app.get('/ip', (req, res)=>{
   res.json([req.ip, req.ips]);
 });
@@ -58,7 +52,7 @@ app.post('/', (req, res)=>{
 app.get('/login', (req, res)=>{
   var redirectURL = encodeURIComponent(new Buffer(config.siteURL).toString('base64'));
   var secureKey = md5(config.wykop.secret+config.siteURL);
-  res.redirect(`http://a.wykop.pl/user/connect/appkey,${config.wykop.key},userkey,,secure,${secureKey},redirect,${redirectURL}`);
+  res.redirect(`http://a.wykop.pl/user/connect/appkey,${config.wykop.key},userkey,secure,${secureKey},redirect,${redirectURL}`);
 });
 app.get('/connect', (req, res)=>{
   //req.query.connectData

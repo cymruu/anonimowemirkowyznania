@@ -1,6 +1,8 @@
 extends ./base.jade
 block content
   .container
+    if error
+      p.bg-danger #{error}
     form(method="post")
       input(name="username" placeholder="username")
       br
