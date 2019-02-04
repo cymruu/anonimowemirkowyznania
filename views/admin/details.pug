@@ -51,7 +51,8 @@ block content
                       |  przez
                       em  #{action.user.username}
                     |  #{action.time}
-              h4 Wyznania dodane z tego IP:
+              h4 Wyznania dodane z tego 
+                a(href=`./${confession._id}/ip`) IP:
                 span.badge #{confession.addedFromSameIP.length}
               ul
                 each related, index in confession.addedFromSameIP

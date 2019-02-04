@@ -54,6 +54,13 @@ adminRouter.get('/details/:confession_id', accessMiddleware('viewDetails'),  (re
     });
   });
 });
+adminRouter.get('/details/:confession_id/ip', accessMiddleware('viewDetails'), accessMiddleware('viewIP'),  (req, res)=>{
+  confessionModel.findById(req.params.confession_id, (err, confession)=>{
+    if(err) return res.send(err);
+    if(!confession) return res.sendStatus(404);
+    res.send(confession.IPAdress);
+  });
+});
 adminRouter.get('/confessions/:filter?',accessMiddleware('accessPanel'), (req, res)=>{
   var search = {};
   req.params.filter?search = {status: req.params.filter}:search = {};

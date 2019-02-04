@@ -1,4 +1,4 @@
-const permissions = [ 'addEntry', 'deleteEntry', 'addReply', 'deleteReply', 'setStatus', 'viewDetails', 'updateTags', 'accessPanel', 'accessMessages', 'accessModsList', 'canChangeUserPermissions'];
+const permissions = [ 'addEntry', 'deleteEntry', 'addReply', 'deleteReply', 'setStatus', 'viewDetails', 'updateTags', 'accessPanel', 'accessMessages', 'accessModsList', 'canChangeUserPermissions', 'viewIP'];
 
 const permissionObject = {};
 permissions.forEach((p, i) => {
