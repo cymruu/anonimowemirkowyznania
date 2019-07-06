@@ -176,12 +176,16 @@ app.get('/link/:linkId/:from', function(req, res){
       res.redirect(ad.out);
     });
 });
-var server;
-if (isObjectEmpty(options)) {
-  var http = require('http');
-  server = http.createServer(app);
-} else {
-  var https = require('https');
-  server = https.createServer(options, app);
+if(_port == "passenger"){
+  app.listen(_port);
+}else{
+  var server;
+  if (isObjectEmpty(options)) {
+    var http = require('http');
+    server = http.createServer(app);
+  } else {
+    var https = require('https');
+    server = https.createServer(options, app);
+  }
+  server.listen(_port);
 }
-server.listen(_port);
