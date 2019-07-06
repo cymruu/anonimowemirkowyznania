@@ -5,6 +5,9 @@ block content
       white-space: normal;
       margin-left: 5px;
     }
+    .participant-list{
+      word-wrap:break-word;
+    }
   if success
     .alert.alert-success
       strong Dodano!
@@ -106,7 +109,7 @@ block content
       if confession.participants
         div.panel.panel-default
           div.panel-heading Uczestnicy dyskusji
-          div.panel-body
+          div.panel-body.participant-list
             each participant, index in confession.participants
               span.label.label-info.participant(data-username=`${participant}`) #{participant}
   script(src='/js/main.js')
