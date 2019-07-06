@@ -1,22 +1,19 @@
 const WebSocketServer = require('ws').Server;
 const url = require('url');
-const fs = require('fs');
-const https = require('https');
 var conversationController = require('./conversations.js');
-var options = {};
-if (fs.existsSync('./certs')) {
-    options.key = fs.readFileSync('./certs/privatekey.key');
-    options.cert = fs.readFileSync('./certs/certificate.crt');
-  if(fs.existsSync('./certs/ca_bundle.crt')){
-    options.ca = fs.readFileSync('./certs/ca_bundle.crt');
-  }
+const {options, isObjectEmpty} = require('../certs.js');
+var handler;
+if(isObjectEmpty(options)){
+  handler = require("http");
+}else{
+  handler = require("https");
 }
-const httpsServer = https.createServer(options, (req, res) => {
+const server = handler.createServer(options, (req, res) => {
   res.writeHead(200);
-  res.end('hello world\n');
+  res.end('AMW chat websockets server\n');
 });
-var wss = new WebSocketServer({server: httpsServer});
-httpsServer.listen(1030);
+var wss = new WebSocketServer({server: server});
+server.listen(1030);
 wss.sendToChannel = function broadcast(channel, data) {
   wss.clients.forEach(function each(client) {
     if (client.readyState === 1 && client.conversation == channel) {

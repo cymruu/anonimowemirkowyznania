@@ -26,17 +26,10 @@ var auth = require('./controllers/authorization.js');
 var aliasGenerator = require('./controllers/aliases.js');
 var surveyController = require('./controllers/survey.js');
 var crypto = require('crypto');
-var https = require('https');
 const fs = require('fs');
 //wss server must be required after we tell Passenger that the app is binding 2 ports.
 const wss = require('./controllers/wsServer.js');
-var options = {};
-if (fs.existsSync('./certs')) {
-  options = {
-    key: fs.readFileSync('./certs/privatekey.key'),
-    cert: fs.readFileSync('./certs/certificate.crt')
-  };
-}
+const {options, isObjectEmpty} = require('./certs.js');
 app.enable('trust proxy');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -175,9 +168,6 @@ app.get('/twojewyznania', (req, res)=>{
 app.get('/contact', (req, res)=>{
   res.render('contact');
 });
-process.on('unhandledRejection', function(err){
-  console.log(err);
-});
 app.get('/link/:linkId/:from', function(req, res){
     advertismentModel.findOne({_id: req.params.linkId}, function(err, ad){
       if(err || !ad)return 404;
@@ -186,8 +176,12 @@ app.get('/link/:linkId/:from', function(req, res){
       res.redirect(ad.out);
     });
 });
-// app.listen(_port, ()=>{
-//   console.log('listening on port '+_port);
-// });
-var httpsServer = https.createServer(options, app);
-httpsServer.listen(_port);
+var server;
+if (isObjectEmpty(options)) {
+  var http = require('http');
+  server = http.createServer(app);
+} else {
+  var https = require('https');
+  server = https.createServer(options, app);
+}
+server.listen(_port);
