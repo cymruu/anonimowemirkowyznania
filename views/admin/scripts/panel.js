@@ -24,7 +24,7 @@ $('.actionButton').click(function(){
   }
   if(obj.data('action')=='danger'&&obj.data('object')=='confession'&&parent.hasClass('warning')){
     var reason = prompt("Wpisz powód odrzucenia wyznania (możesz zostawić puste)");
-    endpoint+='/'+escape(reason);
+    endpoint+='/'+encodeURIComponent(reason);
   }
   $.ajax({
       type: "GET",
