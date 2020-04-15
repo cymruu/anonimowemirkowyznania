@@ -5,17 +5,13 @@ if (typeof(PhusionPassenger) !== 'undefined') {
 }
 var express = require('express');
 var app = express();
-var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var config = require('./config.js');
-var md5 = require('md5');
 var apiRouter = require('./api.js');
 var adminRouter = require('./admin.js');
 var conversationRouter = require('./conversation.js');
 var confessionModel = require('./models/confession.js');
 var replyModel = require('./models/reply.js');
-var userModel = require('./models/user.js');
 var advertismentModel = require('./models/ads.js');
 var statsModel = require('./models/stats.js');
 
@@ -26,9 +22,6 @@ var auth = require('./controllers/authorization.js');
 var aliasGenerator = require('./controllers/aliases.js');
 var surveyController = require('./controllers/survey.js');
 var crypto = require('crypto');
-const fs = require('fs');
-//wss server must be required after we tell Passenger that the app is binding 2 ports.
-const wss = require('./controllers/wsServer.js');
 const {options, isObjectEmpty} = require('./certs.js');
 app.enable('trust proxy');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -72,24 +65,6 @@ app.post('/', async(req, res)=>{
     res.redirect(`confession/${confession._id}/${confession.auth}`);
   });
 });
-app.get('/login', (req, res)=>{
-  var redirectURL = encodeURIComponent(new Buffer(config.siteURL).toString('base64'));
-  var secureKey = md5(config.wykop.secret+config.siteURL);
-  res.redirect(`http://a.wykop.pl/user/connect/appkey,${config.wykop.key},userkey,secure,${secureKey},redirect,${redirectURL}`);
-});
-app.get('/connect', (req, res)=>{
-  //req.query.connectData
-  var authDetails = JSON.parse(new Buffer(req.query.connectData, 'base64').toString('utf-8'));
-  wykopController.wykop.request('User', 'Login', {post: {accountkey: authDetails.token}}).then(function(response){
-    userModel.findOneAndUpdate({username: response.login}, {avatar: response.avatar, userkey: response.userkey}, {upsert: true}, (err, loggedUser)=>{
-      if(err) throw err;
-      var token = jwt.sign(loggedUser, config.secret, {expiresIn: 1440*60});
-      res.cookie('token', token);
-      res.redirect('/');
-    });
-  });
-});
-/*tutaj trzeba wyswietlic ogolne informacje o wyznaniu akcje i konwersacje*/
 app.get('/confession/:confessionid/:auth', (req, res)=>{
   if(!req.params.confessionid || !req.params.auth){
     return res.sendStatus(400);
@@ -170,7 +145,7 @@ app.get('/contact', (req, res)=>{
 });
 app.get('/link/:linkId/:from', function(req, res){
     advertismentModel.findOne({_id: req.params.linkId}, function(err, ad){
-      if(err || !ad)return 404;
+      if(err || !ad)return res.sendStatus(404);
       ad.visits.push({IPAdress: req.ip, from: req.params.from});
       ad.save();
       res.redirect(ad.out);
