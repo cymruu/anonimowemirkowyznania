@@ -1,3 +1,6 @@
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'production'
+}
 var _port = 1337;
 if (typeof (PhusionPassenger) !== 'undefined') {
   PhusionPassenger.configure({ autoInstall: false });
@@ -151,7 +154,6 @@ app.get('/link/:linkId/:from', function (req, res) {
     res.redirect(ad.out);
   });
 });
-
 if (_port == "passenger") {
   app.listen(_port);
 } else {
@@ -163,5 +165,7 @@ if (_port == "passenger") {
     var https = require('https');
     server = https.createServer(options, app);
   }
-  server.listen(_port);
+  server.listen(_port, () => {
+    console.log(`Server started on port: ${_port} [${process.env.NODE_ENV}]`)
+  });
 }

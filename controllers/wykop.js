@@ -38,7 +38,7 @@ const sendPrivateMessage = (receiver, body) => service.Pm.SendMessage(receiver, 
 const acceptConfession = (confession, user, cb) => {
   bodyBuildier.getEntryBody(confession, user, (entryBody) => {
     service.Entries.Add({ body: entryBody, embed: confession.embed })
-      .then(response => {
+      .then(async (response) => {
         confession.entryID = response.id;
         var action = await actionController(user._id, 1).save();
         confession.actions.push(action);
@@ -50,6 +50,7 @@ const acceptConfession = (confession, user, cb) => {
         });
       })
       .catch(err => {
+        console.log(err)
         return cb({ success: false, response: { message: err.toString(), status: 'warning' } });
       })
   })
@@ -59,7 +60,7 @@ const acceptConfession = (confession, user, cb) => {
 addNotificationComment = function (confession, user, cb) {
   cb = cb || function () { };
   service.Entries.CommentAdd(confession.entryID, { body: bodyBuildier.getNotificationCommentBody(confession) })
-    .then(response => {
+    .then(async (response) => {
       confession.notificationCommentId = notificationComment.id;
       var action = await actionController(user._id, 6).save();
       confession.actions.push(action);

@@ -134,7 +134,7 @@ apiRouter.route('/reply/danger/:reply_id/').get(accessMiddleware('setStatus'), (
 });
 apiRouter.route('/reply/delete/:reply_id/').get(accessMiddleware('deleteReply'), (req, res) => {
   replyModel.findOne({ _id: req.params.reply_id }).populate('parentID').then(reply => {
-    wykopController.deleteEntryComment(reply.commentID).then(result => {
+    wykopController.deleteEntryComment(reply.commentID).then(async (result) => {
       var action = await actionController(req.user._id, 7, `reply_id: ${response.id}`).save();
       reply.parentID.actions.push(action);
       reply.status = 0;

@@ -4,6 +4,9 @@
   "description": "AnonimoweMirkoWyznania #anonimowemirkowyznania",
   "main": "app.js",
   "scripts": {
+    "development": "NODE_ENV=development npm start",
+    "production": "NODE_ENV=production npm start",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "sokytsinolop",
