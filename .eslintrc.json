@@ -1,0 +1,136 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended"
+    ],
+    "env": {
+        "node": true
+    },
+    "ignorePatterns": [
+        "node_modules/",
+        "dist"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "comma-dangle": [
+            "error",
+            {
+                "functions": "always-multiline",
+                "objects": "always-multiline",
+                "arrays": "always-multiline",
+                "imports": "always-multiline",
+                "exports": "always-multiline"
+            }
+        ],
+        "keyword-spacing": [
+            "warn",
+            {
+                "before": true,
+                "after": true
+            }
+        ],
+        "curly": "warn",
+        "no-var": "warn",
+        "object-curly-spacing": [
+            "error",
+            "always"
+        ],
+        "prefer-const": "warn",
+        "indent": [
+            "error",
+            "tab"
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "never"
+        ],
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/consistent-type-assertions": [
+            "error",
+            {
+                "assertionStyle": "as"
+            }
+        ],
+        "@typescript-eslint/type-annotation-spacing": "off",
+        "no-trailing-spaces": "error",
+        "key-spacing": [
+            "error",
+            {
+                "mode": "strict"
+            }
+        ],
+        "brace-style": [
+            "error",
+            "1tbs",
+            {
+                "allowSingleLine": true
+            }
+        ],
+        "max-len": [
+            "error",
+            {
+                "code": 120,
+                "tabWidth": 4
+            }
+        ],
+        "arrow-spacing": [
+            "warn",
+            {
+                "before": true,
+                "after": true
+            }
+        ],
+        "eqeqeq": [
+            "warn",
+            "always"
+        ],
+        "space-before-blocks": [
+            "warn",
+            "always"
+        ],
+        "comma-spacing": [
+            "warn",
+            {
+                "before": false,
+                "after": true
+            }
+        ],
+        "no-mixed-spaces-and-tabs": "warn",
+        "no-dupe-else-if": "error",
+        "no-setter-return": "error",
+        "space-before-function-paren": [
+            "error",
+            {
+                "anonymous": "never",
+                "named": "never",
+                "asyncArrow": "always"
+            }
+        ],
+        "no-multi-spaces": [
+            "error"
+        ],
+        "space-infix-ops": [
+            "error"
+        ],
+        "no-unused-vars": "off",
+        "eol-last": [
+            "error"
+        ]
+    }
+}
