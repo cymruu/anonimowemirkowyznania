@@ -13,9 +13,11 @@ import statsModel from './models/stats'
 import replyModel from './models/reply'
 
 //TODO: move connnection to separate file
-mongoose.connect(config.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-	if (err) { throw err }
-})
+mongoose.connect(config.mongoURL,
+	{ useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false },
+	(err) => {
+		if (err) { throw err }
+	})
 mongoose.Promise = global.Promise
 interface RequestWithUser extends Request {
 	user: any;

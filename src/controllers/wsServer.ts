@@ -24,7 +24,7 @@ export function bindWebsocketToServer(server) {
 			if (message.msg.length > 4096) {
 				return ws.send(JSON.stringify({ type: 'alert', body: 'Wiadomość za długa.' }))
 			}
-			if ((time.getTime() - (ws.lastMsg as Date).getTime()) < 1000) {
+			if ((time.getTime() - (ws.lastMsg as Date)?.getTime()) < 1000) {
 				return ws.send(JSON.stringify({ type: 'alert', body: 'Wysyłasz wiadomości za szybko.' }))
 			}
 			ws.lastMsg = time
@@ -52,7 +52,8 @@ export function bindWebsocketToServer(server) {
 		conversationController.validateAuth(params.conversation, params.auth, (err, result) => {
 			if (err) {
 				logger.error(err)
-				ws.send(JSON.stringify({ type: 'alert', body: err }))
+				console.log(err)
+				ws.send(JSON.stringify({ type: 'alert', body: err.toString() }))
 			}
 			if (result) {ws.authorized = true}
 			ws.on('message', (message) => { onMessage(ws, message) })
