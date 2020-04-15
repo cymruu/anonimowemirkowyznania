@@ -52,7 +52,6 @@ export function bindWebsocketToServer(server) {
 		conversationController.validateAuth(params.conversation, params.auth, (err, result) => {
 			if (err) {
 				logger.error(err)
-				console.log(err)
 				ws.send(JSON.stringify({ type: 'alert', body: err.toString() }))
 			}
 			if (result) {ws.authorized = true}
