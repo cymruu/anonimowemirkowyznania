@@ -53,7 +53,7 @@ saveSurvey = function(confession, surveyData){
 }
 wykopLogin = function(cb){
   cb=cb||function(){};
-    request({method: 'POST', url: loginEndpoint, form: {'user[username]': config.wykop.username, 'user[password]': config.wykop.password}, jar:wykopSession, headers: {'User-Agent': userAgent}}, function(err, response, body){
+    request({method: 'POST', url: loginEndpoint, form: {'user[username]': config.wykopClientConfig.username, 'user[password]': config.wykopClientConfig.password}, jar:wykopSession, headers: {'User-Agent': userAgent}}, function(err, response, body){
       if(!err && response.statusCode == 302){
         //logged in
         request({method: 'GET', url: 'https://www.wykop.pl/info/', jar:wykopSession}, function(err, response, body){

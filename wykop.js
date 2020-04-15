@@ -1,4 +1,5 @@
 var config = require('./config.js');
-var Wykop = require('wykop-es6-2');
-var wykop = new Wykop(config.wykop.key, config.wykop.secret, {ssl: true});
-module.exports = wykop;
+var { Wykop, Client } = require('wypokjs');
+const wykop = new Wykop(config.wykopConfig);
+const client = new Client(wykop, config.wykopClientConfig);
+module.exports = client;
