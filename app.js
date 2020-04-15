@@ -82,12 +82,14 @@ app.get('/reply/:confessionid?', (req, res) => {
   } else {
     confessionModel.findById(req.params.confessionid, (err, confession) => {
       if (err) return res.sendStatus(404);
-      wykopController.getParticipants(confession.entryID, (err, participants) => {
-        if (err) participants = [];
+      wykopController.getParticipants(confession.entryID).then(participants => {
         confession.participants = participants;
+      }).catch(_ => {
+        confession.participants = [];
+      }).finally(() => {
         res.render('reply', { confession: confession });
       });
-    });
+    })
   }
 });
 app.post('/reply/:confessionid', (req, res) => {

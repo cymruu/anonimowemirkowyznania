@@ -20,12 +20,6 @@ mongoose.Promise = global.Promise;
 apiRouter.get('/', (req, res)=>{
   res.json({success: true, response: {message: 'API is working!'}});
 });
-apiRouter.get('/participants/:entry_id', (req, res)=>{
-  wykopController.getParticipants(req.params.entry_id, (err, participants)=>{
-    if(err)return res.json(err);
-    res.json(participants);
-  });
-});
 apiRouter.use(auth(true));
 apiRouter.route('/confession/accept/:confession_id').get(accessMiddleware('addEntry'), (req, res)=>{
   confessionModel.findById(req.params.confession_id).populate('survey').exec((err, confession)=>{

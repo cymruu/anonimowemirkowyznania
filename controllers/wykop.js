@@ -2,44 +2,14 @@ var { wykop, service } = require('../wykop.js');
 var bodyBuildier = require('../controllers/bodyBuildier.js');
 var actionController = require('../controllers/actions.js');
 
-// getFollowers = function(entryID, notificationCommentId, cb){
-//   var followers = [];
-//   if(!notificationCommentId){
-//     return cb(null, followers);
-//   }
-//   wykop.request('Entries', 'Index', {params: [entryID]}, (err, entry)=>{
-//     if(err)return cb(err);
-//     for(var i in entry.comments){
-//       var current = entry.comments[i];
-//       if (current.id == notificationCommentId){
-//         if(current.voters){
-//           for(i in current.voters){
-//             followers.push(current.voters[i].author);
-//           }
-//         }
-//       }
-//     }
-//     return cb(null, followers);
-//   });
-// }
 const getFollowers = (notificationCommentId) => service.Entries.CommentUpvoters(notificationCommentId)
 /**
  * get entry participants
  * @param  {int}   entryID entryID
  * @param  {Function} cb      callback
  */
-getParticipants = function (entryID, cb) {
-  wykop.request('Entries', 'Index', { params: [entryID] }, (err, entry) => {
-    var participants = [];
-    if (err) return cb(err);
-    participants.push(entry.author);
-    for (var i in entry.comments) {
-      if (participants.indexOf(entry.comments[i].author) == -1) {
-        participants.push(entry.comments[i].author);
-      }
-    }
-    cb(null, participants);
-  });
+const getParticipants = (entryId) => {
+  return service.Entries.Entry(entryId).then(response => response.comments.map(comment => comment.author.login)
 }
 deleteEntry = function (entryID, cb) {
   var archiveModel = require('../models/archive.js');
