@@ -13,6 +13,8 @@ export interface IConversation extends mongoose.Document {
 	messages: IMessage[]
 	parentID: IConfession
 	userID: IUser
+	//dynamicaly added in logic for displaying ISOP message
+	auth: string
 }
 
 const conversationSchema = new Schema({

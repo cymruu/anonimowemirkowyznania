@@ -1,13 +1,13 @@
 const WebSocketServer = require('ws').Server
 import url from 'url'
-import conversationController from './conversations'
+import * as conversationController from './conversations'
 import logger from '../logger'
 export let wss
 export function bindWebsocketToServer(server) {
 	wss = new WebSocketServer({ server, port: 1030 })
 	wss.sendToChannel = function broadcast(channel, data) {
 		wss.clients.forEach(function each(client) {
-			if (client.readyState === 1 && client.conversation == channel) {
+			if (client.readyState === 1 && client.conversation === channel) {
 				client.send(data)
 			}
 		})
@@ -18,15 +18,22 @@ export function bindWebsocketToServer(server) {
 		} catch (e) {
 			return ws.send(JSON.stringify({ type: 'alert', body: 'Coś się popsuło.' }))
 		}
+		const time = new Date()
 		switch (message.type) {
 		case 'chatMsg':
-			var time = new Date()
-			if (message.msg.length > 4096) { return ws.send(JSON.stringify({ type: 'alert', body: 'Wiadomość za długa.' })) }
-			if ((time - ws.lastMsg) < 1000) {return ws.send(JSON.stringify({ type: 'alert', body: 'Wysyłasz wiadomości za szybko.' }))}
+			if (message.msg.length > 4096) {
+				return ws.send(JSON.stringify({ type: 'alert', body: 'Wiadomość za długa.' }))
+			}
+			if ((time.getTime() - (ws.lastMsg as Date).getTime()) < 1000) {
+				return ws.send(JSON.stringify({ type: 'alert', body: 'Wysyłasz wiadomości za szybko.' }))
+			}
 			ws.lastMsg = time
 			conversationController.newMessage(ws.conversation, ws.auth, message.msg, ws.IPAdress, (err, isOP) => {
 				if (err) {return ws.send(JSON.stringify({ type: 'alert', body: err }))}
-				wss.sendToChannel(ws.conversation, JSON.stringify({ type: 'newMessage', msg: message.msg, username: isOP ? 'OP' : 'Użytkownik mikrobloga' }))
+				wss.sendToChannel(ws.conversation, JSON.stringify({
+					type: 'newMessage',
+					msg: message.msg, username: isOP ? 'OP' : 'Użytkownik mikrobloga',
+				}))
 			})
 			break
 		default:

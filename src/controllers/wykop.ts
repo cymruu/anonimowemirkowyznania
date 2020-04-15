@@ -55,7 +55,7 @@ export const acceptConfession = (confession, user, cb) => {
 }
 
 //TODO: refactor to use promise
-export const addNotificationComment = function(confession, user, cb = () => { }) {
+export const addNotificationComment = function(confession, user, cb = (...args) => { }) {
 	service.Entries.CommentAdd(confession.entryID, { body: bodyBuildier.getNotificationCommentBody(confession) })
 		.then(async (response) => {
 			confession.notificationCommentId = response.id
@@ -75,10 +75,14 @@ export const acceptReply = async (reply, user, cb) => {
 	try {
 		const entryFollowers = await getFollowers(reply.parentID.notificationCommentId)
 		if (entryFollowers.length > 0) {
-			if (entryFollowers.length > 0) { entryBody += `\n! Wołam obserwujących: ${entryFollowers.map(x => `@${x.author.login}`).join(', ')}` }
+			if (entryFollowers.length > 0) {
+				entryBody += `\n! Wołam obserwujących: ${entryFollowers.map(x => `@${x.author.login}`).join(', ')}`
+			}
 		}
 		try {
-			const response = await service.Entries.CommentAdd(reply.parentID.entryID, { body: entryBody, embed: reply.embed })
+			const response = await service.Entries.CommentAdd(
+				reply.parentID.entryID, { body: entryBody, embed: reply.embed },
+			)
 			reply.commentID = response.id
 			reply.status = 1
 			reply.addedBy = user.username

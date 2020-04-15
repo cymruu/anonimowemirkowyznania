@@ -30,7 +30,9 @@ export function validateSurvey(survey) {
 		return { success: false, response: { message: 'Maksymalna długość pytania to 100 znakow.' } }
 	}
 	for (const i in survey.answers) {
-		if (survey.answers[i].length > 50) { return { success: false, response: { message: 'Maksymalna długość odpowiedzi to 50 znakow.' } } }
+		if (survey.answers[i].length > 50) {
+			return { success: false, response: { message: 'Maksymalna długość odpowiedzi to 50 znakow.' } }
+		}
 	}
 	return { success: true }
 }
@@ -52,14 +54,24 @@ export function saveSurvey(confession, surveyData) {
 	})
 }
 export function wykopLogin() {
-	request({ method: 'POST', url: loginEndpoint, form: { 'user[username]': config.wykopClientConfig.username, 'user[password]': config.wykopClientConfig.password }, jar: wykopSession, headers: { 'User-Agent': userAgent } }, function(err, response, body) {
-		if (!err && response.statusCode == 302) {
+	request({
+		method: 'POST',
+		url: loginEndpoint,
+		form: {
+			'user[username]': config.wykopClientConfig.username,
+			'user[password]': config.wykopClientConfig.password,
+		},
+		jar: wykopSession,
+		headers: { 'User-Agent': userAgent },
+	}, function(err, response, body) {
+		if (!err && response.statusCode === 302) {
 			//logged in
-			request({ method: 'GET', url: 'https://www.wykop.pl/info/', jar: wykopSession }, function(err, response, body) {
-				if (response.statusCode === 200) {
-					hash = body.match(hashRegex)[1]
-				}
-			})
+			request({ method: 'GET', url: 'https://www.wykop.pl/info/', jar: wykopSession },
+				function(err, response, body) {
+					if (response.statusCode === 200) {
+						hash = body.match(hashRegex)[1]
+					}
+				})
 		}
 	})
 }
@@ -67,15 +79,32 @@ export function acceptSurvey(confession, user, cb) {
 	cb = cb || function() { }
 	bodyBuildier.getEntryBody(confession, user, function(entryBody) {
 		uploadAttachment(confession.embed, (result) => {
-			if (!result.success) { return cb({ success: false, response: { message: 'couln\'t upload attachment', status: 'error' } }) }
-			//its required for some reason, otherwise CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+			if (!result.success) {
+				return cb({ success: false, response: { message: 'couln\'t upload attachment', status: 'error' } })
+			}
+			//its required for some reason
+			//otherwise CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
 			const answers = confession.survey.answers.map((v) => { return v })
-			const data = { body: entryBody, attachment: result.hash, 'survey[question]': confession.survey.question, 'survey[answers]': answers }
-			request({ method: 'POST', url: addEntryEndpoint + hash, form: data, jar: wykopSession }, async function(err, response, body) {
-				if (err) { return cb({ success: false, response: { message: 'Wykop umar', status: 'error' } }) }
-				if (!(body.substr(0, 8) == 'for(;;);')) { return cb({ success: false, relogin: true, response: { message: 'Session expired, reloging' } }) }
+			const data = {
+				body: entryBody,
+				attachment: result.hash,
+				'survey[question]': confession.survey.question,
+				'survey[answers]': answers,
+			}
+			request({
+				method: 'POST',
+				url: addEntryEndpoint + hash,
+				form: data, jar: wykopSession,
+			}, async function(err, response, body) {
+				let entryId
+				if (err) {
+					return cb({ success: false, response: { message: 'Wykop umar', status: 'error' } })
+				}
+				if (!(body.substr(0, 8) === 'for(;;);')) {
+					return cb({ success: false, relogin: true, response: { message: 'Session expired, reloging' } })
+				}
 				try {
-					var entryId = body.match(idRegex)[1]
+					entryId = body.match(idRegex)[1]
 				} catch (e) {
 					let flag;
 					(body.search('Sesja') > -1) ? flag = true : flag = false
@@ -87,7 +116,12 @@ export function acceptSurvey(confession, user, cb) {
 				confession.addedBy = user.username
 				confession.entryID = entryId
 				confession.save((err) => {
-					if (err) { return cb({ success: false, response: { message: 'couln\'t save confession', status: 'error' } }) }
+					if (err) {
+						return cb({
+							success: false,
+							response: { message: 'couln\'t save confession', status: 'error' },
+						})
+					}
 					return cb({ success: true, response: { message: 'Entry added: ' + entryId, status: 'success' } })
 				})
 			})
@@ -99,7 +133,7 @@ const uploadAttachment = function(url, cb) {
 	request({ method: 'POST', url: uploadAttachmentEndpoint + hash, form: { url } }, function(err, response, body) {
 		if (err) { return cb({ success: false }) }
 		try {
-			var hash = body.match(embedHashRegex)[1]
+			hash = body.match(embedHashRegex)[1]
 		} catch (e) {
 			return cb({ success: false })
 		}

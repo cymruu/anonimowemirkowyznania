@@ -1,5 +1,6 @@
 import { Router } from 'express'
-const conversationRouter = Router
+import { RequestWithUser } from './utils'
+const conversationRouter = Router()
 const confessionModel = require('./models/confession.ts')
 const userModel = require('./models/user.ts')
 const conversationController = require('./controllers/conversations.ts')
@@ -7,7 +8,7 @@ const config = require('./config.ts')
 const auth = require('./controllers/authorization.ts')
 const { wss } = require('./controllers/wsServer.ts')
 conversationRouter.use(auth(false))
-conversationRouter.get('/:parent/new', (req, res, next) => {
+conversationRouter.get('/:parent/new', (req:RequestWithUser, res, next) => {
 	if (req.params.parent.substr(0, 2) === 'U_') {
 		const username = req.params.parent.substr(2)
 		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function(err, userObject) {
@@ -22,7 +23,7 @@ conversationRouter.get('/:parent/new', (req, res, next) => {
 		})
 	}
 })
-function createConversationMiddleware(req, res) {
+function createConversationMiddleware(req:RequestWithUser, res) {
 	conversationController.createNewConversation(res.locals.conversationParent, (err, conversationid) => {
 		if (err) { return res.sendStatus(err) }
 		conversationController.newMessage(conversationid, null, req.body.text, req.ip, (err) => {
@@ -31,9 +32,9 @@ function createConversationMiddleware(req, res) {
 		})
 	})
 }
-conversationRouter.post('/:parent/new', (req, res, next) => {
+conversationRouter.post('/:parent/new', (req:RequestWithUser, res, next) => {
 	if (!req.body.text) { return res.sendStatus(400) }
-	if (req.params.parent.substr(0, 2) == 'U_') {
+	if (req.params.parent.substr(0, 2) === 'U_') {
 		const username = req.params.parent.substr(2)
 		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function(err, userObject) {
 			if (err) { return res.sendStatus(503) }
@@ -50,7 +51,7 @@ conversationRouter.post('/:parent/new', (req, res, next) => {
 		})
 	}
 }, createConversationMiddleware)
-conversationRouter.get('/:conversationid/:auth?', (req, res) => {
+conversationRouter.get('/:conversationid/:auth?', (req:RequestWithUser, res) => {
 	if (!req.params.conversationid) {
 		return res.sendStatus(400)
 	}
@@ -60,18 +61,27 @@ conversationRouter.get('/:conversationid/:auth?', (req, res) => {
 		res.render('conversation', { conversation, siteURL: config.siteURL })
 	})
 })
-conversationRouter.post('/:conversationid/:auth?', (req, res) => {
+conversationRouter.post('/:conversationid/:auth?', (req:RequestWithUser, res) => {
 	if (!req.params.conversationid) {
 		return res.sendStatus(400)
 	}
 	if (!req.params.auth && typeof req.user !== 'undefined' && req.user._id) { req.params.auth = 'U_' + req.user._id }
-	conversationController.newMessage(req.params.conversationid, req.params.auth, req.body.text, req.ip, (err, isOP) => {
-		if (err) { return res.send(err) }
-		conversationController.getConversation(req.params.conversationid, req.params.auth, (err, conversation) => {
+	conversationController.newMessage(
+		req.params.conversationid,
+		req.params.auth,
+		req.body.text,
+		req.ip,
+		(err, isOP) => {
 			if (err) { return res.send(err) }
-			res.render('conversation', { conversation, siteURL: config.siteURL })
-			wss.sendToChannel(req.params.conversationid, JSON.stringify({ type: 'newMessage', msg: req.body.text, username: 'Użytkownik mikrobloga' }))
+			conversationController.getConversation(req.params.conversationid, req.params.auth, (err, conversation) => {
+				if (err) { return res.send(err) }
+				res.render('conversation', { conversation, siteURL: config.siteURL })
+				wss.sendToChannel(req.params.conversationid, JSON.stringify({
+					type: 'newMessage',
+					msg: req.body.text,
+					username: 'Użytkownik mikrobloga',
+				}))
+			})
 		})
-	})
 })
 export default conversationRouter
