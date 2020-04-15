@@ -38,7 +38,7 @@ apiRouter.route('/confession/accept/:confession_id').get(accessMiddleware('addEn
 			return res.json({
 				success: false,
 				response: {
-					message: 'It\'s already added',
+					message: 'Wpis został już dodany',
 					entryID: confession.entryID,
 					status: 'danger',
 				},
@@ -48,7 +48,7 @@ apiRouter.route('/confession/accept/:confession_id').get(accessMiddleware('addEn
 			return res.json({
 				success: false,
 				response: {
-					message: 'It\'s marked as dangerous, unmark first',
+					message: 'Wpis jest oznaczony jako niebezpieczny, zmień jego status aby dodać',
 					status: 'danger',
 				},
 			})
@@ -79,9 +79,16 @@ apiRouter.route('/confession/danger/:confession_id/:reason?')
 	.get(accessMiddleware('setStatus'), (req: RequestWithUser, res) => {
 		confessionModel.findById(req.params.confession_id, async (err, confession) => {
 			if (err) { return res.json(err) }
-			confession.status === ConfessionStatus.DECLINED ?
-				confession.status = ConfessionStatus.WAITING : confession.status = ConfessionStatus.DECLINED
-			const status = confession.status === ConfessionStatus.WAITING ? 'warning' : 'danger'
+			if (confession.status === ConfessionStatus.ACCEPTED) {
+				return res.json(
+					{ success: true, response: {
+						message: 'Wpis został już dodany, nie można zmienić statusu.', status: 'success' },
+					},
+				)
+			}
+			confession.status = confession.status === ConfessionStatus.DECLINED ?
+				ConfessionStatus.WAITING : ConfessionStatus.DECLINED
+			const newStatusStr = confession.status === ConfessionStatus.WAITING ? 'warning' : 'danger'
 			const actionType = confession.status === ConfessionStatus.WAITING ?
 				ActionType.REVERT_DECLINE : ActionType.DECLINE
 			const reason = req.params.reason
@@ -90,7 +97,7 @@ apiRouter.route('/confession/danger/:confession_id/:reason?')
 			confession.save((err) => {
 				if (err) { return res.json({ success: false, response: { message: err } }) }
 				if (confession.status === -1) { statsModel.addAction('declined_confessions', req.user.username) }
-				res.json({ success: true, response: { message: 'Zaaktualizowano status', status: status } })
+				res.json({ success: true, response: { message: 'Zaaktualizowano status', status: newStatusStr } })
 			})
 		})
 	})
@@ -123,14 +130,15 @@ apiRouter.route('/confession/delete/:confession_id')
 				confession.save((err) => {
 					if (err) { return res.json({ success: false, response: { message: err } }) }
 					statsModel.addAction('deleted_confessions', req.user.username)
-					res.json({ success: true, response: { message: `Usunięto wpis ID: ${result.id}` } })
+					res.json({ success: true, response: { message: `Usunięto wpis ID: ${confession.entryID}` } })
 					//TODO: handle response
 					wykopController.sendPrivateMessage(
-						'sokytsinolop', `${req.user.username} usunął wpis \n ${result.id}`,
+						'sokytsinolop', `${req.user.username} usunął wpis \n ${confession.entryID}`,
 					).then()
 				})
 			}).catch(err => {
-				return res.json({ success: false, response: { message: err.error.message } })
+				logger.error(err)
+				return res.json({ success: false, response: { message: err.toString() } })
 			})
 		})
 	})
@@ -166,8 +174,15 @@ apiRouter.route('/reply/accept/:reply_id').get(accessMiddleware('addReply'), (re
 apiRouter.route('/reply/danger/:reply_id/').get(accessMiddleware('setStatus'), (req: RequestWithUser, res) => {
 	replyModel.findById(req.params.reply_id).populate('parentID').exec(async (err, reply) => {
 		if (err) { return res.json({ success: false, response: { message: err, status: 'warning' } }) }
-		reply.status === ConfessionStatus.DECLINED ? reply.status = ConfessionStatus.WAITING : reply.status = ConfessionStatus.DECLINED
-		const status = reply.status === 0 ? 'warning' : 'danger'
+		if (reply.status === ConfessionStatus.ACCEPTED) {
+			return res.json(
+				{ success: true, response: {
+					message: 'Komentarz został już dodany, nie można zmienić statusu.', status: 'success' },
+				},
+			)
+		}
+		reply.status = reply.status === ConfessionStatus.DECLINED ? ConfessionStatus.WAITING : ConfessionStatus.DECLINED
+		const newStatusStr = reply.status === 0 ? 'warning' : 'danger'
 		const actionType = reply.status === ConfessionStatus.WAITING ? ActionType.REVERT_DECLINE : ActionType.DECLINE
 		const action = await createAction(req.user._id, actionType).save()
 		reply.parentID.actions.push(action)
@@ -175,21 +190,28 @@ apiRouter.route('/reply/danger/:reply_id/').get(accessMiddleware('setStatus'), (
 		reply.save((err) => {
 			if (err) { res.json({ success: false, response: { message: err } }) }
 			if (reply.status === -1) { statsModel.addAction('replies_declined', req.user.username) }
-			res.json({ success: true, response: { message: 'Status zaaktualizowany', status: status } })
+			res.json({ success: true, response: { message: 'Status zaaktualizowany', status: newStatusStr } })
 		})
 	})
 })
 apiRouter.route('/reply/delete/:reply_id/').get(accessMiddleware('deleteReply'), (req: RequestWithUser, res) => {
 	replyModel.findOne({ _id: req.params.reply_id }).populate('parentID').then(reply => {
 		wykopController.deleteEntryComment(reply.commentID).then(async (result) => {
-			const action = await createAction(req.user._id, ActionType.DELETE_REPLY, `reply_id: ${result.id}`).save()
+			const action = await createAction(
+				req.user._id,
+				ActionType.DELETE_REPLY,
+				`reply_id: ${req.params.reply_id}`,
+			).save()
 			reply.parentID.actions.push(action)
 			reply.status = 0
 			reply.commentID = null
 
 			Promise.all([reply.save(), reply.parentID.save()]).then(_ => {
-				return res.json({ success: true, response: { message: 'Reply removed', status: 'danger' } })
+				return res.json({ success: true, response: {
+					message: 'Komentarz do wpisu usunięty', status: 'danger' },
+				})
 			}).catch(err => {
+				logger.error(err)
 				return res.json({
 					success: false,
 					response: {
@@ -199,10 +221,14 @@ apiRouter.route('/reply/delete/:reply_id/').get(accessMiddleware('deleteReply'),
 				})
 			})
 		}).catch(err => {
+			logger.error(err)
 			return res.json({ success: false, response: { message: err.toString(), status: 'warning' } })
 		})
-	}).catch(_ => {
-		res.json({ success: false, response: { message: 'Cant delete reply', status: 'error' } })
+	}).catch(err => {
+		logger.error(err)
+		res.json({ success: false, response: {
+			message: 'Nie można usunąć odpowiedzi. Wystąpił błąd', status: 'error' },
+		})
 	})
 })
 export default apiRouter
