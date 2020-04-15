@@ -11,7 +11,7 @@ var actionTypes = {
   8: 'Zaakceptowano nową odpowiedź',
   9: 'Zmodyfikowano tagi wpisu'
 }
-function createAction(userId, actionType, note){
+function createAction(userId, actionType, note) {
   return new actionModel({
     action: actionTypes[actionType],
     user: userId,
