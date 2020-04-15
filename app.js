@@ -125,8 +125,7 @@ app.get('/followers/:confessionid', (req, res) => {
     if (!confession) return res.sendStatus(404);
     wykopController.getFollowers(confession.notificationCommentId)
       .then(result => {
-        console.log(result)
-        res.json(result)
+        res.send(result.map(x => `@${x.author.login}`).join(', '))
       })
       .catch(err => {
         res.json(err);

@@ -1,4 +1,4 @@
-var wykop = require('../wykop.js');
+var { wykop, service } = require('../wykop.js');
 var bodyBuildier = require('../controllers/bodyBuildier.js');
 var actionController = require('../controllers/actions.js');
 
@@ -22,7 +22,7 @@ var actionController = require('../controllers/actions.js');
 //     return cb(null, followers);
 //   });
 // }
-const getFollowers = (notificationCommentId) => wykop.request('entries/commentupvoters', { apiParam: notificationCommentId })
+const getFollowers = (notificationCommentId) => service.Entries.CommentUpvoters(notificationCommentId)
 /**
  * get entry participants
  * @param  {int}   entryID entryID
