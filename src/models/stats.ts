@@ -1,12 +1,16 @@
-import mongoose from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 const Schema = mongoose.Schema
-const logger = require('../logger.ts')
+import logger from '../logger'
 
 export interface IStats extends mongoose.Document {
 	period: string
 	date: Date
 	count: any
 	users: any
+
+}
+interface IStatsModel extends Model<IStats> {
+	addAction(type: string, username?)
 }
 
 const statsModel = new Schema({
@@ -15,7 +19,7 @@ const statsModel = new Schema({
 	count: mongoose.Schema.Types.Mixed,
 	users: mongoose.Schema.Types.Mixed,
 })
-statsModel.statics.addAction = function(type, username = undefined) {
+statsModel.statics.addAction = function(type: string, username?) {
 	const date = new Date()
 	const periods = [
 		['year', new Date(date.getFullYear(), 0, 1), `${date.getFullYear()}`],
@@ -39,4 +43,4 @@ statsModel.statics.addAction = function(type, username = undefined) {
 		})
 	}
 }
-export default mongoose.model<IStats>('stat', statsModel)
+export default mongoose.model<IStats, IStatsModel>('stat', statsModel)

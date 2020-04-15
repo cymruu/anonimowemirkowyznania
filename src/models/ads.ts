@@ -1,17 +1,22 @@
-import mongoose from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 const Schema = mongoose.Schema
-interface IVistit {
+interface IVisit {
 	IPAdress: string,
-	time: Date,
+	time?: Date,
 	from: string
 }
 export interface IAd extends mongoose.Document {
 	name: string
 	captions: string[]
 	active: boolean
-	visits: IVistit[]
+	visits: IVisit[]
 	out: string
 }
+
+interface IAdModel extends Model<IAd> {
+	random(cb)
+}
+
 
 const advertismentSchema = new Schema({
 	name: String,
@@ -36,4 +41,4 @@ advertismentSchema.statics.random = function(callback) {
 		this.findOne({ active: true }, 'name captions out').skip(rand).exec(callback)
 	}.bind(this))
 }
-export default mongoose.model<IAd>('advertisments', advertismentSchema)
+export default mongoose.model<IAd, IAdModel>('advertisments', advertismentSchema)

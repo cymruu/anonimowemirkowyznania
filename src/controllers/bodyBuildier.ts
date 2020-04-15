@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import tagController from './tags'
+import * as tagController from './tags'
 import adsModel from '../models/ads'
 import config from '../config'
 
@@ -38,7 +38,7 @@ function getCommentBodyDev(reply, user) {
 	}
 	return `**${reply.alias}**: ${reply.text}\n${authorized}\n`
 }
-const bodyBuilder = this.process.env.NODE_ENV === 'development' ?
+const bodyBuilder = process.env.NODE_ENV === 'development' ?
 	{ getEntryBodyDev, getNotificationCommentBodyDev, getCommentBodyDev } :
 	{ getEntryBody, getNotificationCommentBody, getCommentBody }
 export default bodyBuilder

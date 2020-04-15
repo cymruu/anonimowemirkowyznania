@@ -8,11 +8,13 @@ import auth from './controllers/authorization'
 import { accessMiddleware, getFlagPermissions, checkIfIsAllowed, flipPermission } from './controllers/access'
 import replyModel from './models/reply'
 import userModel from './models/user'
+import logger from './logger'
+import { RequestWithUser } from './utils'
 //authoriztion
-adminRouter.get('/login', (req, res) => {
+adminRouter.get('/login', (req: RequestWithUser, res) => {
 	res.render('./admin/login.pug', { user: {} })
 })
-adminRouter.post('/login', (req, res) => {
+adminRouter.post('/login', (req: RequestWithUser, res) => {
 	userModel.findOne({
 		username: req.body.username,
 	}, { _id: 1, username: 1, password: 1, flags: 1 }, (err, user) => {
@@ -36,15 +38,15 @@ adminRouter.post('/login', (req, res) => {
 		}
 	})
 })
-adminRouter.get('/logout', (req, res) => {
+adminRouter.get('/logout', (req: RequestWithUser, res) => {
 	res.clearCookie('token')
 	return res.render('./admin/login.pug', { user: {}, error: 'Wylogowano' })
 })
 adminRouter.use(auth(true))
-adminRouter.get('/', accessMiddleware('accessPanel'), (req, res) => {
+adminRouter.get('/', accessMiddleware('accessPanel'), (req: RequestWithUser, res) => {
 	res.redirect('/admin/confessions')
 })
-adminRouter.get('/details/:confession_id', accessMiddleware('viewDetails'), (req, res) => {
+adminRouter.get('/details/:confession_id', accessMiddleware('viewDetails'), (req: RequestWithUser, res) => {
 	confessionModel.findById(req.params.confession_id)
 		.populate([
 			{
@@ -54,22 +56,27 @@ adminRouter.get('/details/:confession_id', accessMiddleware('viewDetails'), (req
 			{ path: 'survey' }]).exec((err, confession) => {
 			if (err) { return res.send(err) }
 			if (!confession) { return res.sendStatus(404) }
-			confessionModel.find({ IPAdress: confession.IPAdress }, { _id: 1, status: 1 }, function(err, results) {
-				if (err) { return res.send(err) }
-				confession.addedFromSameIP = results
-				res.render('./admin/details.pug', { user: req.user, confession })
+			confessionModel.find({ IPAdress: confession.IPAdress }, { _id: 1, status: 1 }, function(err, fromSameIP) {
+				if (err) {
+					logger.error(err)
+					fromSameIP = []
+				}
+				res.render('./admin/details.pug', { user: req.user, confession, fromSameIP })
 			})
 		})
 })
 adminRouter
-	.get('/details/:confession_id/ip', accessMiddleware('viewDetails'), accessMiddleware('viewIP'), (req, res) => {
-		confessionModel.findById(req.params.confession_id, (err, confession) => {
-			if (err) { return res.send(err) }
-			if (!confession) { return res.sendStatus(404) }
-			res.send(confession.IPAdress)
+	.get('/details/:confession_id/ip',
+		accessMiddleware('viewDetails'),
+		accessMiddleware('viewIP'),
+		(req: RequestWithUser, res) => {
+			confessionModel.findById(req.params.confession_id, (err, confession) => {
+				if (err) { return res.send(err) }
+				if (!confession) { return res.sendStatus(404) }
+				res.send(confession.IPAdress)
+			})
 		})
-	})
-adminRouter.get('/confessions/:filter?', accessMiddleware('accessPanel'), (req, res) => {
+adminRouter.get('/confessions/:filter?', accessMiddleware('accessPanel'), (req: RequestWithUser, res) => {
 	let search = {}
 	req.params.filter ? search = { status: req.params.filter } : search = {}
 	confessionModel.find(search).sort({ _id: -1 }).limit(100).exec((err, confessions) => {
@@ -77,13 +84,13 @@ adminRouter.get('/confessions/:filter?', accessMiddleware('accessPanel'), (req, 
 		res.render('./admin/confessions.pug', { user: req.user, confessions: confessions })
 	})
 })
-adminRouter.get('/replies', accessMiddleware('accessPanel'), (req, res) => {
+adminRouter.get('/replies', accessMiddleware('accessPanel'), (req: RequestWithUser, res) => {
 	replyModel.find().populate('parentID').sort({ _id: -1 }).limit(100).exec((err, replies) => {
 		if (err) { res.send(err) }
 		res.render('./admin/replies.pug', { user: req.user, replies: replies })
 	})
 })
-adminRouter.get('/messages/', accessMiddleware('accessMessages'), (req, res) => {
+adminRouter.get('/messages/', accessMiddleware('accessMessages'), (req: RequestWithUser, res) => {
 	conversationModel.find(
 		{ 'userID': req.user._id }, { _id: 1 },
 		{ sort: { 'messages.time': -1 }, limit: 200 },
@@ -92,9 +99,9 @@ adminRouter.get('/messages/', accessMiddleware('accessMessages'), (req, res) => 
 			res.render('./admin/messages.pug', { user: req.user, conversations })
 		})
 })
-adminRouter.get('/mods/', accessMiddleware('accessModsList'), (req, res) => {
+adminRouter.get('/mods/', accessMiddleware('accessModsList'), (req: RequestWithUser, res) => {
 	userModel.find({}, { username: 1, flags: 1 }).lean().then(userList => {
-		userList.forEach((user) => {
+		userList.forEach((user: any) => {
 			user.permissions = getFlagPermissions(user.flags)
 			return user
 		})
@@ -107,16 +114,18 @@ adminRouter.get('/mods/', accessMiddleware('accessModsList'), (req, res) => {
 		res.json({ err })
 	})
 })
-adminRouter.get('/mods/flip/:targetId/:permission', accessMiddleware('canChangeUserPermissions'), (req, res) => {
-	userModel.findOne({ _id: req.params.targetId }, { username: 1, flags: 1 }).then(target => {
-		target.flags = flipPermission(target.flags, req.params.permission)
-		target.save().then(result => {
-			res.redirect('/admin/mods')
+adminRouter.get('/mods/flip/:targetId/:permission',
+	accessMiddleware('canChangeUserPermissions'),
+	(req: RequestWithUser, res) => {
+		userModel.findOne({ _id: req.params.targetId }, { username: 1, flags: 1 }).then(target => {
+			target.flags = flipPermission(target.flags, req.params.permission)
+			target.save().then(result => {
+				res.redirect('/admin/mods')
+			}, err => {
+				res.json({ err })
+			})
 		}, err => {
 			res.json({ err })
 		})
-	}, err => {
-		res.json({ err })
 	})
-})
 export default adminRouter

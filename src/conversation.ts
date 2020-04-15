@@ -1,12 +1,13 @@
 import { Router } from 'express'
 import { RequestWithUser } from './utils'
 const conversationRouter = Router()
-const confessionModel = require('./models/confession.ts')
-const userModel = require('./models/user.ts')
-const conversationController = require('./controllers/conversations.ts')
-const config = require('./config.ts')
-const auth = require('./controllers/authorization.ts')
-const { wss } = require('./controllers/wsServer.ts')
+import confessionModel from './models/confession'
+import userModel from './models/user'
+import * as conversationController from './controllers/conversations'
+import config from './config'
+import auth from './controllers/authorization'
+import { wss } from './controllers/wsServer'
+
 conversationRouter.use(auth(false))
 conversationRouter.get('/:parent/new', (req:RequestWithUser, res, next) => {
 	if (req.params.parent.substr(0, 2) === 'U_') {

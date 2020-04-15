@@ -56,7 +56,7 @@ app.post('/', async (req, res) => {
 	req.body.text = req.body.text || ''
 	confession.text = req.body.text
 	confession.IPAdress = req.ip
-	confession.remotePort = req.connection.remotePort
+	confession.remotePort = req.connection.remotePort.toString()
 	confession.embed = req.body.embed
 	confession.tags = tagController.getTags(req.body.text)
 	confession.auth = crypto.randomBytes(5).toString('hex')
@@ -100,11 +100,9 @@ app.get('/reply/:confessionid?', (req, res) => {
 		confessionModel.findById(req.params.confessionid, (err, confession) => {
 			if (err) { return res.sendStatus(404) }
 			wykopController.getParticipants(confession.entryID).then(participants => {
-				confession.participants = participants
+				res.render('reply', { confession, participants })
 			}).catch(_ => {
-				confession.participants = []
-			}).finally(() => {
-				res.render('reply', { confession: confession })
+				res.render('reply', { confession, participants: [] })
 			})
 		})
 	}
@@ -116,7 +114,7 @@ app.post('/reply/:confessionid', (req, res) => {
 			const reply = new replyModel()
 			reply.text = req.body.text
 			reply.IPAdress = req.ip
-			reply.remotePort = req.connection.remotePort
+			reply.remotePort = req.connection.remotePort.toString()
 			reply.embed = req.body.embed
 			reply.alias = req.body.alias || aliasGenerator(Math.random() >= 0.5)
 			if (reply.alias.trim() === confession.auth) {

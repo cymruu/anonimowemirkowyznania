@@ -53,9 +53,9 @@ block content
                     |  #{action.time}
               h4 Wyznania dodane z tego 
                 a(href=`./${confession._id}/ip`) IP:
-                span.badge #{confession.addedFromSameIP.length}
+                span.badge #{fromSameIP.length}
               ul
-                each related, index in confession.addedFromSameIP
+                each related, index in fromSameIP
                   case related.status
                     when 0
                       -var klass = 'time text-warning'

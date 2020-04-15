@@ -1,6 +1,5 @@
 import request from 'request'
 import config from '../config'
-import tagController from './tags'
 import actionController from './actions'
 import surveyModel from '../models/survey'
 import bodyBuildier from './bodyBuildier'
