@@ -39,6 +39,6 @@ function getCommentBodyDev(reply, user) {
 	return `**${reply.alias}**: ${reply.text}\n${authorized}\n`
 }
 const bodyBuilder = process.env.NODE_ENV === 'development' ?
-	{ getEntryBodyDev, getNotificationCommentBodyDev, getCommentBodyDev } :
+	{ getEntryBody: getEntryBodyDev, getNotificationCommentBody: getNotificationCommentBodyDev, getCommentBody: getCommentBodyDev } :
 	{ getEntryBody, getNotificationCommentBody, getCommentBody }
 export default bodyBuilder
