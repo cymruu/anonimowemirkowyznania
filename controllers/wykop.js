@@ -57,7 +57,7 @@ const acceptConfession = (confession, user, cb) => {
 }
 
 //TODO: refactor to use promise
-addNotificationComment = function (confession, user, cb) {
+const addNotificationComment = function (confession, user, cb) {
   cb = cb || function () { };
   service.Entries.CommentAdd(confession.entryID, { body: bodyBuildier.getNotificationCommentBody(confession) })
     .then(async (response) => {
@@ -72,16 +72,15 @@ addNotificationComment = function (confession, user, cb) {
     })
 }
 
-acceptReply = function (reply, user, cb) {
+const acceptReply = async (reply, user, cb) => {
   var entryBody = bodyBuildier.getCommentBody(reply, user);
-  getFollowers(reply.parentID.entryID, reply.parentID.notificationCommentId, (err, followers) => {
-    if (err) return cb({ success: false, response: { message: JSON.stringify(err) } });
-    if (followers.length > 0) entryBody += `\n! Wołam obserwujących: ${followers.map(function (f) { return '@' + f; }).join(', ')}`;
-    wykop.request('Entries', 'AddComment', { params: [reply.parentID.entryID], post: { body: entryBody, embed: reply.embed } }, async (err, response) => {
-      if (err) {
-        if (err.error.code === 11 || err.error.code === 12 || err.error.code === 13) wykop.relogin();
-        return cb({ success: false, response: { message: JSON.stringify(err), status: 'warning' } });
-      }
+  try {
+    const entryFollowers = await getFollowers(reply.parentID.entryID, reply.parentID.notificationCommentId)
+    if (entryFollowers.length > 0) {
+      if (followers.length > 0) entryBody += `\n! Wołam obserwujących: ${entryFollowers.map(x => `@${x.author.login}`).join(', ')}`;
+    }
+    try {
+      const response = await service.Entries.CommentAdd(reply.parentID.entryID, { body: entryBody, embed: reply.embed })
       reply.commentID = response.id;
       reply.status = 1;
       reply.addedBy = user.username;
@@ -92,9 +91,14 @@ acceptReply = function (reply, user, cb) {
         if (err) return cb({ success: false, response: { message: JSON.stringify(err) } });
         cb({ success: true, response: { message: 'Reply added', commentID: response.id, status: 'success' } });
       });
-    });
-  });
+    } catch (error) {
+      return cb({ success: false, response: { message: err.toString(), status: 'warning' } });
+    }
+  } catch (error) {
+    return cb({ success: false, response: { message: err.toString() } });
+  }
 }
+
 module.exports = {
   acceptConfession, acceptReply, deleteEntry, deleteEntryComment, sendPrivateMessage, getParticipants, addNotificationComment, getFollowers, wykop
 };
