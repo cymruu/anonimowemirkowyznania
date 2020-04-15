@@ -6,6 +6,7 @@ if (typeof (PhusionPassenger) !== 'undefined') {
   PhusionPassenger.configure({ autoInstall: false });
   _port = 'passenger';
 }
+var http = require('http');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -25,7 +26,7 @@ var auth = require('./controllers/authorization.js');
 var aliasGenerator = require('./controllers/aliases.js');
 var surveyController = require('./controllers/survey.js');
 var crypto = require('crypto');
-const { options, isObjectEmpty } = require('./certs.js');
+const { bindWebsocketToServer } = require('./controllers/wsServer.js');
 const logger = require('./logger.js');
 
 app.enable('trust proxy');
@@ -156,18 +157,8 @@ app.get('/link/:linkId/:from', function (req, res) {
     res.redirect(ad.out);
   });
 });
-if (_port == "passenger") {
-  app.listen(_port);
-} else {
-  var server;
-  if (isObjectEmpty(options)) {
-    var http = require('http');
-    server = http.createServer(app);
-  } else {
-    var https = require('https');
-    server = https.createServer(options, app);
-  }
-  server.listen(_port, () => {
-    logger.info(`Server started on port: ${_port} [${process.env.NODE_ENV}]`)
-  });
-}
+server = http.createServer(app);
+bindWebsocketToServer(server)
+server.listen(_port, () => {
+  logger.info(`Server started on port: ${_port} [${process.env.NODE_ENV}]`)
+});

@@ -5,7 +5,7 @@ var userModel = require('./models/user.js');
 var conversationController = require('./controllers/conversations.js');
 var config = require('./config.js');
 var auth = require('./controllers/authorization.js');
-var wss = require('./controllers/wsServer.js');
+var {wss} = require('./controllers/wsServer.js');
 conversationRouter.use(auth(false));
 conversationRouter.get('/:parent/new', (req, res, next)=>{
   if(req.params.parent.substr(0,2) === 'U_'){

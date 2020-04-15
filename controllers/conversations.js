@@ -60,7 +60,7 @@ var conversationController = {
         userObject = conversation.userID._id;
       }
       if(typeof conversation.parentID !== 'undefined' && conversation.parentID.auth === auth)isOP^=true;
-      conversationModel.findByIdAndUpdate(conversationId, {$push: {messages: {time: new Date(), text: text, IPAdress: IPAdress, OP:isOP, user:userObject}}}, {}, (err)=>{
+      conversationModel.findOneAndUpdate(conversationId, {$push: {messages: {time: new Date(), text: text, IPAdress: IPAdress, OP:isOP, user:userObject}}}, {}, (err)=>{
         if(err) return cb(err);
         cb(null, isOP);
       });
