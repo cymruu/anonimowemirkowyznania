@@ -2,6 +2,7 @@ var { wykop, service } = require('../wykop.js');
 var bodyBuildier = require('../controllers/bodyBuildier.js');
 var actionController = require('../controllers/actions.js');
 var archiveModel = require('../models/archive.js');
+const logger = require('../logger.js');
 
 const getFollowers = (notificationCommentId) => service.Entries.CommentUpvoters(notificationCommentId)
 
@@ -18,9 +19,11 @@ const deleteModel = (getModel, deleteModel, modelId, findEl = undefined) => {
         deleteModel(modelId).then(result => {
           resolve(result)
         }).catch(err => {
+          logger.error(err);
           reject(err)
         })
       }).catch(err => {
+        logger.error(err);
         reject(err)
       })
     })
@@ -50,7 +53,7 @@ const acceptConfession = (confession, user, cb) => {
         });
       })
       .catch(err => {
-        console.log(err)
+        logger.error(err);
         return cb({ success: false, response: { message: err.toString(), status: 'warning' } });
       })
   })
@@ -68,6 +71,7 @@ const addNotificationComment = function (confession, user, cb) {
       return cb({ success: true, response: { message: 'notificationComment added', status: 'success' } });
     })
     .catch(err => {
+      logger.error(err);
       return cb({ success: false, response: { message: err.toString(), status: 'error' } });
     })
 }
@@ -91,10 +95,12 @@ const acceptReply = async (reply, user, cb) => {
         if (err) return cb({ success: false, response: { message: JSON.stringify(err) } });
         cb({ success: true, response: { message: 'Reply added', commentID: response.id, status: 'success' } });
       });
-    } catch (error) {
+    } catch (err) {
+      logger.error(err);
       return cb({ success: false, response: { message: err.toString(), status: 'warning' } });
     }
-  } catch (error) {
+  } catch (err) {
+    logger.error(err);
     return cb({ success: false, response: { message: err.toString() } });
   }
 }

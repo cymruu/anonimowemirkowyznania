@@ -26,6 +26,8 @@ var aliasGenerator = require('./controllers/aliases.js');
 var surveyController = require('./controllers/survey.js');
 var crypto = require('crypto');
 const { options, isObjectEmpty } = require('./certs.js');
+const logger = require('./logger.js');
+
 app.enable('trust proxy');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -166,6 +168,6 @@ if (_port == "passenger") {
     server = https.createServer(options, app);
   }
   server.listen(_port, () => {
-    console.log(`Server started on port: ${_port} [${process.env.NODE_ENV}]`)
+    logger.info(`Server started on port: ${_port} [${process.env.NODE_ENV}]`)
   });
 }
