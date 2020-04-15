@@ -1,6 +1,4 @@
-# anonimowemirkowyznania v4
-[demo](https://mirkowyznania.eu)
+# anonimowemirkowyznania v5
+A script which allows you to post anonymously on wykop.pl
 
-[![dependencies Status](https://david-dm.org/cymruu/anonimowemirkowyznania/v4/status.svg)](https://david-dm.org/cymruu/anonimowemirkowyznania/v4)
-
-[#anonimowemirkowyznania@wykop.pl](http://wykop.pl/tag/anonimowemirkowyznania)
+[![dependencies Status](https://david-dm.org/cymruu/anonimowemirkowyznania/v5/status.svg)](https://david-dm.org/cymruu/anonimowemirkowyznania/v5)
