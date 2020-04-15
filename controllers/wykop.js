@@ -10,30 +10,25 @@ const getParticipants = (entryId) => {
   return service.Entries.Entry(entryId).then(response => response.comments.map(comment => comment.author.login))
 }
 
-const deleteModel = (getModel, deleteModel, modelId, findEl = undefined) => {
-  return new Promise((resolve, reject) => {
-    getModel(modelId).then(model => {
-      let archive = new archiveModel();
-      archive.item = findEl ? findEl(model, modelId) : model;
-      archive.save().then(() => {
-        deleteModel(modelId).then(result => {
-          resolve(result)
-        }).catch(err => {
-          logger.error(err);
-          reject(err)
-        })
-      }).catch(err => {
-        logger.error(err);
-        reject(err)
-      })
+const deleteEntry = (entryId) => {
+  return service.Entries.Entry(entryId).then(entryToDelete => {
+    let archive = new archiveModel();
+    archive.item = entryToDelete;
+    archive.save().then(() => {
+      return service.Entries.Delete(entryToDelete.id)
     })
   })
 }
 
-const deleteEntry = (entryId) => deleteModel(service.Entries.Entry, service.Entries.Delete, entryId)
-
-const findCommentToDelete = (model, entryCommentId) => model.comments.find(e => e.id === entryCommentId)
-const deleteEntryComment = (entryCommentId) => deleteModel(service.Entries.Entry, service.Entries.CommentDelete, entryCommentId, findCommentToDelete)
+const deleteEntryComment = (entryCommentId) => {
+  service.Entries.Comment(entryCommentId).then(comment => {
+    let archive = new archiveModel();
+    archive.item = comment;
+    archive.save().then(() => {
+      return service.Entries.CommentDelete(entryCommentId);
+    })
+  })
+}
 
 const sendPrivateMessage = (receiver, body) => service.Pm.SendMessage(receiver, body)
 
@@ -64,7 +59,7 @@ const addNotificationComment = function (confession, user, cb) {
   cb = cb || function () { };
   service.Entries.CommentAdd(confession.entryID, { body: bodyBuildier.getNotificationCommentBody(confession) })
     .then(async (response) => {
-      confession.notificationCommentId = notificationComment.id;
+      confession.notificationCommentId = response.id;
       var action = await actionController(user._id, 6).save();
       confession.actions.push(action);
       confession.save();

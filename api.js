@@ -145,6 +145,8 @@ apiRouter.route('/reply/delete/:reply_id/').get(accessMiddleware('deleteReply'),
       }).catch(err => {
         return res.json({ success: false, response: { message: "Reply removed but model not updated", status: "warning" } })
       });
+    }).catch(err => {
+      return res.json({ success: false, response: { message: err.toString(), status: "warning" } })
     })
   }).catch(_ => {
     res.json({ success: false, response: { message: "Cant delete reply", status: 'error' } })
