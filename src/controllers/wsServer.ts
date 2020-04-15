@@ -2,9 +2,11 @@ const WebSocketServer = require('ws').Server
 import url from 'url'
 import * as conversationController from './conversations'
 import logger from '../logger'
+import config from '../config'
+
 export let wss
 export function bindWebsocketToServer(server) {
-	wss = new WebSocketServer({ server, port: 1030 })
+	wss = new WebSocketServer({ server, port: config.websocketPort })
 	wss.sendToChannel = function broadcast(channel, data) {
 		wss.clients.forEach(function each(client) {
 			if (client.readyState === 1 && client.conversation === channel) {
