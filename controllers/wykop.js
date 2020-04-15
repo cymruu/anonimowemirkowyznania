@@ -1,52 +1,39 @@
 var { wykop, service } = require('../wykop.js');
 var bodyBuildier = require('../controllers/bodyBuildier.js');
 var actionController = require('../controllers/actions.js');
+var archiveModel = require('../models/archive.js');
 
 const getFollowers = (notificationCommentId) => service.Entries.CommentUpvoters(notificationCommentId)
-/**
- * get entry participants
- * @param  {int}   entryID entryID
- * @param  {Function} cb      callback
- */
+
 const getParticipants = (entryId) => {
-  return service.Entries.Entry(entryId).then(response => response.comments.map(comment => comment.author.login)
+  return service.Entries.Entry(entryId).then(response => response.comments.map(comment => comment.author.login))
 }
-deleteEntry = function (entryID, cb) {
-  var archiveModel = require('../models/archive.js');
-  wykop.request('Entries', 'Index', { params: [entryID] }, (err, entry) => {
-    if (err) return cb(err);
-    var archive = new archiveModel();
-    archive.entry = entry;
-    archive.save((err) => {
-      if (err) return cb(err);
-      wykop.request('Entries', 'Delete', { params: [entryID] }, (err, response) => {
-        if (err) return cb(err);
-        return cb(null, response, entry);
-      });
-    });
-  });
+
+const deleteModel = (getModel, deleteModel, modelId, findEl = undefined) => {
+  return new Promise((resolve, reject) => {
+    getModel(modelId).then(model => {
+      let archive = new archiveModel();
+      archive.item = findEl ? findEl(model, modelId) : model;
+      archive.save().then(() => {
+        deleteModel(modelId).then(result => {
+          resolve(result)
+        }).catch(err => {
+          reject(err)
+        })
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  })
 }
-deleteComment = function (entryID, commentID, cb) {
-  var archiveModel = require('../models/archive.js');
-  wykop.request('Entries', 'Index', { params: [entryID] }, (err, entry) => {
-    if (err) return cb(err);
-    var archive = new archiveModel();
-    archive.entry = entry['comments'].find(e => e.id == commentID);
-    archive.save((err) => {
-      if (err) return cb(err);
-      wykop.request('Entries', 'DeleteComment', { params: [entryID, commentID] }, (err, response) => {
-        if (err) return cb(err);
-        return cb(null, response, entry);
-      });
-    });
-  });
-}
-sendPrivateMessage = function (recipient, body, cb) {
-  wykop.request('PM', 'SendMessage', { params: [recipient], post: { body } }, (err, response) => {
-    if (err) return cb(err);
-    cb(null, response);
-  });
-}
+
+const deleteEntry = (entryId) => deleteModel(service.Entries.Entry, service.Entries.Delete, entryId)
+
+const findCommentToDelete = (model, entryCommentId) => model.comments.find(e => e.id === entryCommentId)
+const deleteEntryComment = (entryCommentId) => deleteModel(service.Entries.Entry, service.Entries.CommentDelete, entryCommentId, findCommentToDelete)
+
+const sendPrivateMessage = (receiver, body) => service.Pm.SendMessage(receiver, body)
+
 acceptConfession = function (confession, user, cb) {
   bodyBuildier.getEntryBody(confession, user, function (entryBody) {
     wykop.request('Entries', 'Add', { post: { body: entryBody, embed: confession.embed } }, async (err, response) => {
@@ -101,5 +88,5 @@ acceptReply = function (reply, user, cb) {
   });
 }
 module.exports = {
-  acceptConfession, acceptReply, deleteEntry, deleteComment, sendPrivateMessage, getParticipants, addNotificationComment, getFollowers, wykop
+  acceptConfession, acceptReply, deleteEntry, deleteEntryComment, sendPrivateMessage, getParticipants, addNotificationComment, getFollowers, wykop
 };

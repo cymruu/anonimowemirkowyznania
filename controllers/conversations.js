@@ -19,7 +19,8 @@ var conversationController = {
           cb(null, conversation._id);
         });
       }else{
-        wykopController.sendPrivateMessage(parentObject.username, `Nowa wiadomość na anonimowychmirkowyznaniach ${config.siteURL}/admin/messages`, ()=>{});
+        //TODO: handle response
+        wykopController.sendPrivateMessage(parentObject.username, `Nowa wiadomość na anonimowychmirkowyznaniach ${config.siteURL}/admin/messages`).then();
         return cb(null, conversation._id);
       }
     });

@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var archiveSchema = new Schema({
-  entry: Object
+  item: Object
 });
 
 module.exports = mongoose.model('archives', archiveSchema);
