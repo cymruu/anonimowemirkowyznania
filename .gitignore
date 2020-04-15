@@ -35,3 +35,5 @@ node_modules
 config.ts
 dist/
 .vscode/
+certs/*
+!certs/generate_certs.sh

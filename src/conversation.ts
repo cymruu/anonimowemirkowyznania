@@ -6,10 +6,15 @@ import userModel from './models/user'
 import * as conversationController from './controllers/conversations'
 import config from './config'
 import auth from './controllers/authorization'
-import { wss } from './controllers/wsServer'
+import { wss, isSecureServer } from './controllers/wsServer'
 
 function renderConversationRoute(res, params) {
-	return res.render('conversation', { websocketPort: config.websocketPort, siteURL: config.siteURL, ...params })
+	return res.render('conversation', {
+		websocketPort: config.websocketPort,
+		isSecureServer: isSecureServer || false,
+		siteURL: config.siteURL,
+		...params,
+	})
 }
 
 conversationRouter.use(auth(false))
