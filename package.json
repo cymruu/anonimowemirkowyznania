@@ -19,7 +19,8 @@
     "request": "^2.88.0",
     "uws": "^10.148.2",
     "ws": "^5.2.2",
-    "wykop-es6-2": "^0.6.6"
+    "wykop-es6-2": "^0.6.6",
+    "wypokjs": "file:../wypokjs"
   },
   "repository": {
     "type": "git",

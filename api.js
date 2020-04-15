@@ -1,7 +1,6 @@
 var express = require('express');
 var apiRouter = express.Router();
 var mongoose = require('mongoose');
-var wykop = require('./wykop.js');
 var wykopController = require('./controllers/wykop.js');
 var surveyController = require('./controllers/survey.js');
 var actionController = require('./controllers/actions.js');
