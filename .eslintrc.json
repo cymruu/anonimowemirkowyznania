@@ -8,7 +8,8 @@
     },
     "ignorePatterns": [
         "node_modules/",
-        "dist"
+        "dist",
+        "public/"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
