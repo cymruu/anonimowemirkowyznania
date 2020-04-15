@@ -34,36 +34,43 @@ const deleteEntryComment = (entryCommentId) => deleteModel(service.Entries.Entry
 
 const sendPrivateMessage = (receiver, body) => service.Pm.SendMessage(receiver, body)
 
-acceptConfession = function (confession, user, cb) {
-  bodyBuildier.getEntryBody(confession, user, function (entryBody) {
-    wykop.request('Entries', 'Add', { post: { body: entryBody, embed: confession.embed } }, async (err, response) => {
-      if (err) {
-        if (err.error.code === 11 || err.error.code === 12 || err.error.code === 13) wykop.relogin();
-        return cb({ success: false, response: { message: JSON.stringify(err), status: 'warning' } });
-      }
-      confession.entryID = response.id;
-      var action = await actionController(user._id, 1).save();
-      confession.actions.push(action);
-      confession.status = 1;
-      confession.addedBy = user.username;
-      confession.save((err) => {
-        if (err) return cb({ success: false, response: { message: err } });
-        cb({ success: true, response: { message: 'Entry added', entryID: response.id, status: 'success' } });
-      });
-    });
-  });
+//TODO: refactor to return promise
+const acceptConfession = (confession, user, cb) => {
+  bodyBuildier.getEntryBody(confession, user, (entryBody) => {
+    service.Entries.Add({ body: entryBody, embed: confession.embed })
+      .then(response => {
+        confession.entryID = response.id;
+        var action = await actionController(user._id, 1).save();
+        confession.actions.push(action);
+        confession.status = 1;
+        confession.addedBy = user.username;
+        confession.save((err) => {
+          if (err) return cb({ success: false, response: { message: err } });
+          cb({ success: true, response: { message: 'Entry added', entryID: response.id, status: 'success' } });
+        });
+      })
+      .catch(err => {
+        return cb({ success: false, response: { message: err.toString(), status: 'warning' } });
+      })
+  })
 }
+
+//TODO: refactor to use promise
 addNotificationComment = function (confession, user, cb) {
   cb = cb || function () { };
-  wykop.request('Entries', 'AddComment', { params: [confession.entryID], post: { body: bodyBuildier.getNotificationCommentBody(confession) } }, async (err, notificationComment) => {
-    if (err) return cb({ success: false, response: { message: err, status: 'error' } });
-    confession.notificationCommentId = notificationComment.id;
-    var action = await actionController(user._id, 6).save();
-    confession.actions.push(action);
-    confession.save();
-    return cb({ success: true, response: { message: 'notificationComment added', status: 'success' } });
-  });
+  service.Entries.CommentAdd(confession.entryID, { body: bodyBuildier.getNotificationCommentBody(confession) })
+    .then(response => {
+      confession.notificationCommentId = notificationComment.id;
+      var action = await actionController(user._id, 6).save();
+      confession.actions.push(action);
+      confession.save();
+      return cb({ success: true, response: { message: 'notificationComment added', status: 'success' } });
+    })
+    .catch(err => {
+      return cb({ success: false, response: { message: err.toString(), status: 'error' } });
+    })
 }
+
 acceptReply = function (reply, user, cb) {
   var entryBody = bodyBuildier.getCommentBody(reply, user);
   getFollowers(reply.parentID.entryID, reply.parentID.notificationCommentId, (err, followers) => {
