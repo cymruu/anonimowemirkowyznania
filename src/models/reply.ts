@@ -14,6 +14,8 @@ export interface IReply extends mongoose.Document {
 	addeBy: string
 	IPAdress: string
 	remotePort: string
+	createdAt: Date
+	updatedAt: Date
 }
 
 const replySchema = new Schema({
@@ -28,6 +30,6 @@ const replySchema = new Schema({
 	addedBy: String,
 	IPAdress: String,
 	remotePort: String,
-})
+}, { timestamps: true })
 
 export default mongoose.model<IReply>('replies', replySchema)

@@ -16,6 +16,8 @@ export interface IConfession extends mongoose.Document {
 	actions: IAction[]
 	converations: any[]
 	survey: string
+	createdAt: Date
+	updatedAt: Date
 }
 
 const confessionSchema = new Schema({
@@ -32,6 +34,6 @@ const confessionSchema = new Schema({
 	actions: [{ type: Schema.Types.ObjectId, ref: 'actions' }],
 	conversations: [{ type: Schema.Types.ObjectId, ref: 'conversations' }],
 	survey: { type: Schema.Types.ObjectId, ref: 'surveys' },
-})
+}, { timestamps: true })
 
 export default mongoose.model<IConfession>('confessions', confessionSchema)
