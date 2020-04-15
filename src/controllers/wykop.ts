@@ -55,7 +55,7 @@ export const acceptConfession = (confession, user, cb) => {
 }
 
 //TODO: refactor to use promise
-export const addNotificationComment = function (confession, user, cb = () => { }) {
+export const addNotificationComment = function(confession, user, cb = () => { }) {
 	service.Entries.CommentAdd(confession.entryID, { body: bodyBuildier.getNotificationCommentBody(confession) })
 		.then(async (response) => {
 			confession.notificationCommentId = response.id

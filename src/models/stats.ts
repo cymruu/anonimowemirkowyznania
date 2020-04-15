@@ -2,6 +2,13 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 const logger = require('../logger.ts')
 
+export interface IStats extends mongoose.Document {
+	period: string
+	date: Date
+	count: any
+	users: any
+}
+
 const statsModel = new Schema({
 	period: { type: mongoose.Schema.Types.String, enum: ['day', 'month', 'year'] },
 	date: Date,
@@ -21,4 +28,4 @@ statsModel.statics.addAction = function(type, username = undefined) {
 		})
 	}
 }
-export default mongoose.model('stat', statsModel)
+export default mongoose.model<IStats>('stat', statsModel)

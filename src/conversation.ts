@@ -10,7 +10,7 @@ conversationRouter.use(auth(false))
 conversationRouter.get('/:parent/new', (req, res, next) => {
 	if (req.params.parent.substr(0, 2) === 'U_') {
 		const username = req.params.parent.substr(2)
-		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function (err, userObject) {
+		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function(err, userObject) {
 			if (err) { return res.sendStatus(503) }
 			if (!userObject) { return res.sendStatus(404) }
 			return res.render('conversation', { type: 'user', userObject })
@@ -35,7 +35,7 @@ conversationRouter.post('/:parent/new', (req, res, next) => {
 	if (!req.body.text) { return res.sendStatus(400) }
 	if (req.params.parent.substr(0, 2) == 'U_') {
 		const username = req.params.parent.substr(2)
-		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function (err, userObject) {
+		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function(err, userObject) {
 			if (err) { return res.sendStatus(503) }
 			if (!userObject) { return res.sendStatus(404) }
 			res.locals.conversationParent = userObject

@@ -1,5 +1,19 @@
 import mongoose from 'mongoose'
+import { IUser } from './user'
+import { IConfession } from './confession'
 const Schema = mongoose.Schema
+interface IMessage {
+	time:Date
+	text:string
+	IPAdress: string
+	OP: boolean
+	user?: IUser
+}
+export interface IConversation extends mongoose.Document {
+	messages: IMessage[]
+	parentID: IConfession
+	userID: IUser
+}
 
 const conversationSchema = new Schema({
 	messages: [
@@ -15,4 +29,4 @@ const conversationSchema = new Schema({
 	userID: { type: Schema.Types.ObjectId, ref: 'users' },
 })
 
-export default mongoose.model('conversations', conversationSchema)
+export default mongoose.model<IConversation>('conversations', conversationSchema)

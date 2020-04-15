@@ -1,5 +1,20 @@
 import mongoose from 'mongoose'
+import { IConfession } from './confession'
 const Schema = mongoose.Schema
+
+export interface IReply extends mongoose.Document {
+	text: string
+	alias: string
+	embed: string
+	auth: string
+	authorized: boolean
+	parentID: IConfession
+	commentID: number
+	status: number
+	addeBy: string
+	IPAdress: string
+	remotePort: string
+}
 
 const replySchema = new Schema({
 	text: String,
@@ -15,4 +30,4 @@ const replySchema = new Schema({
 	remotePort: String,
 })
 
-export default mongoose.model('replies', replySchema)
+export default mongoose.model<IReply>('replies', replySchema)

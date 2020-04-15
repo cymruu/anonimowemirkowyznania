@@ -23,7 +23,12 @@ adminRouter.post('/login', (req, res) => {
 		if (user.password === req.body.password) {
 			//success login
 			delete user.password
-			const token = jwt.sign({ _id: user._id, username: user.username, flags: user.flags, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 }, config.secret)
+			const token = jwt.sign({
+				_id: user._id,
+				username: user.username,
+				flags: user.flags,
+				exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
+			}, config.secret)
 			res.cookie('token', token)
 			res.redirect('/admin/confessions')
 		} else {
@@ -40,23 +45,30 @@ adminRouter.get('/', accessMiddleware('accessPanel'), (req, res) => {
 	res.redirect('/admin/confessions')
 })
 adminRouter.get('/details/:confession_id', accessMiddleware('viewDetails'), (req, res) => {
-	confessionModel.findById(req.params.confession_id).populate([{ path: 'actions', options: { sort: { _id: -1 } }, populate: { path: 'user', select: 'username' } }, { path: 'survey' }]).exec((err, confession) => {
-		if (err) { return res.send(err) }
-		if (!confession) { return res.sendStatus(404) }
-		confessionModel.find({ IPAdress: confession.IPAdress }, { _id: 1, status: 1 }, function (err, results) {
+	confessionModel.findById(req.params.confession_id)
+		.populate([
+			{
+				path: 'actions', options: { sort: { _id: -1 } },
+				populate: { path: 'user', select: 'username' },
+			},
+			{ path: 'survey' }]).exec((err, confession) => {
 			if (err) { return res.send(err) }
-			confession.addedFromSameIP = results
-			res.render('./admin/details.pug', { user: req.user, confession })
+			if (!confession) { return res.sendStatus(404) }
+			confessionModel.find({ IPAdress: confession.IPAdress }, { _id: 1, status: 1 }, function(err, results) {
+				if (err) { return res.send(err) }
+				confession.addedFromSameIP = results
+				res.render('./admin/details.pug', { user: req.user, confession })
+			})
+		})
+})
+adminRouter
+	.get('/details/:confession_id/ip', accessMiddleware('viewDetails'), accessMiddleware('viewIP'), (req, res) => {
+		confessionModel.findById(req.params.confession_id, (err, confession) => {
+			if (err) { return res.send(err) }
+			if (!confession) { return res.sendStatus(404) }
+			res.send(confession.IPAdress)
 		})
 	})
-})
-adminRouter.get('/details/:confession_id/ip', accessMiddleware('viewDetails'), accessMiddleware('viewIP'), (req, res) => {
-	confessionModel.findById(req.params.confession_id, (err, confession) => {
-		if (err) { return res.send(err) }
-		if (!confession) { return res.sendStatus(404) }
-		res.send(confession.IPAdress)
-	})
-})
 adminRouter.get('/confessions/:filter?', accessMiddleware('accessPanel'), (req, res) => {
 	let search = {}
 	req.params.filter ? search = { status: req.params.filter } : search = {}
@@ -72,10 +84,13 @@ adminRouter.get('/replies', accessMiddleware('accessPanel'), (req, res) => {
 	})
 })
 adminRouter.get('/messages/', accessMiddleware('accessMessages'), (req, res) => {
-	conversationModel.find({ 'userID': req.user._id }, { _id: 1 }, { sort: { 'messages.time': -1 }, limit: 200 }, (err, conversations) => {
-		if (err) { return res.send(err) }
-		res.render('./admin/messages.pug', { user: req.user, conversations })
-	})
+	conversationModel.find(
+		{ 'userID': req.user._id }, { _id: 1 },
+		{ sort: { 'messages.time': -1 }, limit: 200 },
+		(err, conversations) => {
+			if (err) { return res.send(err) }
+			res.render('./admin/messages.pug', { user: req.user, conversations })
+		})
 })
 adminRouter.get('/mods/', accessMiddleware('accessModsList'), (req, res) => {
 	userModel.find({}, { username: 1, flags: 1 }).lean().then(userList => {
@@ -83,7 +98,11 @@ adminRouter.get('/mods/', accessMiddleware('accessModsList'), (req, res) => {
 			user.permissions = getFlagPermissions(user.flags)
 			return user
 		})
-		res.render('./admin/mods.pug', { user: req.user, userList: userList, canChangeUserPermissions: checkIfIsAllowed(req.user.flags, 'canChangeUserPermissions') })
+		res.render('./admin/mods.pug', {
+			user: req.user,
+			userList: userList,
+			canChangeUserPermissions: checkIfIsAllowed(req.user.flags, 'canChangeUserPermissions'),
+		})
 	}, err => {
 		res.json({ err })
 	})
