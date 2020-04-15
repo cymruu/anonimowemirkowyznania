@@ -176,6 +176,7 @@ app.get('/link/:linkId/:from', function(req, res){
       res.redirect(ad.out);
     });
 });
+
 if(_port == "passenger"){
   app.listen(_port);
 }else{

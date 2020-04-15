@@ -13,7 +13,7 @@ var confessionModel = require('./models/confession.js');
 var statsModel = require('./models/stats.js');
 var replyModel = require('./models/reply.js');
 
-mongoose.connect(config.mongoURL, { useNewUrlParser: true }, (err)=>{
+mongoose.connect(config.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true}, (err)=>{
   if(err) throw err;
 });
 mongoose.Promise = global.Promise;
