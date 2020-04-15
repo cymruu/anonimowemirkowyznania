@@ -11,12 +11,16 @@ import config from './config'
 import confessionModel, { ConfessionStatus } from './models/confession'
 import statsModel from './models/stats'
 import replyModel from './models/reply'
+import logger from './logger'
 
 //TODO: move connnection to separate file
 mongoose.connect(config.mongoURL,
 	{ useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false },
 	(err) => {
-		if (err) { throw err }
+		if (err) {
+			logger.error(err)
+			process.exit(1)
+		}
 	})
 mongoose.Promise = global.Promise
 interface RequestWithUser extends Request {

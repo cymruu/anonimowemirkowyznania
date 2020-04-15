@@ -8,6 +8,10 @@ import config from './config'
 import auth from './controllers/authorization'
 import { wss } from './controllers/wsServer'
 
+function renderConversationRoute(res, params) {
+	return res.render('conversation', { websocketPort: config.websocketPort, siteURL: config.siteURL, ...params })
+}
+
 conversationRouter.use(auth(false))
 conversationRouter.get('/:parent/new', (req:RequestWithUser, res, next) => {
 	if (req.params.parent.substr(0, 2) === 'U_') {
@@ -15,12 +19,12 @@ conversationRouter.get('/:parent/new', (req:RequestWithUser, res, next) => {
 		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function(err, userObject) {
 			if (err) { return res.sendStatus(503) }
 			if (!userObject) { return res.sendStatus(404) }
-			return res.render('conversation', { type: 'user', userObject })
+			return renderConversationRoute(res, { type: 'user', userObject })
 		})
 	} else {
 		confessionModel.findById(req.params.parent, (err, confession) => {
 			if (err) { return res.sendStatus(404) }
-			return res.render('conversation', { type: 'confession', confession })
+			return renderConversationRoute(res, { type: 'confession', confession })
 		})
 	}
 })
@@ -59,7 +63,7 @@ conversationRouter.get('/:conversationid/:auth?', (req:RequestWithUser, res) => 
 	if (!req.params.auth && typeof req.user !== 'undefined' && req.user._id) { req.params.auth = 'U_' + req.user._id }
 	conversationController.getConversation(req.params.conversationid, req.params.auth, (err, conversation) => {
 		if (err) { return res.send(err) }
-		res.render('conversation', { conversation, siteURL: config.siteURL })
+		return renderConversationRoute(res, { conversation })
 	})
 })
 conversationRouter.post('/:conversationid/:auth?', (req:RequestWithUser, res) => {
@@ -76,12 +80,12 @@ conversationRouter.post('/:conversationid/:auth?', (req:RequestWithUser, res) =>
 			if (err) { return res.send(err) }
 			conversationController.getConversation(req.params.conversationid, req.params.auth, (err, conversation) => {
 				if (err) { return res.send(err) }
-				res.render('conversation', { conversation, siteURL: config.siteURL })
 				wss.sendToChannel(req.params.conversationid, JSON.stringify({
 					type: 'newMessage',
 					msg: req.body.text,
 					username: 'Użytkownik mikrobloga',
 				}))
+				return renderConversationRoute(res, { conversation })
 			})
 		})
 })

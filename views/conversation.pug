@@ -35,5 +35,6 @@ block script
       event.preventDefault();
       });
       const conversationId = '#{conversation._id}';
+      const websocketPort = '#{websocketPort}'; 
       const authCode = '#{conversation.auth}';
     script(src="/js/chat.js" type="text/javascript")
