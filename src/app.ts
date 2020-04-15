@@ -1,8 +1,8 @@
+declare let PhusionPassenger: any
 if (!process.env.NODE_ENV) {
 	process.env.NODE_ENV = 'production'
 }
 let _port: number | string = 1337
-let PhusionPassenger: any
 if (typeof (PhusionPassenger) !== 'undefined') {
 	PhusionPassenger.configure({ autoInstall: false })
 	_port = 'passenger'
@@ -27,7 +27,6 @@ import auth from './controllers/authorization'
 import aliasGenerator from './controllers/aliases'
 import * as surveyController from './controllers/survey'
 import crypto from 'crypto'
-import { bindWebsocketToServer } from './controllers/wsServer'
 import logger from './logger'
 
 app.enable('trust proxy')
@@ -167,7 +166,6 @@ app.get('/link/:linkId/:from', function(req, res) {
 	})
 })
 const server = http.createServer(app)
-bindWebsocketToServer(server)
 server.listen(_port, () => {
 	logger.info(`Server started on port: ${_port} [${process.env.NODE_ENV}]`)
 })
