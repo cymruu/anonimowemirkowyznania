@@ -3,12 +3,12 @@ const apiRouter = Router()
 import mongoose from 'mongoose'
 import * as wykopController from './controllers/wykop'
 import * as surveyController from './controllers/survey'
-import actionController from './controllers/actions'
+import { createAction, ActionType } from './controllers/actions'
 import * as tagController from './controllers/tags'
 import auth from './controllers/authorization'
 import { accessMiddleware } from './controllers/access'
 import config from './config'
-import confessionModel from './models/confession'
+import confessionModel, { ConfessionStatus } from './models/confession'
 import statsModel from './models/stats'
 import replyModel from './models/reply'
 
@@ -73,11 +73,13 @@ apiRouter.route('/confession/danger/:confession_id/:reason?')
 	.get(accessMiddleware('setStatus'), (req: RequestWithUser, res) => {
 		confessionModel.findById(req.params.confession_id, async (err, confession) => {
 			if (err) { return res.json(err) }
-			confession.status === -1 ? confession.status = 0 : confession.status = -1
-			const status = confession.status === 0 ? 'warning' : 'danger'
-			const actionType = confession.status === 0 ? 3 : 2
+			confession.status === ConfessionStatus.DECLINED ?
+				confession.status = ConfessionStatus.WAITING : confession.status = ConfessionStatus.DECLINED
+			const status = confession.status === ConfessionStatus.WAITING ? 'warning' : 'danger'
+			const actionType = confession.status === ConfessionStatus.WAITING ?
+				ActionType.REVERT_DECLINE : ActionType.DECLINE
 			const reason = req.params.reason
-			const action = await actionController(req.user._id, actionType, reason).save()
+			const action = await createAction(req.user._id, actionType, reason).save()
 			confession.actions.push(action)
 			confession.save((err) => {
 				if (err) { return res.json({ success: false, response: { message: err } }) }
@@ -88,10 +90,10 @@ apiRouter.route('/confession/danger/:confession_id/:reason?')
 	})
 apiRouter.route('/confession/tags/:confession_id/:tag')
 	.get(accessMiddleware('updateTags'), (req: RequestWithUser, res) => {
-	//there's probably more clean way to do this.
+	//there's probably better way to do this.
 		confessionModel.findById(req.params.confession_id, async (err, confession) => {
 			if (err) { return res.send(err) }
-			const action = await actionController(req.user._id, 9, req.params.tag).save()
+			const action = await createAction(req.user._id, ActionType.UPDATED_TAGS, req.params.tag).save()
 			confession.update({
 				$set: {
 					tags: tagController.prepareArray(confession.tags, req.params.tag),
@@ -109,7 +111,7 @@ apiRouter.route('/confession/delete/:confession_id')
 		confessionModel.findById(req.params.confession_id, (err, confession) => {
 			if (err) { return res.sendStatus(500) }
 			wykopController.deleteEntry(confession.entryID).then(async (result) => {
-				const action = await actionController(req.user._id, 5).save()
+				const action = await createAction(req.user._id, ActionType.DELETE_ENTRY).save()
 				confession.status = -1
 				confession.actions.push(action)
 				confession.save((err) => {
@@ -158,10 +160,10 @@ apiRouter.route('/reply/accept/:reply_id').get(accessMiddleware('addReply'), (re
 apiRouter.route('/reply/danger/:reply_id/').get(accessMiddleware('setStatus'), (req: RequestWithUser, res) => {
 	replyModel.findById(req.params.reply_id).populate('parentID').exec(async (err, reply) => {
 		if (err) { return res.json({ success: false, response: { message: err, status: 'warning' } }) }
-		reply.status === -1 ? reply.status = 0 : reply.status = -1
+		reply.status === ConfessionStatus.DECLINED ? reply.status = ConfessionStatus.WAITING : reply.status = ConfessionStatus.DECLINED
 		const status = reply.status === 0 ? 'warning' : 'danger'
-		const actionType = reply.status === 0 ? 3 : 2
-		const action = await actionController(req.user._id, actionType).save()
+		const actionType = reply.status === ConfessionStatus.WAITING ? ActionType.REVERT_DECLINE : ActionType.DECLINE
+		const action = await createAction(req.user._id, actionType).save()
 		reply.parentID.actions.push(action)
 		reply.parentID.save()
 		reply.save((err) => {
@@ -174,7 +176,7 @@ apiRouter.route('/reply/danger/:reply_id/').get(accessMiddleware('setStatus'), (
 apiRouter.route('/reply/delete/:reply_id/').get(accessMiddleware('deleteReply'), (req: RequestWithUser, res) => {
 	replyModel.findOne({ _id: req.params.reply_id }).populate('parentID').then(reply => {
 		wykopController.deleteEntryComment(reply.commentID).then(async (result) => {
-			const action = await actionController(req.user._id, 7, `reply_id: ${result.id}`).save()
+			const action = await createAction(req.user._id, ActionType.DELETE_REPLY, `reply_id: ${result.id}`).save()
 			reply.parentID.actions.push(action)
 			reply.status = 0
 			reply.commentID = null

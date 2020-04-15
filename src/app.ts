@@ -21,7 +21,7 @@ import advertismentModel from './models/ads'
 import statsModel from './models/stats'
 
 import * as wykopController from './controllers/wykop'
-import actionController from './controllers/actions'
+import { createAction, ActionType } from './controllers/actions'
 import * as tagController from './controllers/tags'
 import auth from './controllers/authorization'
 import aliasGenerator from './controllers/aliases'
@@ -60,7 +60,7 @@ app.post('/', async (req, res) => {
 	confession.embed = req.body.embed
 	confession.tags = tagController.getTags(req.body.text)
 	confession.auth = crypto.randomBytes(5).toString('hex')
-	const action = await actionController(null, 0).save()
+	const action = await createAction(null, ActionType.NEW_ENTRY).save()
 	confession.actions.push(action)
 	confession.save((err) => {
 		if (err) { return res.send(err) }
@@ -126,7 +126,7 @@ app.post('/reply/:confessionid', (req, res) => {
 			reply.save(async (err) => {
 				if (err) { res.send(err) }
 				statsModel.addAction('new_reply')
-				const action = await actionController(null, 4).save()
+				const action = await createAction(null, ActionType.NEW_REPLY).save()
 				confession.actions.push(action)
 				confession.save()
 				res.render('reply', { success: true, reply: reply, confession: confession })

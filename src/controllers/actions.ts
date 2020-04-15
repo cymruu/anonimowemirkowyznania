@@ -13,7 +13,20 @@ const actionTypes = {
 	9: 'Zmodyfikowano tagi wpisu',
 }
 
-export default function createAction(userId, actionType, note?: string) {
+export enum ActionType {
+	NEW_ENTRY = 0,
+	ACCEPT_ENTRY,
+	DECLINE,
+	REVERT_DECLINE,
+	NEW_REPLY,
+	DELETE_ENTRY,
+	ADD_NOTIFICATION_COMMENT,
+	DELETE_REPLY,
+	ACCEPT_REPLY,
+	UPDATED_TAGS,
+}
+
+export function createAction(userId: string, actionType: ActionType, note?: string) {
 	return new actionModel({
 		action: actionTypes[actionType],
 		user: userId,

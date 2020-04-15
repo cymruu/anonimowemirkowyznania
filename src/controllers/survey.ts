@@ -1,6 +1,6 @@
 import request from 'request'
 import config from '../config'
-import actionController from './actions'
+import { createAction, ActionType } from './actions'
 import surveyModel from '../models/survey'
 import bodyBuildier from './bodyBuildier'
 
@@ -109,7 +109,7 @@ export function acceptSurvey(confession, user, cb) {
 					(body.search('Sesja') > -1) ? flag = true : flag = false
 					return cb({ success: false, relogin: flag, response: { message: body, status: 'error' } })
 				}
-				const action = await actionController(user._id, 1).save()
+				const action = await createAction(user._id, ActionType.ACCEPT_ENTRY).save()
 				confession.actions.push(action)
 				confession.status = 1
 				confession.addedBy = user.username

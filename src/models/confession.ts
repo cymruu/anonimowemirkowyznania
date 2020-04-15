@@ -2,6 +2,12 @@ import mongoose from 'mongoose'
 import { IAction } from './action'
 const Schema = mongoose.Schema
 
+export enum ConfessionStatus{
+	DECLINED = -1,
+	WAITING,
+	ACCEPTED,
+}
+
 export interface IConfession extends mongoose.Document {
 	text: string
 	embed: string
