@@ -24,7 +24,7 @@ function getCommentBody(reply, user) {
 	return `**${reply.alias}**: ${reply.text}\n${authorized}\nZaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`
 }
 function getEntryBodyDev(confession, user, cb) {
-	const entryBody = tagController.trimTags(`${confession.text}\n\n ${confession._id}`, confession.tags)
+	const entryBody = tagController.trimTags(`${confession.text}\n\n ${confession._id}\n\n #wykopapitesty \n!dostałem ostrzeżenie za flood, to może nam dajcie testowe środowisko api?`, confession.tags)
 
 	cb(entryBody)
 }

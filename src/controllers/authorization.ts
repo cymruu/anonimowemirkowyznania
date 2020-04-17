@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import config from '../config'
 import userModel from '../models/user'
 
-export default function(loginRequired) {
+export default function(loginRequired: boolean) {
 	if (typeof loginRequired === 'undefined') {loginRequired = false}
 	return function(req, res, next) {
 		const token = req.cookies.token || req.body.token || req.query.token || req.headers['x-access-token']
