@@ -36,9 +36,9 @@ block content
                   td #{reply.auth}
                   td
                     if reply.commentID
-                      a(href=`http://wykop.pl/wpis/${reply.parentID.entryID}/#comment-${reply.commentID}`, target="_blank") #{reply.parentID.entryID}
+                      a(href=`https://wykop.pl/wpis/${reply.parentID.entryID}/#comment-${reply.commentID}`, target="_blank") #{reply.parentID.entryID}
                     else
-                      a(href=`http://wykop.pl/wpis/${reply.parentID.entryID}`, target="_blank") #{reply.parentID.entryID}
+                      a(href=`https://wykop.pl/wpis/${reply.parentID.entryID}`, target="_blank") #{reply.parentID.entryID}
                   td #{reply.addedBy}
                   td
                     button.btn.btn-success.actionButton&attributes({'data-action':'accept', 'data-id':reply.id, 'data-object':'reply'}) Dodaj
