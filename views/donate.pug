@@ -1,0 +1,17 @@
+extends ./base.pug
+block content
+    p.info
+    |Roczny koszt utrzymania Anonimowych Mirko Wyznań, wynosi 235zł. Jeśli chcesz wesprzeć projekt, możesz przekazać donację na tej stronie.
+    br
+    b PayPal
+    form(action=#{paypalLink} method='post' target='_top')
+        input(type='hidden' name='cmd' value='_s-xclick')
+        input(type='hidden' name='hosted_button_id' value='JAM3N3Y8UZ7DY')
+        input(type='image' src='https://www.paypalobjects.com/pl_PL/PL/i/btn/btn_donate_LG.gif' border='0' name='submit' title='PayPal - The safer, easier way to pay online!' alt='Przekaż darowiznę za pomocą przycisku PayPal')
+        img(alt='' border='0' src='https://www.paypal.com/pl_PL/i/scr/pixel.gif' width='1' height='1')
+
+    b Donacja kartą kredytową / paypal 
+    br
+    script(src='https://donorbox.org/widget.js' paypalexpress='false')
+    iframe(allowpaymentrequest='' frameborder='0' height='900px' name='donorbox' scrolling='no' seamless='seamless' src='https://donorbox.org/embed/amw-donate' style='max-width: 500px; min-width: 310px; max-height:none!important' width='100%')
+    |

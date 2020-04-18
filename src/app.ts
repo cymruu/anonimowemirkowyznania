@@ -157,6 +157,9 @@ app.get('/twojewyznania', (req, res) => {
 app.get('/contact', (req, res) => {
 	res.render('contact')
 })
+app.get('/donate', (req, res) => {
+	res.render('donate', { paypalLink: 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr' })
+})
 app.get('/link/:linkId/:from', function(req, res) {
 	advertismentModel.findOne({ _id: req.params.linkId }, function(err, ad) {
 		if (err || !ad) { return res.sendStatus(404) }
