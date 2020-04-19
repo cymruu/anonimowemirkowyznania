@@ -106,11 +106,11 @@ block content
         input.form-control(type="url", name="embed", placeholder="URL do obrazka", maxlength=3000)
       .form-group
         button.btn.btn-large.btn-success(type="submit") Wyślij
-      if confession.participants
+      if participants
         div.panel.panel-default
           div.panel-heading Uczestnicy dyskusji
           div.panel-body.participant-list
-            each participant, index in confession.participants
+            each participant, index in participants
               span.label.label-info.participant(data-username=`${participant}`) #{participant}
   script(src='/js/main.js')
 block script

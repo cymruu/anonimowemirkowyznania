@@ -7,6 +7,7 @@ block content
           .panel-heading
             |Wpis
             if confession.entryID
+              | 
               a(href=`http://wykop.pl/wpis/${confession.entryID}` target="_blank") #{confession.entryID}
             .pull-right
               span.label.label-small.label-success.actionButton&attributes({'data-action':'accept', 'data-id':confession.id, 'data-object':'confession'}) Dodaj
