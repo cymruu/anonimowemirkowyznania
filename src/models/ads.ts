@@ -33,7 +33,7 @@ const advertismentSchema = new Schema({
 })
 
 advertismentSchema.statics.random = function(callback) {
-	this.count({ active: true }, function(err, count) {
+	this.countDocuments({ active: true }, function(err, count) {
 		if (err) {
 			return callback(err)
 		}
