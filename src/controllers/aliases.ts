@@ -39,9 +39,12 @@ function femaleForm(string) {
 function getRandomItem(items) {
 	return items[Math.floor(Math.random() * items.length)]
 }
-function getAlias(sex) {
-	const adj = capitalize(getRandomItem(adjectives))
-	const name = capitalize(sex ? getRandomItem(male) : femaleForm(getRandomItem(female)))
+function getAlias(isMale: boolean) {
+	let adj = capitalize(getRandomItem(adjectives))
+	if (isMale === false) {
+		adj = femaleForm(adj)
+	}
+	const name = capitalize(isMale ? getRandomItem(male) : getRandomItem(female))
 	return `${adj}${name}`
 }
 export default getAlias
