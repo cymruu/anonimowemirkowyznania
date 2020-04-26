@@ -7,7 +7,12 @@ import logger from '../logger'
 export const getFollowers = (notificationCommentId) => service.Entries.CommentUpvoters(notificationCommentId)
 
 export const getParticipants = (entryId) => {
-	return service.Entries.Entry(entryId).then(response => response.comments.map(comment => comment.author.login))
+	if (!Number.isInteger(entryId)) {
+		return Promise.reject(new Error('Not numeric entry ID'))
+	}
+	return service.Entries.Entry(entryId)
+		.then(response => response.comments.map(comment => comment.author.login))
+		.then(mapped => Array.from(new Set(mapped).values()))
 }
 
 export const deleteEntry = (entryId) => {

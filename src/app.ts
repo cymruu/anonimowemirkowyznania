@@ -92,19 +92,15 @@ app.get('/confession/:confessionid/:auth', (req, res) => {
 			})
 	}
 })
-app.get('/reply/:confessionid?', (req, res) => {
-	if (!req.params.confessionid) {
-		return res.sendStatus(400)
-	} else {
-		confessionModel.findById(req.params.confessionid, (err, confession) => {
-			if (err) { return res.sendStatus(404) }
-			wykopController.getParticipants(confession.entryID).then(participants => {
-				res.render('reply', { confession, participants })
-			}).catch(_ => {
-				res.render('reply', { confession, participants: [] })
-			})
+app.get('/reply/:confessionid', (req, res) => {
+	confessionModel.findById(req.params.confessionid, (err, confession) => {
+		if (err) { return res.sendStatus(404) }
+		wykopController.getParticipants(confession.entryID).then(participants => {
+			res.render('reply', { confession, participants })
+		}).catch(err => {
+			res.render('reply', { confession, participants: [] })
 		})
-	}
+	})
 })
 app.post('/reply/:confessionid', (req, res) => {
 	confessionModel.findById(req.params.confessionid, (err, confession) => {
