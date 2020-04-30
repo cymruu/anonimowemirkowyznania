@@ -4,7 +4,12 @@ import { createAction, ActionType } from '../controllers/actions'
 import archiveModel from '../models/archive'
 import logger from '../logger'
 
-export const getFollowers = (notificationCommentId) => service.Entries.CommentUpvoters(notificationCommentId)
+export const getFollowers = (notificationCommentId) => {
+	if (!Number.isInteger(notificationCommentId)) {
+		return Promise.resolve([])
+	}
+	return service.Entries.CommentUpvoters(notificationCommentId)
+}
 
 export const getParticipants = (entryId) => {
 	if (!Number.isInteger(entryId)) {
