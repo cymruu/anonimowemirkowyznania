@@ -4,7 +4,7 @@ import adsModel from '../models/ads'
 import config from '../config'
 
 function getEntryBody(confession, user, cb) {
-	let entryBody = tagController.trimTags(`#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`, confession.tags)
+	let entryBody = tagController.trimTags(`#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nID: #${confession._id}\nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`, confession.tags)
 	adsModel.random(function(err, randomAd) {
 		if (err || !randomAd) { return cb(entryBody) }
 		const caption = randomAd.captions[Math.floor(Math.random() * randomAd.captions.length)]
