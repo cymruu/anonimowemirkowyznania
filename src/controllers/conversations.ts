@@ -1,6 +1,8 @@
 import conversationModel from '../models/conversation'
 import * as wykopController from '../controllers/wykop'
 import config from '../config'
+import logger from '../logger'
+
 export function createNewConversation(parentObject, cb) {
 	let userFlag: boolean
 	const conversation = new conversationModel()
@@ -23,7 +25,9 @@ export function createNewConversation(parentObject, cb) {
 			wykopController.sendPrivateMessage(
 				parentObject.username,
 				`Nowa wiadomość na anonimowychmirkowyznaniach ${config.siteURL}/admin/messages`,
-			).then()
+			).then().catch(err => {
+				logger.error(err)
+			})
 			return cb(null, conversation._id)
 		}
 	})
@@ -76,11 +80,11 @@ export function newMessage(conversationId, auth, text, IPAdress, cb) {
 			if (typeof conversation.parentID !== 'undefined' && conversation.parentID.auth === auth) {
 				isOP = true
 			}
-			conversationModel.findOneAndUpdate(conversationId,
+			conversationModel.findOneAndUpdate({ _id: conversationId },
 				{ $push:
 					{ messages: { time: new Date(), text: text, IPAdress: IPAdress, OP: isOP, user: userObject } },
 				},
-				{}, (err) => {
+				(err) => {
 					if (err) { return cb(err) }
 					cb(null, isOP)
 				})

@@ -18,7 +18,7 @@ function renderConversationRoute(res, params) {
 }
 
 conversationRouter.use(auth(false))
-conversationRouter.get('/:parent/new', (req:RequestWithUser, res, next) => {
+conversationRouter.get('/:parent/new', (req: RequestWithUser, res, next) => {
 	if (req.params.parent.substr(0, 2) === 'U_') {
 		const username = req.params.parent.substr(2)
 		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function(err, userObject) {
@@ -33,7 +33,7 @@ conversationRouter.get('/:parent/new', (req:RequestWithUser, res, next) => {
 		})
 	}
 })
-function createConversationMiddleware(req:RequestWithUser, res) {
+function createConversationMiddleware(req: RequestWithUser, res) {
 	conversationController.createNewConversation(res.locals.conversationParent, (err, conversationid) => {
 		if (err) { return res.sendStatus(err) }
 		conversationController.newMessage(conversationid, null, req.body.text, req.ip, (err) => {
@@ -42,7 +42,7 @@ function createConversationMiddleware(req:RequestWithUser, res) {
 		})
 	})
 }
-conversationRouter.post('/:parent/new', (req:RequestWithUser, res, next) => {
+conversationRouter.post('/:parent/new', (req: RequestWithUser, res, next) => {
 	if (!req.body.text) { return res.sendStatus(400) }
 	if (req.params.parent.substr(0, 2) === 'U_') {
 		const username = req.params.parent.substr(2)
@@ -61,7 +61,7 @@ conversationRouter.post('/:parent/new', (req:RequestWithUser, res, next) => {
 		})
 	}
 }, createConversationMiddleware)
-conversationRouter.get('/:conversationid/:auth?', (req:RequestWithUser, res) => {
+conversationRouter.get('/:conversationid/:auth?', (req: RequestWithUser, res) => {
 	if (!req.params.conversationid) {
 		return res.sendStatus(400)
 	}
@@ -71,7 +71,7 @@ conversationRouter.get('/:conversationid/:auth?', (req:RequestWithUser, res) => 
 		return renderConversationRoute(res, { conversation })
 	})
 })
-conversationRouter.post('/:conversationid/:auth?', (req:RequestWithUser, res) => {
+conversationRouter.post('/:conversationid/:auth?', (req: RequestWithUser, res) => {
 	if (!req.params.conversationid) {
 		return res.sendStatus(400)
 	}
