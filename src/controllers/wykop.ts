@@ -3,10 +3,11 @@ import bodyBuildier from '../controllers/bodyBuildier'
 import { createAction, ActionType } from '../controllers/actions'
 import archiveModel from '../models/archive'
 import logger from '../logger'
+import { CommentUpvoter } from 'wypokjs/dist/models/Upvoter'
 
 export const getFollowers = (notificationCommentId) => {
 	if (!Number.isInteger(notificationCommentId)) {
-		return Promise.resolve([])
+		return Promise.resolve([] as CommentUpvoter[])
 	}
 	return service.Entries.CommentUpvoters(notificationCommentId)
 }
