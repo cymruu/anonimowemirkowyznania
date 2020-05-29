@@ -5,9 +5,9 @@ import archiveModel from '../models/archive'
 import logger from '../logger'
 import { CommentUpvoter } from 'wypokjs/dist/models/Upvoter'
 
-export const getFollowers = (notificationCommentId) => {
+export const getFollowers = (notificationCommentId): Promise<CommentUpvoter[]> => {
 	if (!Number.isInteger(notificationCommentId)) {
-		return Promise.resolve([] as CommentUpvoter[])
+		return Promise.resolve([])
 	}
 	return service.Entries.CommentUpvoters(notificationCommentId)
 }
