@@ -58,7 +58,8 @@ function onMessage(ws, message) {
 			if (err) {return ws.send(JSON.stringify({ type: 'alert', body: err }))}
 			wss.sendToChannel(ws.conversation, JSON.stringify({
 				type: 'newMessage',
-				msg: message.msg, username: isOP ? 'OP' : 'Użytkownik mikrobloga',
+				msg: message.msg,
+				username: isOP ? 'OP' : 'Użytkownik mikrobloga',
 			}))
 		})
 		break

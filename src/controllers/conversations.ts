@@ -38,7 +38,7 @@ export function validateAuth(conversationId, auth, cb) {
 		if (!conversation) {
 			return cb('nie odnaleziono konwersacji')
 		} //this returns string because validateAuth function result is sent in chat msg
-		if (typeof conversation.userID !== 'undefined' && conversation.userID._id === auth) {
+		if (typeof conversation.userID !== 'undefined' && conversation.userID._id.toString() === auth) {
 			return cb(null, true)
 		}
 		if (typeof conversation.parentID !== 'undefined' && conversation.parentID.auth === auth) {
@@ -55,7 +55,10 @@ export function getConversation(conversationId, auth, cb) {
 			if (!conversation) {
 				return cb('nie odnaleziono konwersacji')
 			}
-			if (typeof conversation.userID !== 'undefined' && auth && conversation.userID._id === auth.substr(2)) {
+			if (typeof conversation.userID !== 'undefined'
+				&& auth &&
+				conversation.userID._id.toString() === auth.substr(2)
+			) {
 				conversation.auth = conversation.userID._id
 			}
 			if (typeof conversation.parentID !== 'undefined' && conversation.parentID.auth === auth) {
@@ -73,7 +76,7 @@ export function newMessage(conversationId, auth, text, IPAdress, cb) {
 			if (!conversation) { return cb('nie odnaleziono konwersacji') }
 			let isOP = false
 			let userObject = null
-			if (typeof conversation.userID !== 'undefined' && conversation.userID._id === auth) {
+			if (typeof conversation.userID !== 'undefined' && conversation.userID._id.toString() === auth) {
 				isOP = true
 				userObject = conversation.userID._id
 			}
