@@ -85,6 +85,8 @@ apiRouter.route('/confession/accept/:confession_id').get(
 					)),
 				])
 				saveActions.then(() => {
+					wykopController.addNotificationComment(confession, req.user)
+					statsModel.addAction('confessions_accepted', req.user.username)
 					return res.json(
 						{ success: true, response: {
 							message: 'Wpis został dodany', status: 'success' },
