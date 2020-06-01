@@ -26,7 +26,7 @@ async function getEntryBody(confession, user, donationsToShare: IDonation[]) {
 	for (const donation of donationsToShare) {
 		const donor = donation.from || 'Anonimowy'
 		const message = donation.message || '...'
-		entryBody += `\n\`${donor}: ${message} **${donation.amount}zł** dziękuję!\``
+		entryBody += `\n\${donor}: ${message} **${donation.amount}zł** dziękuję!`
 	}
 	return entryBody
 }
