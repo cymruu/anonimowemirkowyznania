@@ -112,8 +112,11 @@ adminRouter.get('/donations', accessMiddleware('accessDonations'), (req: Request
 })
 adminRouter.post('/donations', accessMiddleware('addDonations'), async (req: RequestWithUser, res) => {
 	const donation = new DonationModel(req.body)
-	await donation.save()
-	res.redirect('./donations')
+	await donation.save().then(() => {
+		res.redirect('./donations')
+	}).catch(err => {
+		res.send(err)
+	})
 })
 adminRouter.get('/mods/', accessMiddleware('accessModsList'), (req: RequestWithUser, res) => {
 	userModel.find({}, { username: 1, flags: 1 }).lean().then(userList => {

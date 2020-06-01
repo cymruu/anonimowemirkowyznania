@@ -3,12 +3,16 @@ block content
   .container
     h3 Dodaj donacje
     form#confession(method="post")
-        input(type="number", name="amount")
-        input(name="message")
+        label(for="amount") Amount
+        input(type="number", id="amount", name="amount")
+        label(for="from") From
+        input(name="from", id="from")
+        label(for="message") Message
+        input(name="message", id="message")
         button(type="submit") Wyślij
 
     h4 Lista donacji
     .row
         ul
         each donate, index in donateList 
-          li #{donate.amount} - #{donate.message} - #{donate.added}
+          li #{donate.amount} - #{donate.from}: #{donate.message} - #{donate.added}
