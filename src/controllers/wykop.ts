@@ -48,7 +48,7 @@ export const acceptConfession = (confession: IConfession, entryBody: string) => 
 	return service.Entries.Add({ body: entryBody, embed: confession.embed })
 }
 
-//TODO: refactor to use promise
+//TODO: refactor like addEntry
 export const addNotificationComment = function(confession, user, cb = (...args) => { }) {
 	service.Entries.CommentAdd(confession.entryID, { body: bodyBuildier.getNotificationCommentBody(confession) })
 		.then(async (response) => {
@@ -63,7 +63,7 @@ export const addNotificationComment = function(confession, user, cb = (...args) 
 			return cb({ success: false, response: { message: err.toString(), status: 'error' } })
 		})
 }
-
+//TODO: refactor like addEntry
 export const acceptReply = async (reply, user, cb) => {
 	let entryBody = bodyBuildier.getCommentBody(reply, user)
 	try {

@@ -14,6 +14,7 @@ import replyModel from './models/reply'
 import logger from './logger'
 import { guardMiddleware } from './utils/apiGuard'
 import bodyBuilder from './controllers/bodyBuildier'
+import donationModel from './models/donation'
 
 //TODO: move connnection to separate file
 mongoose.connect(config.mongoURL,
@@ -58,7 +59,8 @@ apiRouter.route('/confession/accept/:confession_id').get(
 					},
 				})
 			}
-			const entryBody = await bodyBuilder.getEntryBody(confession, req.user)
+			const donationsToShare = await donationModel.find({ added: false })
+			const entryBody = await bodyBuilder.getEntryBody(confession, req.user, donationsToShare)
 			let promise
 			if (confession.survey) {
 				promise = surveyController.acceptSurvey(confession as any, entryBody).catch(err => {
@@ -78,20 +80,23 @@ apiRouter.route('/confession/accept/:confession_id').get(
 				confession.actions.push(action)
 				confession.status = 1
 				confession.addedBy = req.user.username
-				confession.save((err) => {
-					if (err) {
-						return res.json(
-							{ success: false, response: {
-								message:
-								'Wpis został dodany, ale nie zapis w bazie danych się nie powiódł',
-								status: 'success',
-							},
-							},
-						)
-					}
+				const saveActions = Promise.all([confession.save(), ...donationsToShare.map(x =>
+					x.update({ added: true },
+					)),
+				])
+				saveActions.then(() => {
 					return res.json(
 						{ success: true, response: {
 							message: 'Wpis został dodany', status: 'success' },
+						},
+					)
+				}).catch(() => {
+					return res.json(
+						{ success: false,
+							response: {
+								message: 'Wpis został dodany, ale nie zapis w bazie danych się nie powiódł',
+								status: 'success',
+							},
 						},
 					)
 				})

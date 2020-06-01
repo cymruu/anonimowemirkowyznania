@@ -2,7 +2,7 @@
 import * as tagController from './tags'
 import adsModel from '../models/ads'
 import config from '../config'
-import donationModel from '../models/donation'
+import donationModel, { IDonation } from '../models/donation'
 import { makeProgressBar } from '../utils/progressBar'
 import { IConfession } from '../models/confession'
 import { IUser } from '../models/user'
@@ -14,7 +14,7 @@ const getBody = (confession:IConfession, user:IUser) => {
 		`#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nID: #${confession._id}\nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`
 }
 
-async function getEntryBody(confession, user) {
+async function getEntryBody(confession, user, donationsToShare: IDonation[]) {
 	let entryBody = tagController.trimTags(getBody(confession, user), confession.tags)
 	const [randomAd, totalAmountDonated] = await Promise.all([adsModel.random(), donationModel.totalInCurrentYear()])
 	if (randomAd) {
@@ -23,7 +23,11 @@ async function getEntryBody(confession, user) {
 		entryBody += `\n[${caption}](${randomAd.out})`
 	}
 	entryBody += `\n\`${makeProgressBar(totalAmountDonated)}\``
-
+	for (const donation of donationsToShare) {
+		const donor = donation.from || 'Anonimowy'
+		const message = donation.message || '...'
+		entryBody += `\n\`${donor}: ${message} **${donation.amount}zł** dziękuję!\``
+	}
 	return entryBody
 }
 function getNotificationCommentBody(confession) {

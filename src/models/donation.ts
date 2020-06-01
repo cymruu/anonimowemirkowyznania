@@ -1,9 +1,10 @@
 import mongoose, { Schema, Model } from 'mongoose'
 import { IAd } from './ads'
 
-interface IDonation extends mongoose.Document {
+export interface IDonation extends mongoose.Document {
 	amount: number,
 	added: boolean,
+	from: string,
 	message: string,
 }
 interface IDonationModel extends Model<IDonation> {
@@ -12,6 +13,7 @@ interface IDonationModel extends Model<IDonation> {
 const donationSchema = new Schema({
 	amount: { type: Number, required: true },
 	added: { type: Boolean, default: false },
+	from: String,
 	message: String,
 }, { timestamps: true })
 
