@@ -13,6 +13,7 @@ import statsModel from './models/stats'
 import replyModel from './models/reply'
 import logger from './logger'
 import { guardMiddleware } from './utils/apiGuard'
+import bodyBuilder from './controllers/bodyBuildier'
 
 //TODO: move connnection to separate file
 mongoose.connect(config.mongoURL,
@@ -35,8 +36,8 @@ apiRouter.use(auth(true))
 apiRouter.route('/confession/accept/:confession_id').get(
 	guardMiddleware,
 	accessMiddleware('addEntry'),
-	(req: RequestWithUser, res) => {
-		confessionModel.findById(req.params.confession_id).populate('survey').exec((err, confession) => {
+	async (req: RequestWithUser, res) => {
+		confessionModel.findById(req.params.confession_id).populate('survey').exec(async (err, confession) => {
 			if (err) { return res.send(err) }
 			if (confession.entryID && confession.status === 1) {
 				return res.json({
@@ -57,26 +58,51 @@ apiRouter.route('/confession/accept/:confession_id').get(
 					},
 				})
 			}
+			const entryBody = await bodyBuilder.getEntryBody(confession, req.user)
+			let promise
 			if (confession.survey) {
-				surveyController.acceptSurvey(confession, req.user, function(result) {
-					if (!result.success && result.relogin) {
+				promise = surveyController.acceptSurvey(confession as any, entryBody).catch(err => {
+					logger.error(err.message)
+					if (err.relogin) {
+						logger.info('Relogin wykop HTTP client')
 						surveyController.wykopLogin()
 					}
-					if (result.success) {
-						wykopController.addNotificationComment(confession, req.user)
-						statsModel.addAction('accepted_surveys', req.user.username)
-					}
-					return res.json(result)
+					return Promise.reject(err.message)
 				})
 			} else {
-				wykopController.acceptConfession(confession, req.user, function(result) {
-					if (result.success) {
-						wykopController.addNotificationComment(confession, req.user)
-						statsModel.addAction('confessions_accepted', req.user.username)
-					}
-					return res.json(result)
-				})
+				promise = wykopController.acceptConfession(confession, entryBody)
 			}
+			promise.then(async (response) => {
+				confession.entryID = response.id
+				const action = await createAction(req.user._id, ActionType.ACCEPT_ENTRY).save()
+				confession.actions.push(action)
+				confession.status = 1
+				confession.addedBy = req.user.username
+				confession.save((err) => {
+					if (err) {
+						return res.json(
+							{ success: false, response: {
+								message:
+								'Wpis został dodany, ale nie zapis w bazie danych się nie powiódł',
+								status: 'success',
+							},
+							},
+						)
+					}
+					return res.json(
+						{ success: true, response: {
+							message: 'Wpis został dodany', status: 'success' },
+						},
+					)
+				})
+			}).catch(err => {
+				logger.error(err)
+				return res.json(
+					{ success: false, response: {
+						message: err.toString(), status: 'error' },
+					},
+				)
+			})
 		})
 	})
 apiRouter.route('/confession/danger/:confession_id/:reason?')

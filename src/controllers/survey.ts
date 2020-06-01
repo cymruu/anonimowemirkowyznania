@@ -1,8 +1,9 @@
 import request from 'request'
 import config from '../config'
 import { createAction, ActionType } from './actions'
-import surveyModel from '../models/survey'
+import surveyModel, { ISurvey } from '../models/survey'
 import bodyBuildier from './bodyBuildier'
+import { IConfession } from 'src/models/confession'
 
 const loginEndpoint = 'https://www.wykop.pl/zaloguj/'
 // const addEntryEndpoint = 'http://www.wykop.pl/xhr/entry/create/';
@@ -74,12 +75,11 @@ export function wykopLogin() {
 		}
 	})
 }
-export function acceptSurvey(confession, user, cb) {
-	cb = cb || function() { }
-	bodyBuildier.getEntryBody(confession, user, function(entryBody) {
+export function acceptSurvey(confession: IConfession & {survey: ISurvey}, entryBody: string) {
+	return new Promise((resolve, reject) => {
 		uploadAttachment(confession.embed, (result) => {
 			if (!result.success) {
-				return cb({ success: false, response: { message: 'couln\'t upload attachment', status: 'error' } })
+				return Promise.reject({ message: 'Error while trying to upload attachment' })
 			}
 			//its required for some reason
 			//otherwise CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
@@ -97,32 +97,19 @@ export function acceptSurvey(confession, user, cb) {
 			}, async function(err, response, body) {
 				let entryId
 				if (err) {
-					return cb({ success: false, response: { message: 'Wykop umar', status: 'error' } })
+					return reject({ message: 'Error while trying to make request to wykop' })
 				}
 				if (!(body.substr(0, 8) === 'for(;;);')) {
-					return cb({ success: false, relogin: true, response: { message: 'Session expired, reloging' } })
+					return reject({ message: 'Error wykop returned malformed response' })
 				}
 				try {
 					entryId = body.match(idRegex)[1]
 				} catch (e) {
 					let flag;
 					(body.search('Sesja') > -1) ? flag = true : flag = false
-					return cb({ success: false, relogin: flag, response: { message: body, status: 'error' } })
+					return reject({ relogin: true, message: 'Sesja wygasła' })
 				}
-				const action = await createAction(user._id, ActionType.ACCEPT_ENTRY).save()
-				confession.actions.push(action)
-				confession.status = 1
-				confession.addedBy = user.username
-				confession.entryID = entryId
-				confession.save((err) => {
-					if (err) {
-						return cb({
-							success: false,
-							response: { message: 'couln\'t save confession', status: 'error' },
-						})
-					}
-					return cb({ success: true, response: { message: 'Entry added: ' + entryId, status: 'success' } })
-				})
+				return resolve({ id: entryId })
 			})
 		})
 	})

@@ -4,6 +4,7 @@ import { createAction, ActionType } from '../controllers/actions'
 import archiveModel from '../models/archive'
 import logger from '../logger'
 import { CommentUpvoter } from 'wypokjs/dist/models/Upvoter'
+import { IConfession } from '../models/confession'
 
 export const getFollowers = (notificationCommentId): Promise<CommentUpvoter[]> => {
 	if (!Number.isInteger(notificationCommentId)) {
@@ -43,26 +44,8 @@ export const deleteEntryComment = (entryCommentId) => {
 
 export const sendPrivateMessage = (receiver, body) => service.Pm.SendMessage(receiver, body)
 
-//TODO: refactor to return promise
-export const acceptConfession = (confession, user, cb) => {
-	bodyBuildier.getEntryBody(confession, user, (entryBody) => {
-		service.Entries.Add({ body: entryBody, embed: confession.embed })
-			.then(async (response) => {
-				confession.entryID = response.id
-				const action = await createAction(user._id, ActionType.ACCEPT_ENTRY).save()
-				confession.actions.push(action)
-				confession.status = 1
-				confession.addedBy = user.username
-				confession.save((err) => {
-					if (err) { return cb({ success: false, response: { message: err } }) }
-					cb({ success: true, response: { message: 'Entry added', entryID: response.id, status: 'success' } })
-				})
-			})
-			.catch(err => {
-				logger.error(err)
-				return cb({ success: false, response: { message: err.toString(), status: 'warning' } })
-			})
-	})
+export const acceptConfession = (confession: IConfession, entryBody: string) => {
+	return service.Entries.Add({ body: entryBody, embed: confession.embed })
 }
 
 //TODO: refactor to use promise

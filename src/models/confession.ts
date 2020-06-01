@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { IAction } from './action'
+import { ISurvey } from './survey'
 const Schema = mongoose.Schema
 
 export enum ConfessionStatus{
@@ -21,7 +22,7 @@ export interface IConfession extends mongoose.Document {
 	remotePort: string
 	actions: IAction[]
 	converations: any[]
-	survey: string
+	survey: string|ISurvey
 	createdAt: Date
 	updatedAt: Date
 }
