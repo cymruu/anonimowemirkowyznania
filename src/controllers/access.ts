@@ -1,6 +1,6 @@
 const permissions = [
 	'addEntry', 'deleteEntry', 'addReply', 'deleteReply', 'setStatus', 'viewDetails', 'updateTags', 'accessPanel',
-	'accessMessages', 'accessModsList', 'canChangeUserPermissions', 'viewIP',
+	'accessMessages', 'accessModsList', 'canChangeUserPermissions', 'viewIP', 'accessDonations', 'addDonations',
 ]
 
 const permissionObject = {}

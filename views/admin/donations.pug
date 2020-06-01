@@ -1,0 +1,14 @@
+extends ./base.pug
+block content
+  .container
+    h3 Dodaj donacje
+    form#confession(method="post")
+        input(type="number", name="amount")
+        input(name="message")
+        button(type="submit") Wyślij
+
+    h4 Lista donacji
+    .row
+        ul
+        each donate, index in donateList 
+          li #{donate.amount} - #{donate.message} - #{donate.added}

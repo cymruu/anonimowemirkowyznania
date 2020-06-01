@@ -10,6 +10,7 @@ import replyModel from './models/reply'
 import userModel from './models/user'
 import logger from './logger'
 import { RequestWithUser } from './utils'
+import DonationModel from './models/donation'
 //authoriztion
 adminRouter.get('/login', (req: RequestWithUser, res) => {
 	res.render('./admin/login.pug', { user: {} })
@@ -98,6 +99,21 @@ adminRouter.get('/messages/', accessMiddleware('accessMessages'), (req: RequestW
 			if (err) { return res.send(err) }
 			res.render('./admin/messages.pug', { user: req.user, conversations })
 		})
+})
+adminRouter.get('/donations', accessMiddleware('accessDonations'), (req: RequestWithUser, res) => {
+	DonationModel.find({}).then(donateList => {
+		res.render('./admin/donations.pug', {
+			user: req.user,
+			donateList,
+		})
+	}, err => {
+		res.json({ err })
+	})
+})
+adminRouter.post('/donations', accessMiddleware('addDonations'), async (req: RequestWithUser, res) => {
+	const donation = new DonationModel(req.body)
+	await donation.save()
+	res.redirect('./donations')
 })
 adminRouter.get('/mods/', accessMiddleware('accessModsList'), (req: RequestWithUser, res) => {
 	userModel.find({}, { username: 1, flags: 1 }).lean().then(userList => {

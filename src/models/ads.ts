@@ -14,7 +14,7 @@ export interface IAd extends mongoose.Document {
 }
 
 interface IAdModel extends Model<IAd> {
-	random(cb)
+	random(): Promise<IAd>
 }
 
 
@@ -32,13 +32,10 @@ const advertismentSchema = new Schema({
 	out: String,
 })
 
-advertismentSchema.statics.random = function(callback) {
-	this.countDocuments({ active: true }, function(err, count) {
-		if (err) {
-			return callback(err)
-		}
+advertismentSchema.statics.random = function(): Promise<IAd> {
+	return this.countDocuments({ active: true }).then(count => {
 		const rand = Math.floor(Math.random() * count)
-		this.findOne({ active: true }, 'name captions out').skip(rand).exec(callback)
-	}.bind(this))
+		return this.findOne({ active: true }, 'name captions out').skip(rand)
+	})
 }
 export default mongoose.model<IAd, IAdModel>('advertisments', advertismentSchema)
