@@ -2,11 +2,13 @@ extends ./base.pug
 block content
   .alert.alert-success
     strong Dodano! &nbsp;
-    | Wyznanie pojawi się na mikroblogu po zaakceptowaniu
+    | Wyznanie pojawi się na mikroblogu po zaakceptowaniu. Na mikroblogu łatwo będziesz mógl je znaleźć pod tagiem 
+    a(href=`http://wykop.pl/tag/${confession._id}` target="_blank")  #{confession._id}
     br
     | Kod autoryzacji: <strong>#{confession.auth}</strong> (dzięki niemu będziesz mogł odpowiadać w swoim wpisie jako OP).
-    | Pod tym linkiem mozesz przeglądać co dzieje się z twoim wyzaniem i jakie akcje zostały podjęte, mozesz takze czytac wiadomosci prywatne, jesli jakies się pojawią.
-    b  Pamiętaj kod jest tajny i jeśli dostanie się w ręce osob trzecich uzyskaja dostep do twoich prywatnych wiadomosci i beda mogly odpowiadac w twoim imieniu
+    b  Pamiętaj kod jest tajny, udostępnienie go spowoduje że każdy będzie mógł odpowiadać jako OP i zobaczyć prywatne konwersacje.
+    | Na stronie którą teraz widzisz pojawią się akcje moderatora dotyczące tego wyznania, oraz lista prywatnych wiadomości wysłanych do Ciebie. Jeśli chcesz odpowiadać jako OP,
+    | lub spodziewasz się otrzymać prywatne wiadomości to może warto dodać tę stronę do zakładek.
   .panel.panel-default
     .panel-heading
       |Wpis
@@ -35,12 +37,12 @@ block content
         |  #{action.time}
   h3 Konwersacje
   ul.list-group
-    if confession.conversations
+    if confession.conversations.length
       each conversation, index in confession.conversations
           li.list-group-item
             a(href=`../../conversation/${conversation}/${confession.auth}`) #{conversation._id}
     else
-      p Nie masz jeszcze zadnych konwersacji
+      p Brak konwersacji do tego wyznania
 block script
   script(type="text/javascript").
     var cid = '#{confession._id}';
