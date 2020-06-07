@@ -7,8 +7,12 @@ if (typeof (PhusionPassenger) !== 'undefined') {
 	PhusionPassenger.configure({ autoInstall: false })
 	_port = 'passenger'
 }
+import config from './config'
 import http from 'http'
 import express from 'express'
+import Stripe from 'stripe'
+const stripe = new Stripe(config.stripe.secret,
+	{ apiVersion: '2020-03-02' })
 const app = express()
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
@@ -157,6 +161,29 @@ app.get('/contact', (req, res) => {
 })
 app.get('/donate', (req, res) => {
 	res.render('donate')
+})
+app.get('/donate/success', (req, res) => {
+	res.render('donate_success')
+})
+app.post('/donate', async (req, res) => {
+	let amount = req.body.amount === 'custom' ? req.body['custom-amount'] : req.body.amount
+	amount = Number(amount) * 100
+	try {
+		const paymentIntent = await stripe.paymentIntents.create({
+			amount,
+			currency: 'pln',
+			payment_method_types: ['p24'],
+			receipt_email: req.body.email,
+		})
+		res.render('donate', {
+			client_secret: paymentIntent.client_secret,
+			email: req.body.email,
+			stripe_pub: config.stripe.publishable,
+			return_url: `${config.siteURL}/donate/success`,
+		})
+	} catch (error) {
+		res.redirect('/donate')
+	}
 })
 app.get('/link/:linkId/:from', function(req, res) {
 	advertismentModel.findOne({ _id: req.params.linkId }, function(err, ad) {

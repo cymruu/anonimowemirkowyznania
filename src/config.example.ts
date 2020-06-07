@@ -13,4 +13,8 @@ export default {
 	mongoURL: 'mongodb://username:password@host/database_name',
 	secret: 'secret_for_signing_jwt', //website's secret key,
 	websocketPort: 8090, //port on which a websockets server will work
+	stripe: {
+		publishable: '',
+		secret: '',
+	},
 }

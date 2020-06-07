@@ -9,7 +9,8 @@ html( lang="pl" )
         link(href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css", rel="stylesheet")
         link(rel="icon", type="image/png", href="./images/pepe.png")
         script(src="https://unpkg.com/jquery@3.5.0/dist/jquery.js")
-        script(src="")
+        block headscripts
+        block headstyle
         body
           include ./menu.pug
           .container
