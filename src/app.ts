@@ -182,6 +182,7 @@ app.post('/donate', async (req, res) => {
 			return_url: `${config.siteURL}/donate/success`,
 		})
 	} catch (error) {
+		logger.error(JSON.stringify(error))
 		res.render('donate', { error: error.message })
 	}
 })
