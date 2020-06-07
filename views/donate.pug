@@ -19,7 +19,7 @@ block content
     |Roczny koszt utrzymania Anonimowych Mirko Wyznań, wynosi 235zł. Jeśli chcesz wesprzeć projekt, możesz przekazać donację na tej stronie.
     br
     br
-    b Przelewy24 (BLIK)
+    h4 Przelewy24 (BLIK)
     form(method="post")#payment-form
         .form-group
             label(for='email') Email 
@@ -52,8 +52,7 @@ block content
             input.form-control#custom-amount(name='custom-amount', type='number', min="0")
         button.btn.btn-large.btn-success#submit-button Przekaż darowiznę
     br
-    br
-    b PayPal
+    h4 PayPal
     form(action='https://www.paypal.com/cgi-bin/webscr' method='post' target='_top')
         input(type='hidden' name='cmd' value='_s-xclick')
         input(type='hidden' name='hosted_button_id' value='JAM3N3Y8UZ7DY')
@@ -67,7 +66,7 @@ block script
             const customAmountInput = document.getElementById('custom-amount')
             const customAmountRadio = document.getElementById('custom-amount-radio')
             customAmountInput.onclick = ()=>{
-            customAmountRadio.checked = true
+                customAmountRadio.checked = true
             }
 
             var stripe = Stripe('#{stripe_pub}');
