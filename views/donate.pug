@@ -8,6 +8,9 @@ block content
     if client_secret
         .alert.alert-success
             strong Zachwile zostaniesz przekierowany na stronę płatności. Dziękujemy za wsparcie AMW
+    if error
+        .alert.alert-danger
+            | #{error}
     p.info
     |Dziękuję za zainteresowałeś się wsparciem Anonimowych Mirko Wyznań. Przekazana donacja wraz z wiadomością zostanie dodana pod kolejnym dodanym wpisem po zaakceptowaniu.
     |Roczny koszt utrzymania Anonimowych Mirko Wyznań, wynosi 235zł. Jeśli chcesz wesprzeć projekt, możesz przekazać donację na tej stronie.
@@ -43,7 +46,7 @@ block content
             input.form-check-input(type='radio' id="amount4" name='amount' value='custom')
             label.form-check-label(for='amount4')
                 | Inna kwota
-            input.form-control#custom-amount(name="custom-amount", type="number")
+            input.form-control#custom-amount(name='custom-amount', type='number', min="0")
         #error-message(role='alert')
         button.btn.btn-large.btn-success#submit-button Przekaż darowiznę
     br
@@ -56,7 +59,7 @@ block content
     |Jeśli chcesz wesprzeć projekt w inny sposób - 
     a(href='/contact') napisz!
 block headscripts
-    script(src="https://js.stripe.com/v3/")
+    script(src='https://js.stripe.com/v3/')
 block script
         script(type='text/javascript').
             var stripe = Stripe('#{stripe_pub}');

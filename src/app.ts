@@ -182,7 +182,7 @@ app.post('/donate', async (req, res) => {
 			return_url: `${config.siteURL}/donate/success`,
 		})
 	} catch (error) {
-		res.redirect('/donate')
+		res.render('donate', { error: error.message })
 	}
 })
 app.get('/link/:linkId/:from', function(req, res) {
