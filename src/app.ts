@@ -32,6 +32,7 @@ import aliasGenerator from './controllers/aliases'
 import * as surveyController from './controllers/survey'
 import crypto from 'crypto'
 import logger from './logger'
+import DonationIntent from './models/donationIntent'
 
 app.enable('trust proxy')
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -175,6 +176,16 @@ app.post('/donate', async (req, res) => {
 			payment_method_types: ['p24'],
 			receipt_email: req.body.email,
 		})
+		const localIntent = new DonationIntent({
+			intentId: paymentIntent.id,
+			email: req.body.email,
+			username: req.body.username,
+			message: req.body.message,
+			amount,
+		})
+		localIntent.save().then().catch((err => {
+			logger.error(err.toString())
+		}))
 		res.render('donate', {
 			client_secret: paymentIntent.client_secret,
 			email: req.body.email,
