@@ -11,6 +11,18 @@ block content
         input(name="message", id="message")
         button(type="submit") Wyślij
 
+    h4 Donation intents
+    .row
+        ul
+        each intent, index in donationIntents 
+          li
+            b Amount:
+            | #{intent.amount}  
+            b Username:
+            | #{intent.username}: #{intent.message} 
+            b Id: 
+            | #{intent.intentId} 
+
     h4 Lista donacji
     .row
         ul

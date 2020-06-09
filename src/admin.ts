@@ -11,6 +11,7 @@ import userModel from './models/user'
 import logger from './logger'
 import { RequestWithUser } from './utils'
 import DonationModel from './models/donation'
+import donationIntent from './models/donationIntent'
 //authoriztion
 adminRouter.get('/login', (req: RequestWithUser, res) => {
 	res.render('./admin/login.pug', { user: {} })
@@ -101,13 +102,14 @@ adminRouter.get('/messages/', accessMiddleware('accessMessages'), (req: RequestW
 		})
 })
 adminRouter.get('/donations', accessMiddleware('accessDonations'), (req: RequestWithUser, res) => {
-	DonationModel.find({}).then(donateList => {
+	Promise.all([DonationModel.find({}), donationIntent.find({})]).then(([donateList, donationIntents]) => {
 		res.render('./admin/donations.pug', {
 			user: req.user,
 			donateList,
+			donationIntents,
 		})
-	}, err => {
-		res.json({ err })
+	}).catch(err => {
+		res.json(err)
 	})
 })
 adminRouter.post('/donations', accessMiddleware('addDonations'), async (req: RequestWithUser, res) => {
