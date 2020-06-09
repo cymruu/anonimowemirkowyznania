@@ -1,9 +1,11 @@
 import request from 'request'
+import axios, { AxiosInstance } from 'axios'
 import config from '../config'
 import { createAction, ActionType } from './actions'
 import surveyModel, { ISurvey } from '../models/survey'
 import bodyBuildier from './bodyBuildier'
 import { IConfession } from 'src/models/confession'
+import qs from 'qs'
 
 const loginEndpoint = 'https://www.wykop.pl/zaloguj/'
 // const addEntryEndpoint = 'http://www.wykop.pl/xhr/entry/create/';
@@ -16,6 +18,7 @@ const embedHashRegex = /"hash":"([A-Za-z0-9]{32})/
 const wykopSession = request.jar()
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0'
 let hash
+
 export function validateSurvey(survey) {
 	if (survey.question.length < 5) {
 		return { success: false, response: { message: 'Pytanie jest za krotkie.' } }
@@ -126,4 +129,44 @@ const uploadAttachment = function(url, cb) {
 		return cb({ success: true, hash: hash })
 	})
 }
-wykopLogin()
+// wykopLogin()
+
+
+class WykopHTTPClient {
+	private _http: AxiosInstance
+	constructor(private username, private password: string) {
+		this._http = axios.create({
+			baseURL: 'https://wykop.pl',
+			timeout: 5000,
+			headers: {
+				'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
+			},
+		})
+		delete this._http.defaults.headers.common['Accept']
+		this.login()
+	}
+	private login() {
+		const formData = qs.stringify({
+			user: {
+				username: this.username,
+				password: this.password,
+			},
+		})
+		this._http.post(loginEndpoint,
+			formData,
+			{
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+			})
+			.then(res => {
+				if (res.status === 302) {
+					console.log('loggedIn')
+				}
+			}).catch(err => {
+				console.log(err)
+			})
+	}
+}
+
+const c = new WykopHTTPClient(config.wykopClientConfig.username, config.wykopClientConfig.password)
