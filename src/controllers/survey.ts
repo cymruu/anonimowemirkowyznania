@@ -3,9 +3,10 @@ import axios, { AxiosInstance } from 'axios'
 import config from '../config'
 import { createAction, ActionType } from './actions'
 import surveyModel, { ISurvey } from '../models/survey'
+import confession, { IConfession } from '../models/confession'
 import bodyBuildier from './bodyBuildier'
-import { IConfession } from 'src/models/confession'
 import qs from 'qs'
+import logger from '../logger'
 
 const loginEndpoint = 'https://www.wykop.pl/zaloguj/'
 // const addEntryEndpoint = 'http://www.wykop.pl/xhr/entry/create/';
@@ -16,7 +17,7 @@ const idRegex = /data-id=\\"(\d{8})\\"/
 const hashRegex = /"([a-f0-9]{32}-\d{10})"/
 const embedHashRegex = /"hash":"([A-Za-z0-9]{32})/
 const wykopSession = request.jar()
-const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0'
+const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0'
 let hash
 
 export function validateSurvey(survey) {
@@ -134,39 +135,70 @@ const uploadAttachment = function(url, cb) {
 
 class WykopHTTPClient {
 	private _http: AxiosInstance
+	private hash: string
+
 	constructor(private username, private password: string) {
 		this._http = axios.create({
-			baseURL: 'https://wykop.pl',
+			baseURL: 'https://www.wykop.pl', //"www" in url is essential
 			timeout: 5000,
 			headers: {
-				'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
+				'User-Agent': userAgent,
 			},
+
 		})
-		delete this._http.defaults.headers.common['Accept']
 		this.login()
 	}
 	private login() {
 		const formData = qs.stringify({
-			user: {
-				username: this.username,
-				password: this.password,
-			},
+			'user[username]': this.username,
+			'user[password]': this.password,
 		})
-		this._http.post(loginEndpoint,
+		this._http.post('/zaloguj',
 			formData,
 			{
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
 				},
+				maxRedirects: 0,
+				validateStatus: (status) => {
+					return status >= 200 && status < 303
+				},
 			})
 			.then(res => {
 				if (res.status === 302) {
-					console.log('loggedIn')
+					const cookies: string[] = res.headers['set-cookie']
+					const cookieHeader = cookies.map(x => x.split(';')[0]).join('; ')
+					this._http.defaults.headers.Cookie = cookieHeader
+					logger.debug(`Saving authorization cookies ${cookieHeader}`)
+					logger.info('HTTP client logged in')
+				} else {
+					throw new Error('Wykop didn\'t redirect')
 				}
-			}).catch(err => {
-				console.log(err)
 			})
+			.then(() => {
+				return this.getHash()
+			})
+			.catch(err => {
+				logger.warn(`HTTP client failed login: ${err.toString()}`)
+			})
+
+	}
+	public acceptSurvey(confession: IConfession & {survey: ISurvey}, entryBody: string) {
+		const formData = {
+			body: entryBody,
+			'survey[question]': confession.survey.question,
+			'survey[answers]': confession.survey.answers.map(x => x),
+		}
+		this._http.post(`/ajax2/wpis/dodaj/hash/${this.hash}`, qs.stringify(formData)).then(res => {
+			console.log(res.data)
+		}).catch(err => {
+			logger.error('HTTP client request failed:')
+		})
+	}
+	private async getHash() {
+		return this._http.get('/info').then(res => {
+			this.hash = res.data.match(hashRegex)[1]
+			logger.debug(`Fetched authorization hash ${this.hash}`)
+		})
 	}
 }
-
-const c = new WykopHTTPClient(config.wykopClientConfig.username, config.wykopClientConfig.password)
