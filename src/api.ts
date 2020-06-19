@@ -15,6 +15,7 @@ import logger from './logger'
 import { guardMiddleware } from './utils/apiGuard'
 import bodyBuilder from './controllers/bodyBuildier'
 import donationModel from './models/donation'
+import WykopHTTPClient from './service/WykopHTTPClient'
 
 //TODO: move connnection to separate file
 mongoose.connect(config.mongoURL,
@@ -63,14 +64,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 			const entryBody = await bodyBuilder.getEntryBody(confession, req.user, donationsToShare)
 			let promise
 			if (confession.survey) {
-				promise = surveyController.acceptSurvey(confession as any, entryBody).catch(err => {
-					logger.error(err.message)
-					if (err.relogin) {
-						logger.info('Relogin wykop HTTP client')
-						surveyController.wykopLogin()
-					}
-					return Promise.reject(err.message)
-				})
+				promise = WykopHTTPClient.acceptSurvey(confession as any, entryBody)
 			} else {
 				promise = wykopController.acceptConfession(confession, entryBody)
 			}
