@@ -44,8 +44,8 @@ export const deleteEntryComment = (entryCommentId) => {
 
 export const sendPrivateMessage = (receiver, body) => service.Pm.SendMessage(receiver, body)
 
-export const acceptConfession = (confession: IConfession, entryBody: string) => {
-	return service.Entries.Add({ body: entryBody, embed: confession.embed })
+export const acceptConfession = (confession: IConfession, entryBody: string, adultmedia: boolean = false) => {
+	return service.Entries.Add({ body: entryBody, embed: confession.embed, adultmedia })
 }
 
 //TODO: refactor like addEntry
