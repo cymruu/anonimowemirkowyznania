@@ -75,12 +75,12 @@ class WykopHTTPClientClass {
 				.then(res => {
 					const entryId = res.data.match(idRegex)[1]
 					return { id: entryId }
-				}).catch(err => {
-					logger.error(`HTTP client request failed: ${err.toString}`)
-					logger.info('relogin HTTP client')
-					this.login()
-					throw err
 				})
+		}).catch(err => {
+			logger.error(`HTTP client request failed: ${err.toString}`)
+			logger.info('relogin HTTP client')
+			this.login()
+			throw err
 		})
 	}
 	private uploadAttachment(embed: string) {
