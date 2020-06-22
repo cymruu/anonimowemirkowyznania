@@ -13,7 +13,7 @@ export interface IConfession extends mongoose.Document {
 	text: string
 	embed: string
 	auth: string
-	tags: string[]
+	tags: [string, number][]
 	entryID: number
 	status: number
 	addedBy:string

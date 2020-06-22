@@ -62,11 +62,12 @@ apiRouter.route('/confession/accept/:confession_id').get(
 			}
 			const donationsToShare = await donationModel.find({ added: false })
 			const entryBody = await bodyBuilder.getEntryBody(confession, req.user, donationsToShare)
+			const adultMedia = confession.tags.map(x => x[0]).includes('#nsfw')
 			let promise
 			if (confession.survey) {
-				promise = WykopHTTPClient.acceptSurvey(confession as any, entryBody)
+				promise = WykopHTTPClient.acceptSurvey(confession as any, entryBody, adultMedia)
 			} else {
-				promise = wykopController.acceptConfession(confession, entryBody)
+				promise = wykopController.acceptConfession(confession, entryBody, adultMedia)
 			}
 			promise.then(async (response) => {
 				confession.entryID = response.id

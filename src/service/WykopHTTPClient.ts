@@ -60,12 +60,13 @@ class WykopHTTPClientClass {
 			})
 
 	}
-	public acceptSurvey(confession: IConfession & {survey: ISurvey}, entryBody: string) {
+	public acceptSurvey(confession: IConfession & {survey: ISurvey}, entryBody: string, adultMedia: boolean) {
 		const formData = {
 			body: entryBody,
 			'survey[question]': confession.survey.question,
 			'survey[answers]': confession.survey.answers.map(x => x),
 			attachment: undefined,
+			...adultMedia ? { adultmedia: 'on' } : undefined,
 		}
 		// eslint-disable-next-line max-len
 		const attachmentPromise = confession.embed ? this.uploadAttachment(confession.embed) : Promise.resolve(undefined)
