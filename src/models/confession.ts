@@ -3,7 +3,7 @@ import { IAction } from './action'
 import { ISurvey } from './survey'
 const Schema = mongoose.Schema
 
-export enum ConfessionStatus{
+export enum ConfessionStatus {
 	DECLINED = -1,
 	WAITING,
 	ACCEPTED,

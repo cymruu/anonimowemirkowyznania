@@ -162,7 +162,7 @@ apiRouter.route('/confession/delete/:confession_id')
 				if (err) { return res.sendStatus(500) }
 				wykopController.deleteEntry(confession.entryID).then(async (result) => {
 					const action = await createAction(req.user._id, ActionType.DELETE_ENTRY).save()
-					confession.status = -1
+					confession.status = ConfessionStatus.DECLINED
 					confession.actions.push(action)
 					confession.save((err) => {
 						if (err) { return res.json({ success: false, response: { message: err } }) }
@@ -250,7 +250,7 @@ apiRouter.route('/reply/delete/:reply_id/').get(
 					`reply_id: ${req.params.reply_id}`,
 				).save()
 				reply.parentID.actions.push(action)
-				reply.status = 0
+				reply.status = ConfessionStatus.DECLINED,
 				reply.commentID = null
 
 				Promise.all([reply.save(), reply.parentID.save()]).then(_ => {
