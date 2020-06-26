@@ -104,6 +104,8 @@ block content
         input.form-control(type="text", name="alias", placeholder="Pseudonim (wpisz kod potwierdzający, a zostaniesz oznaczony jako OP)" maxlength=32)
       .form-group
         input.form-control(type="url", name="embed", placeholder="URL do obrazka", maxlength=3000)
+        small.form-text.text-muted 
+          | Bezpośredni link do obrazka (zakończony rozszerzeniem pliku np. https://i.imgur.com/3qajQcs.png), lub link do youtube, streamable.
       .form-group
         button.btn.btn-large.btn-success(type="submit") Wyślij
       if (participants && participants.length > 0)
