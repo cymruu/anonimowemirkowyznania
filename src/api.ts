@@ -98,7 +98,6 @@ apiRouter.route('/confession/accept/:confession_id').get(
 					)
 				})
 			}).catch(err => {
-				logger.error(err)
 				return res.json(
 					{ success: false, response: {
 						message: err.toString(), status: 'error' },
@@ -174,7 +173,6 @@ apiRouter.route('/confession/delete/:confession_id')
 						).then()
 					})
 				}).catch(err => {
-					logger.error(err)
 					return res.json({ success: false, response: { message: err.toString() } })
 				})
 			})
@@ -204,9 +202,12 @@ apiRouter.route('/reply/accept/:reply_id').get(
 					},
 				})
 			}
-			wykopController.acceptReply(reply, req.user, function(result) {
-				if (result.success) { statsModel.addAction('replies_added', req.user.username) }
-				return res.json(result)
+			wykopController.acceptReply(reply, req.user).then(reply => {
+				res.json({ success: true, response: {
+					message: 'Reply added', commentID: reply.commentID, status: 'success' },
+				})
+			}).catch(err => {
+				res.json({ success: false, response: { message: err.toString() } })
 			})
 		})
 	})
@@ -268,11 +269,10 @@ apiRouter.route('/reply/delete/:reply_id/').get(
 					})
 				})
 			}).catch(err => {
-				logger.error(err)
 				return res.json({ success: false, response: { message: err.toString(), status: 'warning' } })
 			})
 		}).catch(err => {
-			logger.error(err)
+			logger.error(err.toString())
 			res.json({ success: false, response: {
 				message: 'Nie można usunąć odpowiedzi. Wystąpił błąd', status: 'error' },
 			})

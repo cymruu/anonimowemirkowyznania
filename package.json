@@ -1,6 +1,6 @@
 {
   "name": "anonimowemirkowyznania",
-  "version": "5.0.0",
+  "version": "5.0.5",
   "description": "AnonimoweMirkoWyznania #anonimowemirkowyznania",
   "main": "app.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "pug": "^2.0.4",
     "winston": "^3.2.1",
     "ws": "^7.2.3",
-    "wypokjs": "^0.1.7"
+    "wypokjs": "^0.1.8"
   },
   "repository": {
     "type": "git",

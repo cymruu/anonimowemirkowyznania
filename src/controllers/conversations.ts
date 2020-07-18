@@ -25,9 +25,7 @@ export function createNewConversation(parentObject, cb) {
 			wykopController.sendPrivateMessage(
 				parentObject.username,
 				`Nowa wiadomość na anonimowychmirkowyznaniach ${config.siteURL}/admin/messages`,
-			).then().catch(err => {
-				logger.error(err)
-			})
+			).then()
 			return cb(null, conversation._id)
 		}
 	})

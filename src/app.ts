@@ -102,8 +102,7 @@ app.get('/reply/:confessionid', (req, res) => {
 		if (err) { return res.sendStatus(404) }
 		wykopController.getParticipants(confession.entryID).then(participants => {
 			res.render('reply', { confession, participants })
-		}).catch(err => {
-			logger.error(err)
+		}).catch(_ => {
 			res.render('reply', { confession, participants: [] })
 		})
 	})
@@ -145,9 +144,8 @@ app.get('/followers/:confessionid', (req, res) => {
 			.then(result => {
 				res.send(result.map(x => `@${x.author.login}`).join(', '))
 			})
-			.catch(err => {
-				logger.error(err)
-				res.status(500).send('cos poszlo nie tak')
+			.catch(_ => {
+				res.status(500).send('coś poszło nie tak')
 			})
 	})
 })

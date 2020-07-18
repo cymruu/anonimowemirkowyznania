@@ -76,6 +76,9 @@ class WykopHTTPClientClass {
 				.then(res => {
 					const entryId = res.data.match(idRegex)[1]
 					return { id: entryId }
+				}).catch(err => {
+					logger.error(err.toString())
+					throw err
 				})
 		}).catch(err => {
 			logger.error(`HTTP client request failed: ${err.toString}`)

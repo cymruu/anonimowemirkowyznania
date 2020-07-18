@@ -11,7 +11,7 @@ export interface IReply extends mongoose.Document {
 	parentID: IConfession
 	commentID: number
 	status: number
-	addeBy: string
+	addedBy: string
 	IPAdress: string
 	remotePort: string
 	createdAt: Date
