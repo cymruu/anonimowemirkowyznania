@@ -24,10 +24,9 @@
     "md5": "^2.2.1",
     "mongoose": "^5.9.7",
     "pug": "^2.0.4",
-    "request": "^2.88.0",
     "winston": "^3.2.1",
     "ws": "^7.2.3",
-    "wypokjs": "^0.1.5"
+    "wypokjs": "^0.1.7"
   },
   "repository": {
     "type": "git",
