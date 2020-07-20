@@ -183,6 +183,7 @@ app.post('/donate', async (req, res) => {
 		})
 		localIntent.save().then().catch((err => {
 			logger.error(err.toString())
+			throw err
 		}))
 		res.render('donate', {
 			client_secret: paymentIntent.client_secret,

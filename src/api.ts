@@ -170,7 +170,7 @@ apiRouter.route('/confession/delete/:confession_id')
 						//TODO: handle response
 						wykopController.sendPrivateMessage(
 							'sokytsinolop', `${req.user.username} usunął wpis \n ${confession.entryID}`,
-						).then()
+						).then().catch(_ => {})
 					})
 				}).catch(err => {
 					return res.json({ success: false, response: { message: err.toString() } })
@@ -207,7 +207,7 @@ apiRouter.route('/reply/accept/:reply_id').get(
 					message: 'Reply added', commentID: reply.commentID, status: 'success' },
 				})
 			}).catch(err => {
-				res.json({ success: false, response: { message: err.toString() } })
+				res.json({ success: false, response: { message: err.toString() }, status: 'error' })
 			})
 		})
 	})
