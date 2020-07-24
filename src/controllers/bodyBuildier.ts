@@ -15,7 +15,13 @@ const getBody = (confession:IConfession, user:IUser) => {
 }
 
 async function getEntryBody(confession, user, donationsToShare: IDonation[]) {
-	let entryBody = tagController.trimTags(getBody(confession, user), confession.tags)
+	let entryBody = donationsToShare.length ? 'Ostatnie donacje:' : ''
+	for (const donation of donationsToShare) {
+		const donor = donation.from || 'Anonimowy'
+		const message = donation.message || '...'
+		entryBody += `\n**${donor}**: ${message} **${donation.amount}zł** dziękuję!\n`
+	}
+	entryBody += tagController.trimTags(getBody(confession, user), confession.tags)
 	const [randomAd, totalAmountDonated] = await Promise.all([adsModel.random(), donationModel.totalDonationSum()])
 	if (randomAd) {
 		const caption = randomAd.captions[Math.floor(Math.random() * randomAd.captions.length)]
@@ -25,11 +31,7 @@ async function getEntryBody(confession, user, donationsToShare: IDonation[]) {
 	const yearsFounded = Math.trunc(totalAmountDonated / 235)
 	const donationsForCurrent = totalAmountDonated % 235
 	entryBody += `\n\`${makeProgressBar(donationsForCurrent)}\``
-	for (const donation of donationsToShare) {
-		const donor = donation.from || 'Anonimowy'
-		const message = donation.message || '...'
-		entryBody += `\n**${donor}**: ${message} **${donation.amount}zł** dziękuję!`
-	}
+
 	if (yearsFounded) {
 		entryBody += `\n Uzbieraliśmy już na ${yearsFounded} lat działania AMW!`
 	}
