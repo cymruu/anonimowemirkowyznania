@@ -12,6 +12,7 @@ import logger from './logger'
 import { RequestWithUser } from './utils'
 import DonationModel from './models/donation'
 import donationIntent from './models/donationIntent'
+import confession from './models/confession'
 //authoriztion
 adminRouter.get('/login', (req: RequestWithUser, res) => {
 	res.render('./admin/login.pug', { user: {} })
@@ -55,16 +56,23 @@ adminRouter.get('/details/:confession_id', accessMiddleware('viewDetails'), (req
 				path: 'actions', options: { sort: { _id: -1 } },
 				populate: { path: 'user', select: 'username' },
 			},
-			{ path: 'survey' }]).exec((err, confession) => {
-			if (err) { return res.send(err) }
+			{ path: 'survey' },
+		])
+		.then(confession => {
 			if (!confession) { return res.sendStatus(404) }
-			confessionModel.find({ IPAdress: confession.IPAdress }, { _id: 1, status: 1 }, function(err, fromSameIP) {
-				if (err) {
-					logger.error(err)
-					fromSameIP = []
-				}
-				res.render('./admin/details.pug', { user: req.user, confession, fromSameIP })
-			})
+			confessionModel.find({ IPAdress: confession.IPAdress }, { _id: 1, status: 1 })
+				.sort({ _id: -1 })
+				.then(fromSameIP => {
+					return [confession, fromSameIP]
+				}).catch(err => {
+					logger.error(err.toString())
+					return [confession, []]
+				}).then(([confession, fromSameIP]) => {
+					res.render('./admin/details.pug', { user: req.user, confession, fromSameIP })
+				})
+		})
+		.catch(err => {
+			logger.error(err.toString())
 		})
 })
 adminRouter
