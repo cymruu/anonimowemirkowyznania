@@ -76,7 +76,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 				confession.status = 1
 				confession.addedBy = req.user.username
 				const saveActions = Promise.all([confession.save(), ...donationsToShare.map(x =>
-					x.update({ added: true },
+					x.updateOne({ added: true },
 					)),
 				])
 				saveActions.then(() => {
@@ -140,12 +140,12 @@ apiRouter.route('/confession/tags/:confession_id/:tag')
 		confessionModel.findById(req.params.confession_id, async (err, confession) => {
 			if (err) { return res.send(err) }
 			const action = await createAction(req.user._id, ActionType.UPDATED_TAGS, req.params.tag).save()
-			confession.update({
+			confession.updateOne({
 				$set: {
 					tags: tagController.prepareArray(confession.tags, req.params.tag),
 				},
 				$push: { actions: action._id },
-			}).then(success => {
+			}).then(result => {
 				res.json({ success: true, response: { message: 'Tagi zaaktualizowano', status: 'success' } })
 			}, function(err) {
 				return res.json({ success: false, response: { message: err } })

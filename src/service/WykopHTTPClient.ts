@@ -74,14 +74,19 @@ class WykopHTTPClientClass {
 			formData.attachment = attachmentHash
 			return this._http.post(`/ajax2/wpis/dodaj/hash/${this.hash}`, qs.stringify(formData))
 				.then(res => {
-					const entryId = res.data.match(idRegex)[1]
+					let entryId
+					try {
+						entryId = res.data.match(idRegex)[1]
+					} catch (e) {
+						throw new Error(res.data)
+					}
 					return { id: entryId }
 				}).catch(err => {
 					logger.error(err.toString())
 					throw err
 				})
 		}).catch(err => {
-			logger.error(`HTTP client request failed: ${err.toString}`)
+			logger.error(`HTTP client request failed: ${err.toString()}`)
 			logger.info('relogin HTTP client')
 			this.login()
 			throw err
@@ -95,8 +100,12 @@ class WykopHTTPClientClass {
 	}
 	private async getHash() {
 		return this._http.get('/info').then(res => {
-			this.hash = res.data.match(hashRegex)[1]
-			logger.debug(`Fetched authorization hash ${this.hash}`)
+			try {
+				this.hash = res.data.match(hashRegex)[1]
+				logger.debug(`Fetched authorization hash ${this.hash}`)
+			} catch (err) {
+				logger.warn(err)
+			}
 		})
 	}
 }
