@@ -3,7 +3,7 @@ import { IAd } from './ads'
 
 export interface IDonation extends mongoose.Document {
 	amount: number,
-	added: boolean,
+	entryID: number,
 	from: string,
 	message: string,
 }
@@ -13,7 +13,7 @@ interface IDonationModel extends Model<IDonation> {
 }
 const donationSchema = new Schema({
 	amount: { type: Number, required: true },
-	added: { type: Boolean, default: false },
+	entryID: { type: Number, default: null },
 	from: String,
 	message: String,
 }, { timestamps: true })

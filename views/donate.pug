@@ -10,13 +10,14 @@ block headstyle
 block content
     if client_secret
         .alert.alert-success
-            strong Zachwile zostaniesz przekierowany na stronę płatności. Dziękujemy za wsparcie AMW
+            strong Zachwile zostaniesz przekierowany na stronę płatności. Dziękujemy za wsparcie inicjatywy.
     if error
         .alert.alert-danger
             | #{error}
     p.info
-    |Dziękuję za zainteresowałeś się wsparciem Anonimowych Mirko Wyznań. Przekazana donacja wraz z wiadomością zostanie dodana pod kolejnym dodanym wpisem po zaakceptowaniu.
-    |Roczny koszt utrzymania Anonimowych Mirko Wyznań, wynosi 235zł. Jeśli chcesz wesprzeć projekt, możesz przekazać donację na tej stronie.
+    | Dziękuję za zainteresowałeś się wsparciem Anonimowych Mirko Wyznań. 
+    | Roczny koszt utrzymania Anonimowych Mirko Wyznań, wynosi 235zł.
+    | Przekazana donacja wraz z wiadomością zostanie dodana w nowym wpisie z konta @AnonimoweMirkoWyznania.
     br
     br
     h4 Przelewy24 (BLIK)
@@ -28,6 +29,8 @@ block content
         .form-group
             label(for='username') Nick
             input.form-control#username(name='username')
+            small.form-text.text-muted Dodaj @ przed nickiem w polu, aby zostać zawołanym do podziękowania dodanego na wykop.
+            br
             small.form-text.text-muted (donacja zostanie podpisana jako "Anonim" jeśli nie wypełnisz tego pola)
         .form-group
             label(for='message') Wiadomość

@@ -12,7 +12,8 @@ import logger from './logger'
 import { RequestWithUser } from './utils'
 import DonationModel from './models/donation'
 import donationIntent from './models/donationIntent'
-import confession from './models/confession'
+import bodyBuildier from './controllers/bodyBuildier'
+import { service } from './wykop'
 //authoriztion
 adminRouter.get('/login', (req: RequestWithUser, res) => {
 	res.render('./admin/login.pug', { user: {} })
@@ -122,9 +123,16 @@ adminRouter.get('/donations', accessMiddleware('accessDonations'), (req: Request
 })
 adminRouter.post('/donations', accessMiddleware('addDonations'), async (req: RequestWithUser, res) => {
 	const donation = new DonationModel(req.body)
-	await donation.save().then(() => {
+	await donation.save().then(async () => {
+		const entryBody = await bodyBuildier.getDonationEntryBody(donation)
+		return service.Entries.Add({ body: entryBody, adultmedia: false })
+	}).then(res => {
+		donation.entryID = res.id
+		return donation.save()
+	}).then(() => {
 		res.redirect('./donations')
 	}).catch(err => {
+		logger.error(err)
 		res.send(err)
 	})
 })

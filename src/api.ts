@@ -60,8 +60,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 					},
 				})
 			}
-			const donationsToShare = await donationModel.find({ added: false })
-			const entryBody = await bodyBuilder.getEntryBody(confession, req.user, donationsToShare)
+			const entryBody = await bodyBuilder.getEntryBody(confession, req.user)
 			const adultMedia = confession.tags.map(x => x[0]).includes('#nsfw')
 			let promise
 			if (confession.survey) {
@@ -75,11 +74,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 				confession.actions.push(action)
 				confession.status = 1
 				confession.addedBy = req.user.username
-				const saveActions = Promise.all([confession.save(), ...donationsToShare.map(x =>
-					x.updateOne({ added: true },
-					)),
-				])
-				saveActions.then(() => {
+				confession.save().then(() => {
 					wykopController.addNotificationComment(confession, req.user)
 					statsModel.addAction('confessions_accepted', req.user.username)
 					return res.json(
