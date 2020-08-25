@@ -18,8 +18,8 @@ export const guardMiddleware = (req, res, next) => {
 			}
 			logger.debug(`Adding ${value} to ModelsBeingProcessed`)
 			modelsBeingProcessed.push(value)
-			res.on('finish', () => {
-				logger.debug('Finish')
+			res.on('close', () => {
+				logger.debug('Close')
 				removeValue(value)
 			})
 		}

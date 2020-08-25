@@ -9,6 +9,6 @@ const logInterceptor = (err: WykopError | AxiosError) => {
 	return err
 }
 
-export const wykop = new Wykop(config.wykopConfig, [logInterceptor])
-export const client = new Client(wykop, config.wykopClientConfig)
+const wykop = new Wykop(config.wykopConfig, [logInterceptor])
+const client = new Client(wykop, config.wykopClientConfig)
 export const service = CreateWykopService(client)

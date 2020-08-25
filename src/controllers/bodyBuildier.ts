@@ -42,7 +42,7 @@ async function getDonationEntryBody(donation: IDonation) {
 	const totalAmountDonated = await donationModel.totalDonationSum()
 	const message = donation.message || '...'
 	let entryBody = '#anonimowemirkodonacje\n Nowa donacja na rzecz #anonimowemirkowyznania\n'
-	entryBody += `\n**${donor}**: ${message} **${donation.amount}zł**\n`
+	entryBody += `\n${donor}: ${message} - ${donation.amount}zł**\n`
 	const yearsFounded = Math.trunc(totalAmountDonated / 235)
 	const donationsForCurrent = totalAmountDonated % 235
 	entryBody += `\n\`${makeProgressBar(donationsForCurrent)}\``
