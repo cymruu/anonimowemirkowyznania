@@ -44,7 +44,7 @@ export class WykopQueue {
 			.then(() => this.processTask())
 			.catch(err => {
 				if (queueTask.attempts < this._attempts) {
-					if (err instanceof WykopError) {
+					if ((err as any) instanceof WykopError) {
 						if (err.errorObject.code === 506) {//limit exceeded
 							this._tasks.push(queueTask)
 							this.stopProcessing()
