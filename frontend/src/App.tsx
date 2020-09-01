@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react';
-import { Link as RouterLink, Router, RouteComponentProps } from '@reach/router'
+import { Link as RouterLink, Router } from '@reach/router'
 import { Index } from './Index';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { AppBar, Toolbar, IconButton, Typography, Button, makeStyles, Link } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+import { Login } from './Login';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,7 +38,7 @@ function App() {
       </AppBar>
       <Router>
         <Index path="/" />
-        {/* <Login path="/login" /> */}
+        <Login path="/login" />
       </Router>
     </Fragment>
   );
