@@ -1,5 +1,5 @@
-import { Button, withStyles, TableRow, TableRowTypeMap } from "@material-ui/core"
-import React, { ReactPropTypes, PropsWithChildren } from "react"
+import { withStyles, TableRow, Theme, fade } from "@material-ui/core"
+import React from "react"
 
 const statusToClass = (status: number) => {
     switch (status) {
@@ -19,14 +19,16 @@ function StyledTableRow(props: any) {
     return <TableRow className={classes[statusToClass(status)]}>{children}</TableRow>
 }
 
-export default withStyles({
+const tableBgOpacity = 0.3
+
+export default withStyles((theme: Theme) => ({
     declined: {
-        backgroundColor: 'green',
+        backgroundColor: fade(theme.palette.error.light, tableBgOpacity),
     },
     pending: {
-        backgroundColor: 'yellow',
+        backgroundColor: fade(theme.palette.warning.light, tableBgOpacity),
     },
     added: {
-        backgroundColor: 'green',
-    }
-})(StyledTableRow)
+        backgroundColor: fade(theme.palette.success.light, tableBgOpacity),
+    },
+}))(StyledTableRow)
