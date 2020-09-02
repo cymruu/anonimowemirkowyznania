@@ -17,6 +17,7 @@ const app = express()
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import apiRouter from './api'
+import apiv2Router from './apiV2'
 import adminRouter from './admin'
 import conversationRouter from './conversation'
 import confessionModel from './models/confession'
@@ -40,6 +41,7 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 app.use(express.static('public'))
 app.use('/api', apiRouter)
+app.use('/api2', apiv2Router)
 app.use('/admin', adminRouter)
 app.use('/conversation', conversationRouter)
 app.use(auth(false))

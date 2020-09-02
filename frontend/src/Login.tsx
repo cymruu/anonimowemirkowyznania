@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { RouteComponentProps } from "@reach/router";
-import { TextField, Container, makeStyles, Button } from "@material-ui/core";
+import { TextField, Container, makeStyles, Button, Snackbar } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     form: {
@@ -11,34 +11,53 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+
 export function Login(props: RouteComponentProps) {
     const classes = useStyles()
-    const [login, setLogin] = useState("")
-    const [password, setPassword] = useState("")
+    const [inputs, setInputs] = useState({
+        username: '',
+        password: ''
+    });
+    const [result, setResult] = useState({ success: undefined, error: undefined })
+    const [open, setOpen] = useState(false);
 
-    useEffect(() => {
-        async function loginUser() {
-            const response = await fetch('api/login', { method: 'post', body: JSON.stringify({ login, password }) })
-            const json = await response.json()
-            console.log(json);
+    const handleClose = (event: React.SyntheticEvent | React.MouseEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
         }
-        loginUser()
-    }, [login, password])
 
-    const handleSubmit = (event: any) => {
-        event.preventDefault();
+        setOpen(false);
+    };
+
+    const loginRequest = useCallback(() => {
+        fetch('/api2/user/login', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(inputs) }).then(async res => {
+            const loginResult = await res.json()
+            setResult(loginResult)
+            if(!loginResult.success){
+                setOpen(true)
+            }
+        })
+    }, [inputs])
+
+    function handleChange(event: any) {
+        const { name, value } = event.target;
+        setInputs(inputs => ({ ...inputs, [name]: value }));
+    }
+    function handleSubmit(event: any) {
+        event.preventDefault()
+        loginRequest()
     }
     return (
         <Container maxWidth="xs">
-            <form noValidate autoComplete="off" className={classes.form} onSubmit={handleSubmit}>
+            <form autoComplete="off" className={classes.form} onSubmit={handleSubmit}>
                 <div>
                     <TextField label="Username" variant="outlined"
                         margin="normal"
                         required
                         fullWidth
-                        name="login"
-                        value={login}
-                        onChange={e => setLogin(e.target.value)}
+                        name="username"
+                        value={inputs.username}
+                        onChange={handleChange}
                     />
                 </div>
                 <div>
@@ -46,9 +65,9 @@ export function Login(props: RouteComponentProps) {
                         margin="normal"
                         required
                         fullWidth
-                        name="login"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
+                        name="password"
+                        value={inputs.password}
+                        onChange={handleChange}
                         type="password"
                     />
                 </div>
@@ -61,6 +80,16 @@ export function Login(props: RouteComponentProps) {
                 >
                     Login
                     </Button>
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={open}
+                    autoHideDuration={6000}
+                    onClose={handleClose}
+                    message={result.error}
+                />
             </form>
         </Container>
     )
