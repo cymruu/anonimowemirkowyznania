@@ -1,6 +1,9 @@
 import React, { useState, useCallback } from "react";
+import { navigate } from "@reach/router";
 import { RouteComponentProps } from "@reach/router";
 import { TextField, Container, makeStyles, Button, Snackbar } from "@material-ui/core";
+
+import HTTPClient from "../service/HTTPClient";
 
 const useStyles = makeStyles((theme) => ({
     form: {
@@ -16,7 +19,7 @@ export function Login(props: RouteComponentProps) {
     const classes = useStyles()
     const [inputs, setInputs] = useState({
         username: '',
-        password: ''
+        password: '',
     });
     const [result, setResult] = useState({ success: undefined, error: undefined })
     const [open, setOpen] = useState(false);
@@ -30,11 +33,14 @@ export function Login(props: RouteComponentProps) {
     };
 
     const loginRequest = useCallback(() => {
-        fetch('/api2/user/login', { method: 'post', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(inputs) }).then(async res => {
+        HTTPClient.post('/users/login', inputs).then(async (res) => {
             const loginResult = await res.json()
             setResult(loginResult)
-            if(!loginResult.success){
+            if (!loginResult.success) {
                 setOpen(true)
+            }
+            if(loginResult.success){
+                navigate('/confessions')
             }
         })
     }, [inputs])

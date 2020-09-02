@@ -16,7 +16,7 @@ export interface IConfession extends mongoose.Document {
 	tags: [string, number][]
 	entryID: number
 	status: number
-	addedBy:string
+	addedBy: string
 	notificationCommentId: number
 	IPAdress: string
 	remotePort: string
