@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "@reach/router";
 import HTTPClient from "../service/HTTPClient";
-import { Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, makeStyles, Button, Container } from "@material-ui/core";
+import { Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Container } from "@material-ui/core";
+import { SuccessButton } from "../components/SuccessButton";
 
 export function Confessions(props: RouteComponentProps) {
     const [confessions, setConfessions] = useState([])
@@ -52,10 +53,10 @@ export function Confessions(props: RouteComponentProps) {
                                     {confession.addedBy}
                                 </TableCell>
                                 <TableCell>
-                                    <Button variant="contained">
+                                    <SuccessButton variant="contained">
                                         Accept
-                                </Button>
-                                <Button variant="contained" color="secondary">
+                                </SuccessButton>
+                                    <Button variant="contained" color="secondary">
                                         Decline
                                 </Button>
                                 </TableCell>
