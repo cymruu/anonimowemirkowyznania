@@ -3,6 +3,7 @@ import { RouteComponentProps } from "@reach/router";
 import HTTPClient from "../service/HTTPClient";
 import { Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Container } from "@material-ui/core";
 import { SuccessButton } from "../components/SuccessButton";
+import StyledTableRow from "../components/StyledTableRow";
 
 export function Confessions(props: RouteComponentProps) {
     const [confessions, setConfessions] = useState([])
@@ -33,7 +34,7 @@ export function Confessions(props: RouteComponentProps) {
                     </TableHead>
                     <TableBody>
                         {confessions.map((confession: any) => (
-                            <TableRow key={confession._id} hover>
+                            <StyledTableRow key={confession._id} status={confession.status} hover>
                                 <TableCell>
                                     {confession._id}
                                 </TableCell>
@@ -60,7 +61,7 @@ export function Confessions(props: RouteComponentProps) {
                                         Decline
                                 </Button>
                                 </TableCell>
-                            </TableRow>
+                            </StyledTableRow>
                         ))}
                     </TableBody>
                 </Table>
