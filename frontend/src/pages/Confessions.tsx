@@ -1,21 +1,36 @@
-import React, { useEffect, useState } from "react";
+import { Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { RouteComponentProps } from "@reach/router";
-import HTTPClient from "../service/HTTPClient";
-import { Table, TableHead, TableRow, TableCell, TableBody, TableContainer, Paper, Button, Container } from "@material-ui/core";
-import { SuccessButton } from "../components/SuccessButton";
+import React, { useEffect, useState } from "react";
+import { ActionButtons } from "../components/ActionButtons";
 import StyledTableRow from "../components/StyledTableRow";
+import HTTPClient from "../service/HTTPClient";
 
 export function Confessions(props: RouteComponentProps) {
     const [confessions, setConfessions] = useState([])
+    const [dataLoaded, setDataLoaded] = useState(false)
 
     useEffect(() => {
         const getConfessions = async () => {
-            const res = await HTTPClient.get('/confessions')
+            return HTTPClient.get('/confessions')
+        }
+        getConfessions().then(async (res) => {
             const confessions = await res.json()
             setConfessions(confessions)
-        }
-        getConfessions()
+        }).finally(() => {
+            setDataLoaded(true)
+        })
     }, [])
+
+    const addEntry = (confession: any, event: Event) => {
+        event.preventDefault()
+        return HTTPClient.get(`/confessions/confession/${confession._id}/accept`).then(async (res) => {
+            const response = await res.json()
+            const confessionsCopy: any[] = [...confessions]
+            const index = confessionsCopy.findIndex((x) => x._id === confession._id)
+            confessionsCopy[index] = { ...confessionsCopy[index], ...response.data.updateObject }
+            setConfessions(confessionsCopy as any)
+        })
+    }
 
     return (
         <Container>
@@ -54,17 +69,13 @@ export function Confessions(props: RouteComponentProps) {
                                     {confession.addedBy}
                                 </TableCell>
                                 <TableCell>
-                                    <SuccessButton variant="contained">
-                                        Accept
-                                </SuccessButton>
-                                    <Button variant="contained" color="secondary">
-                                        Decline
-                                </Button>
+                                    <ActionButtons confession={confession} acceptFn={addEntry} />
                                 </TableCell>
                             </StyledTableRow>
                         ))}
                     </TableBody>
                 </Table>
+                {!dataLoaded && <LinearProgress />}
             </TableContainer>
         </Container>
     )

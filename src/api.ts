@@ -40,7 +40,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 	async (req: RequestWithUser, res) => {
 		confessionModel.findById(req.params.confession_id).populate('survey').exec(async (err, confession) => {
 			if (err) { return res.send(err) }
-			if (confession.entryID && confession.status === 1) {
+			if (confession.entryID && confession.status === ConfessionStatus.ACCEPTED) {
 				return res.json({
 					success: false,
 					response: {
@@ -50,7 +50,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 					},
 				})
 			}
-			if (confession.status === -1) {
+			if (confession.status === ConfessionStatus.DECLINED) {
 				return res.json({
 					success: false,
 					response: {
@@ -71,7 +71,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 				confession.entryID = response.id
 				const action = await createAction(req.user._id, ActionType.ACCEPT_ENTRY).save()
 				confession.actions.push(action)
-				confession.status = 1
+				confession.status = ConfessionStatus.ACCEPTED
 				confession.addedBy = req.user.username
 				confession.save().then(() => {
 					WykopRequestQueue.addTask(() => wykopController.addNotificationComment(confession, req.user))

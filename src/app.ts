@@ -17,7 +17,7 @@ const app = express()
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import apiRouter from './api'
-import apiv2Router from './apiV2'
+import apiv2Router from './apiv2/apiV2'
 import adminRouter from './admin'
 import conversationRouter from './conversation'
 import confessionModel from './models/confession'

@@ -19,7 +19,7 @@ function StyledTableRow(props: any) {
     return <TableRow className={classes[statusToClass(status)]}>{children}</TableRow>
 }
 
-const tableBgOpacity = 0.3
+const tableBgOpacity = 0.2
 
 export default withStyles((theme: Theme) => ({
     declined: {
