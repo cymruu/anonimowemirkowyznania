@@ -2,7 +2,6 @@ import { Router, Request } from 'express'
 const apiRouter = Router()
 import mongoose from 'mongoose'
 import * as wykopController from './controllers/wykop'
-import * as surveyController from './controllers/survey'
 import { createAction, ActionType } from './controllers/actions'
 import * as tagController from './controllers/tags'
 import auth from './controllers/authorization'
@@ -14,8 +13,8 @@ import replyModel from './models/reply'
 import logger from './logger'
 import { guardMiddleware } from './utils/apiGuard'
 import bodyBuilder from './controllers/bodyBuildier'
-import donationModel from './models/donation'
 import WykopHTTPClient from './service/WykopHTTPClient'
+import { WykopRequestQueue } from './wykop'
 
 //TODO: move connnection to separate file
 mongoose.connect(config.mongoURL,
@@ -75,7 +74,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 				confession.status = 1
 				confession.addedBy = req.user.username
 				confession.save().then(() => {
-					wykopController.addNotificationComment(confession, req.user)
+					WykopRequestQueue.addTask(() => wykopController.addNotificationComment(confession, req.user))
 					statsModel.addAction('confessions_accepted', req.user.username)
 					return res.json(
 						{ success: true, response: {
@@ -140,7 +139,7 @@ apiRouter.route('/confession/tags/:confession_id/:tag')
 					tags: tagController.prepareArray(confession.tags, req.params.tag),
 				},
 				$push: { actions: action._id },
-			}).then(result => {
+			}).then(() => {
 				res.json({ success: true, response: { message: 'Tagi zaaktualizowano', status: 'success' } })
 			}, function(err) {
 				return res.json({ success: false, response: { message: err } })
@@ -154,7 +153,7 @@ apiRouter.route('/confession/delete/:confession_id')
 		(req: RequestWithUser, res) => {
 			confessionModel.findById(req.params.confession_id, (err, confession) => {
 				if (err) { return res.sendStatus(500) }
-				wykopController.deleteEntry(confession.entryID).then(async (result) => {
+				wykopController.deleteEntry(confession.entryID).then(async () => {
 					const action = await createAction(req.user._id, ActionType.DELETE_ENTRY).save()
 					confession.status = ConfessionStatus.DECLINED
 					confession.actions.push(action)
@@ -163,9 +162,10 @@ apiRouter.route('/confession/delete/:confession_id')
 						statsModel.addAction('deleted_confessions', req.user.username)
 						res.json({ success: true, response: { message: `Usunięto wpis ID: ${confession.entryID}` } })
 						//TODO: handle response
-						wykopController.sendPrivateMessage(
+						WykopRequestQueue.addTask(() => wykopController.sendPrivateMessage(
 							'sokytsinolop', `${req.user.username} usunął wpis \n ${confession.entryID}`,
-						).then().catch(_ => {})
+						))
+
 					})
 				}).catch(err => {
 					return res.json({ success: false, response: { message: err.toString() } })
@@ -239,7 +239,7 @@ apiRouter.route('/reply/delete/:reply_id/').get(
 	accessMiddleware('deleteReply'),
 	(req: RequestWithUser, res) => {
 		replyModel.findOne({ _id: req.params.reply_id }).populate('parentID').then(reply => {
-			wykopController.deleteEntryComment(reply.commentID).then(async (result) => {
+			wykopController.deleteEntryComment(reply.commentID).then(async () => {
 				const action = await createAction(
 					req.user._id,
 					ActionType.DELETE_REPLY,

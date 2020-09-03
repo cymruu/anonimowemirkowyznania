@@ -3,6 +3,7 @@ import { Wykop, Client, CreateWykopService } from 'wypokjs'
 import { WykopError } from 'wypokjs/dist/wykop'
 import { AxiosError } from 'axios'
 import logger from './logger'
+import { WykopQueue } from './service/WykopQueue'
 
 const logInterceptor = (err: WykopError | AxiosError) => {
 	logger.error(err.toString())
@@ -11,4 +12,6 @@ const logInterceptor = (err: WykopError | AxiosError) => {
 
 const wykop = new Wykop(config.wykopConfig, [logInterceptor])
 const client = new Client(wykop, config.wykopClientConfig)
+export const WykopRequestQueue = new WykopQueue(5000, 5)
+WykopRequestQueue.startProcessing()
 export const service = CreateWykopService(client)
