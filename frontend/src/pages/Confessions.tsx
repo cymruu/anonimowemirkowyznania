@@ -1,4 +1,4 @@
-import { Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Snackbar } from "@material-ui/core";
 import { RouteComponentProps } from "@reach/router";
 import React, { useEffect, useState } from "react";
 import { ActionButtons } from "../components/ActionButtons";
@@ -8,15 +8,29 @@ import HTTPClient from "../service/HTTPClient";
 export function Confessions(props: RouteComponentProps) {
     const [confessions, setConfessions] = useState([])
     const [dataLoaded, setDataLoaded] = useState(false)
+    const [error, setError] = useState({open: false, message: undefined})
 
     useEffect(() => {
         const getConfessions = async () => {
             return HTTPClient.get('/confessions')
         }
-        getConfessions().then(async (res) => {
-            const confessions = await res.json()
-            setConfessions(confessions)
-        }).finally(() => {
+        getConfessions()
+        .then(async (res) => {
+            const response = await res.json()
+            
+            if(response.success){
+                setConfessions(response.data)
+            }
+        })
+        .catch(async (err: Response | Error)=>{
+            if(err instanceof Error){
+                console.log(err)
+            }else{
+                const {error} = await err.json()
+                setError({open: true, ...error})
+            }
+        })
+        .finally(() => {
             setDataLoaded(true)
         })
     }, [])
@@ -34,6 +48,7 @@ export function Confessions(props: RouteComponentProps) {
 
     return (
         <Container>
+            <Snackbar open={error.open} message={error.message} />
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>

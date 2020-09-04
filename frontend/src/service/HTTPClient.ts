@@ -1,6 +1,11 @@
 class HTTPClient{
     get(endpoint: string){
-        return fetch(`api2/${endpoint}`)
+        return fetch(`api2/${endpoint}`).then(response=>{
+            if(!response.ok){
+                throw response
+            }
+            return response
+        })
     }
     post(endpoint: string, body: object){
         return fetch(`api2/${endpoint}`, {

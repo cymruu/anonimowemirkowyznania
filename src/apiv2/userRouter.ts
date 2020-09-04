@@ -2,7 +2,14 @@ import { Router } from 'express'
 import userModel from '../models/user'
 import jwt from 'jsonwebtoken'
 import config from '../config'
+import { authentication } from './middleware/authentication'
+import { RequestWithUser } from 'src/utils'
+import { makeAPIResponse } from './apiV2'
 export const userRouter = Router()
+
+userRouter.get('/', authentication, (req:RequestWithUser, res) => {
+	res.json(makeAPIResponse(res, req.user))
+})
 
 userRouter.post('/login', async (req, res) => {
 	userModel.findOne({ username: req.body.username }).lean().then(user => {

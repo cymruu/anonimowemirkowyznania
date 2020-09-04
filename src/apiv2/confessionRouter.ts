@@ -1,16 +1,16 @@
-import { Router, Response } from 'express'
-import { RequestWithUser } from '../utils'
-import confessionModel, { IConfession, ConfessionStatus } from '../models/confession'
-import logger from '../logger'
+import { Response, Router } from 'express'
 import { accessMiddleware } from '../controllers/access'
-import { authentication } from './middleware/authentication'
+import { ActionType, createAction } from '../controllers/actions'
 import bodyBuilder from '../controllers/bodyBuildier'
 import * as wykopController from '../controllers/wykop'
+import logger from '../logger'
+import confessionModel, { ConfessionStatus, IConfession } from '../models/confession'
 import statsModel from '../models/stats'
-import { makeAPIResponse } from './apiV2'
 import WykopHTTPClient from '../service/WykopHTTPClient'
-import { createAction, ActionType } from '../controllers/actions'
+import { RequestWithUser } from '../utils'
 import { WykopRequestQueue } from '../wykop'
+import { makeAPIResponse } from './apiV2'
+import { authentication } from './middleware/authentication'
 
 export const confessionRouter = Router()
 
@@ -37,7 +37,7 @@ confessionRouter.get('/', async (req: RequestWithUser, res) => {
 		.lean()
 		.limit(100)
 		.then(confessions => {
-			res.json(confessions)
+			res.json(makeAPIResponse(res, confessions))
 		}).catch(err => {
 			logger.error(err.toString())
 			res.status(500).send(500)

@@ -15,20 +15,20 @@ export interface APIError {
 	message: string
 }
 
-interface APIResponse {
+interface APIResponse<T> {
 	success: boolean
 	status: number
-	data: any
+	data: T
 	error: APIError
 }
 
-export function makeAPIResponse(res: Response, data: object, error?: APIError) {
+export function makeAPIResponse<T>(res: Response, data: T, error?: APIError) {
 	return ({
-		success: error === undefined,
+		success: !!error,
 		status: res.statusCode,
 		data,
 		error,
-	}) as APIResponse
+	}) as APIResponse<T>
 }
 
 export default apiRouter
