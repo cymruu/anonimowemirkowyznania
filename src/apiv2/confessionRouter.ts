@@ -85,9 +85,25 @@ confessionRouter.get('/confession/:id/accept',
 						statsModel.addAction('confessions_accepted', req.user.username)
 						const { status, addedBy, entryID } = confession
 						return res.json(makeAPIResponse(res, {
-							updateObject: { status, addedBy, entryID },
+							patchObject: { status, addedBy, entryID },
 						}))
 					})
 				})
+			})
+	})
+confessionRouter.put('/confession/:id/status',
+	accessMiddleware('setStatus'),
+	getConfessionMiddleWare,
+	(req: RequestWithConfession, res) => {
+		if (!Object.values(ConfessionStatus).includes(req.body.status)) {
+			return res.status(400).json(makeAPIResponse(res, null, { message: 'Wrong status' }))
+		}
+		req.confession.status = req.body.status
+		req.confession.save()
+			.then(() => {
+				res.status(200).json(makeAPIResponse(res, { patchObject: { status: req.confession.status } }))
+			}).catch(err => {
+				logger.error(err.toString())
+				res.status(500).json(makeAPIResponse(res, null, { message: 'Internal server error' }))
 			})
 	})

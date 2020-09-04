@@ -24,7 +24,7 @@ interface APIResponse<T> {
 
 export function makeAPIResponse<T>(res: Response, data: T, error?: APIError) {
 	return ({
-		success: !!error,
+		success: !error,
 		status: res.statusCode,
 		data,
 		error,

@@ -7,12 +7,18 @@ class HTTPClient{
             return response
         })
     }
-    post(endpoint: string, body: object){
+    private request(endpoint: string, method: string, body: object){
         return fetch(`api2/${endpoint}`, {
-            method: 'post',
+            method,
             body: JSON.stringify(body),
             headers: { 'Content-Type': 'application/json' },
         })
+    }
+    post(endpoint: string, body: object){
+        return this.request(endpoint, 'post', body)
+    }
+    put(endpoint: string, body: object){
+        return this.request(endpoint, 'put', body)
     }
 }
 

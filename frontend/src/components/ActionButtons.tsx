@@ -3,35 +3,44 @@ import { RouteComponentProps } from "@reach/router";
 import React, { Fragment, useState } from "react";
 import { SuccessButton } from "./SuccessButton";
 
+
+type buttonActionFunction = (confession: any, event: Event) => Promise<any>;
+
 interface ActionButtonsProps {
     confession: any
-    acceptFn: (confession: any, event: any) => Promise<any>
-    declineFn?: () => void
+    acceptFn: buttonActionFunction
+    setStatusFn: buttonActionFunction
+    deleteFn: buttonActionFunction
 }
 
-const getRedButtonProps = (confession: any) => {
+const getRedButtonProps = (confession: any, setStatusFn: buttonActionFunction, deleteFn: buttonActionFunction) => {
     switch (confession.status) {
         case -1:
             return {
-                text: 'Undecline'
+                text: 'Undecline',
+                fn: setStatusFn,
             }
         case 0:
             return {
-                text: 'Decline'
+                text: 'Decline',
+                fn: setStatusFn,
             }
         case 1:
             return {
-                text: 'Remove'
+                text: 'Remove',
+                fn: deleteFn,
             }
+        default:
+            throw Error('Should never reach')
     }
 }
 
 export function ActionButtons(props: RouteComponentProps & ActionButtonsProps) {
     const [isSending, setSending] = useState(false)
 
-    const { acceptFn, declineFn, confession } = props
+    const { acceptFn, setStatusFn, deleteFn, confession } = props
 
-    const actionWrapper = (actionFn: (...args: any) => Promise<any>) => (confession: object, event: any) => {
+    const actionWrapper = (actionFn: buttonActionFunction) => (confession: object, event: any) => {
         setSending(true)
         actionFn(confession, event)
             .then().finally(() => {
@@ -39,15 +48,15 @@ export function ActionButtons(props: RouteComponentProps & ActionButtonsProps) {
             })
     }
 
-    const button = getRedButtonProps(confession)
+    const {text, fn} = getRedButtonProps(confession, setStatusFn, deleteFn)
     return (
         <Fragment>
             <Grid container direction="column">
                 <SuccessButton disabled={isSending || confession.status === 1} variant="contained" onClick={e => actionWrapper(acceptFn)(confession, e)}>
                     {isSending ? <CircularProgress size={24} /> : 'Accept'}
                 </SuccessButton>
-                <Button disabled={isSending} variant="contained" color="secondary">
-                    {isSending ? <CircularProgress size={24} /> : button?.text}
+                <Button disabled={isSending} variant="contained" color="secondary" onClick={e=>actionWrapper(fn)(confession, e)}>
+                    {isSending ? <CircularProgress size={24} /> : text}
                 </Button>
             </Grid>
         </Fragment>

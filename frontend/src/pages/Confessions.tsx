@@ -5,6 +5,13 @@ import { ActionButtons } from "../components/ActionButtons";
 import StyledTableRow from "../components/StyledTableRow";
 import HTTPClient from "../service/HTTPClient";
 
+function replaceConfession(confessions: any, _id: string, patchObject: object){
+    const confessionsCopy: any[] = [...confessions]
+    const index = confessionsCopy.findIndex((x) => x._id === _id)
+    confessionsCopy[index] = { ...confessionsCopy[index], ...patchObject }
+    return confessionsCopy
+}   
+
 export function Confessions(props: RouteComponentProps) {
     const [confessions, setConfessions] = useState([])
     const [dataLoaded, setDataLoaded] = useState(false)
@@ -37,12 +44,22 @@ export function Confessions(props: RouteComponentProps) {
 
     const addEntry = (confession: any, event: Event) => {
         event.preventDefault()
-        return HTTPClient.get(`/confessions/confession/${confession._id}/accept`).then(async (res) => {
+        return HTTPClient.get(`/confessions/confession/${confession._id}/accept`)
+        .then(async (res) => {
             const response = await res.json()
-            const confessionsCopy: any[] = [...confessions]
-            const index = confessionsCopy.findIndex((x) => x._id === confession._id)
-            confessionsCopy[index] = { ...confessionsCopy[index], ...response.data.updateObject }
-            setConfessions(confessionsCopy as any)
+            const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject)
+            setConfessions(updatedConfessions as any)
+        })
+    }
+
+    const setStatusFn = (confession: any, event: Event)=>{
+        event.preventDefault()
+        const status = confession.status===0?-1:0
+        return HTTPClient.put(`/confessions/confession/${confession._id}/status`, {status})
+        .then(async res=>{
+            const response = await res.json()
+            const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject)
+            setConfessions(updatedConfessions as any)
         })
     }
 
@@ -84,7 +101,12 @@ export function Confessions(props: RouteComponentProps) {
                                     {confession.addedBy}
                                 </TableCell>
                                 <TableCell>
-                                    <ActionButtons confession={confession} acceptFn={addEntry} />
+                                    <ActionButtons
+                                        confession={confession}
+                                        acceptFn={addEntry}
+                                        setStatusFn={setStatusFn}
+                                        deleteFn={setStatusFn}
+                                    />
                                 </TableCell>
                             </StyledTableRow>
                         ))}
