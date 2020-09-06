@@ -2,6 +2,8 @@ import { Button, CircularProgress, Grid } from "@material-ui/core";
 import { RouteComponentProps } from "@reach/router";
 import React, { Fragment, useState } from "react";
 import { SuccessButton } from "./SuccessButton";
+import useLongPress from "../utils/longPress";
+import { ConfessionDeclineDialog } from "./ConfessionDeclineDialog";
 
 
 type buttonActionFunction = (confession: any, event: Event) => Promise<any>;
@@ -37,6 +39,7 @@ const getRedButtonProps = (confession: any, setStatusFn: buttonActionFunction, d
 
 export function ActionButtons(props: RouteComponentProps & ActionButtonsProps) {
     const [isSending, setSending] = useState(false)
+    const [isDeclineDialogOpen, setDeclineDialogOpen] = useState(false)
 
     const { acceptFn, setStatusFn, deleteFn, confession } = props
 
@@ -48,14 +51,25 @@ export function ActionButtons(props: RouteComponentProps & ActionButtonsProps) {
             })
     }
 
+    const handleDialogClose = ()=>{
+        setDeclineDialogOpen(false)
+    }
+
+    const longPressFn = ()=>{
+        setDeclineDialogOpen(true)
+    }
+
+    
     const {text, fn} = getRedButtonProps(confession, setStatusFn, deleteFn)
+    const longPressHook = useLongPress(longPressFn, (event) => actionWrapper(fn)(confession, event))
     return (
         <Fragment>
+            {isDeclineDialogOpen && <ConfessionDeclineDialog open={isDeclineDialogOpen} handleClose={handleDialogClose}/>}
             <Grid container direction="column">
                 <SuccessButton disabled={isSending || confession.status === 1} variant="contained" onClick={e => actionWrapper(acceptFn)(confession, e)}>
                     {isSending ? <CircularProgress size={24} /> : 'Accept'}
                 </SuccessButton>
-                <Button disabled={isSending} variant="contained" color="secondary" onClick={e=>actionWrapper(fn)(confession, e)}>
+                <Button {...longPressHook} disabled={isSending} variant="contained" color="secondary">
                     {isSending ? <CircularProgress size={24} /> : text}
                 </Button>
             </Grid>
