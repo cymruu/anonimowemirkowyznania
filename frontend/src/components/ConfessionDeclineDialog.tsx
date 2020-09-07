@@ -1,11 +1,9 @@
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField } from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField } from "@material-ui/core";
 import React, { useState } from "react";
 
 export function ConfessionDeclineDialog({open, handleClose}: {open: boolean, handleClose: () => void}){
   const [reason, setReason] = useState<string|null>(null)
-  const handleReasonChange = (reason: string)=>{
-    setReason(reason)
-  }
+  
   return (
         <Dialog
         open={open}
@@ -13,12 +11,9 @@ export function ConfessionDeclineDialog({open, handleClose}: {open: boolean, han
       >
         <DialogTitle>Set confession decline reason</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Decline confession with reason:
-          </DialogContentText>
           <FormControl component="fieldset">
             <FormLabel component="legend">Select reason:</FormLabel>
-              <RadioGroup name="reason" value={reason} onChange={e=>handleReasonChange(e.target.value)}>
+              <RadioGroup name="reason" value={reason} onChange={e=>setReason(e.target.value)}>
                 <FormControlLabel value="reason 1" control={<Radio />} label="Reason 1" />
                 <FormControlLabel value="reason 2" control={<Radio />} label="Reason 2" />
                 <FormControlLabel value="custom" control={<Radio />} label="Custom" />

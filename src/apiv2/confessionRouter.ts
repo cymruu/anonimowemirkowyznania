@@ -99,12 +99,12 @@ confessionRouter.put('/confession/:id/status',
 		if (!Object.values(ConfessionStatus).includes(req.body.status)) {
 			return res.status(400).json(makeAPIResponse(res, null, { message: 'Wrong status' }))
 		}
-		const reason = req.body.reason
+		const note = req.body.note
 		req.confession.status = req.body.status
 		const actionType = req.body.status === ConfessionStatus.DECLINED ?
 			ActionType.DECLINE
 			: ActionType.REVERT_DECLINE
-		const action = await createAction(req.user._id, actionType, reason).save()
+		const action = await createAction(req.user._id, actionType, note).save()
 		req.confession.actions.push(action)
 		req.confession.save()
 			.then(() => {
