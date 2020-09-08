@@ -1,12 +1,11 @@
 import { Button, CircularProgress, Grid } from "@material-ui/core";
-import { RouteComponentProps } from "@reach/router";
 import React, { Fragment, useState } from "react";
 import { SuccessButton } from "./SuccessButton";
 import useLongPress from "../utils/longPress";
 import { ConfessionDeclineDialog } from "./ConfessionDeclineDialog";
 
 
-type buttonActionFunction = (confession: any) => Promise<any>;
+export type buttonActionFunction = (confession: any) => Promise<any>;
 
 interface ActionButtonsProps {
     confession: any
@@ -37,7 +36,7 @@ const getRedButtonProps = (confession: any, setStatusFn: buttonActionFunction, d
     }
 }
 
-export function ActionButtons(props: RouteComponentProps & ActionButtonsProps) {
+export function ActionButtons(props: ActionButtonsProps) {
     const [isSending, setSending] = useState(false)
     const [isDeclineDialogOpen, setDeclineDialogOpen] = useState(false)
 
@@ -52,10 +51,6 @@ export function ActionButtons(props: RouteComponentProps & ActionButtonsProps) {
             })
     }
 
-    const handleDialogClose = ()=>{
-        setDeclineDialogOpen(false)
-    }
-
     const longPressFn = ()=>{
         if(confession.status ===0)
             setDeclineDialogOpen(true)
@@ -65,7 +60,7 @@ export function ActionButtons(props: RouteComponentProps & ActionButtonsProps) {
     const longPressHook = useLongPress(longPressFn, (event) => actionWrapper(fn)(confession, event))
     return (
         <Fragment>
-            {isDeclineDialogOpen && <ConfessionDeclineDialog open={isDeclineDialogOpen} handleClose={handleDialogClose}/>}
+            {isDeclineDialogOpen && <ConfessionDeclineDialog confession={confession} open={isDeclineDialogOpen} setDeclineDialogOpen={setDeclineDialogOpen} setStatusFn={setStatusFn} />}
             <Grid container direction="column">
                 <SuccessButton disabled={isSending || confession.status === 1} variant="contained" onClick={e => actionWrapper(acceptFn)(confession, e)}>
                     {isSending ? <CircularProgress size={24} /> : 'Accept'}
