@@ -6,7 +6,7 @@ import useLongPress from "../utils/longPress";
 import { ConfessionDeclineDialog } from "./ConfessionDeclineDialog";
 
 
-type buttonActionFunction = (confession: any, event: Event) => Promise<any>;
+type buttonActionFunction = (confession: any) => Promise<any>;
 
 interface ActionButtonsProps {
     confession: any
@@ -43,9 +43,10 @@ export function ActionButtons(props: RouteComponentProps & ActionButtonsProps) {
 
     const { acceptFn, setStatusFn, deleteFn, confession } = props
 
-    const actionWrapper = (actionFn: buttonActionFunction) => (confession: object, event: any) => {
+    const actionWrapper = (actionFn: buttonActionFunction) => (confession: object, event: Event | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        event.preventDefault()
         setSending(true)
-        actionFn(confession, event)
+        actionFn(confession)
             .then().finally(() => {
                 setSending(false)
             })
@@ -56,10 +57,10 @@ export function ActionButtons(props: RouteComponentProps & ActionButtonsProps) {
     }
 
     const longPressFn = ()=>{
-        setDeclineDialogOpen(true)
+        if(confession.status ===0)
+            setDeclineDialogOpen(true)
     }
 
-    
     const {text, fn} = getRedButtonProps(confession, setStatusFn, deleteFn)
     const longPressHook = useLongPress(longPressFn, (event) => actionWrapper(fn)(confession, event))
     return (

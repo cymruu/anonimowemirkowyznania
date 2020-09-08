@@ -42,8 +42,7 @@ export function Confessions(props: RouteComponentProps) {
         })
     }, [])
 
-    const addEntry = (confession: any, event: Event) => {
-        event.preventDefault()
+    const addEntry = (confession: any) => {
         return HTTPClient.get(`/confessions/confession/${confession._id}/accept`)
         .then(async (res) => {
             const response = await res.json()
@@ -52,8 +51,7 @@ export function Confessions(props: RouteComponentProps) {
         })
     }
 
-    const setStatusFn = (confession: any, event: Event)=>{
-        event.preventDefault()
+    const setStatusFn = (confession: any)=>{
         const status = confession.status===0?-1:0
         return HTTPClient.put(`/confessions/confession/${confession._id}/status`, {status})
         .then(async res=>{
