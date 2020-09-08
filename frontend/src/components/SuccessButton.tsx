@@ -1,8 +1,8 @@
-import { Button, withStyles, Theme } from "@material-ui/core";
+import { Button, withStyles, Theme } from '@material-ui/core';
 
-export const SuccessButton = withStyles((theme: Theme)=>({
-    root: {
-      backgroundColor: theme.palette.success.main,
-      color: theme.palette.common.white,
-    },
-  }))(Button);
+export default withStyles((theme: Theme) => ({
+  root: {
+    backgroundColor: theme.palette.success.main,
+    color: theme.palette.common.white,
+  },
+}))(Button);

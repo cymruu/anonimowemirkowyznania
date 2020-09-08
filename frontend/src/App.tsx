@@ -1,9 +1,11 @@
-import { AppBar, Button, IconButton, Link, makeStyles, Toolbar, Typography } from '@material-ui/core';
+import {
+  AppBar, Button, IconButton, Link, makeStyles, Toolbar, Typography,
+} from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Link as RouterLink, Router } from '@reach/router';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Confessions } from './pages/Confessions';
 import { Index } from './pages/Index';
 import { Login } from './pages/Login';
@@ -23,17 +25,17 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const classes = useStyles();
-  const [user, setUser] = useState(undefined)
-  useEffect(()=>{
-    const getUser = () => HTTPClient.get('/users')
-    getUser().then(async res=>{
-      const {data} = await res.json()
-      setUser(data)
-    }).catch(()=>undefined)
-  }, [])
+  const [user, setUser] = useState(undefined);
+  useEffect(() => {
+    const getUser = () => HTTPClient.get('/users');
+    getUser().then(async (res) => {
+      const { data } = await res.json();
+      setUser(data);
+    }).catch(() => undefined);
+  }, []);
 
   return (
-    <Fragment>
+    <>
       <CssBaseline />
       <AppBar position="static">
         <Toolbar>
@@ -49,14 +51,16 @@ function App() {
           <Button color="inherit">
             <Link component={RouterLink} to="/login" color="inherit">Login</Link>
           </Button>
-          {user && <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                color="inherit"
-              >
-                <AccountCircle />
-            </IconButton>}
+          {user && (
+          <IconButton
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
+          )}
         </Toolbar>
       </AppBar>
       <Router>
@@ -64,7 +68,7 @@ function App() {
         <Confessions path="/confessions" />
         <Login path="/login" />
       </Router>
-    </Fragment>
+    </>
   );
 }
 

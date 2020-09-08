@@ -1,117 +1,116 @@
-import { Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Snackbar } from "@material-ui/core";
-import { RouteComponentProps } from "@reach/router";
-import React, { useEffect, useState } from "react";
-import { ActionButtons } from "../components/ActionButtons";
-import StyledTableRow from "../components/StyledTableRow";
-import HTTPClient from "../service/HTTPClient";
+import {
+  Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
+  TableRow, Snackbar,
+} from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import { RouteComponentProps } from '@reach/router';
+import { ActionButtons } from '../components/ActionButtons';
+import StyledTableRow from '../components/StyledTableRow';
+import HTTPClient from '../service/HTTPClient';
 
-function replaceConfession(confessions: any, _id: string, patchObject: object){
-    const confessionsCopy: any[] = [...confessions]
-    const index = confessionsCopy.findIndex((x) => x._id === _id)
-    confessionsCopy[index] = { ...confessionsCopy[index], ...patchObject }
-    return confessionsCopy
-}   
+function replaceConfession(confessions: any, _id: string, patchObject: object) {
+  const confessionsCopy: any[] = [...confessions];
+  const index = confessionsCopy.findIndex((x) => x._id === _id);
+  confessionsCopy[index] = { ...confessionsCopy[index], ...patchObject };
+  return confessionsCopy;
+}
 
-export function Confessions(props: RouteComponentProps) {
-    const [confessions, setConfessions] = useState([])
-    const [dataLoaded, setDataLoaded] = useState(false)
-    const [error, setError] = useState({open: false, message: undefined})
+export default function Confessions(props: RouteComponentProps) {
+  const [confessions, setConfessions] = useState([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [snackBar, setSnackBar] = useState({ open: false, message: undefined });
 
-    useEffect(() => {
-        const getConfessions = async () => {
-            return HTTPClient.get('/confessions')
+  useEffect(() => {
+    const getConfessions = async () => HTTPClient.get('/confessions');
+    getConfessions()
+      .then(async (res) => {
+        const response = await res.json();
+
+        if (response.success) {
+          setConfessions(response.data);
         }
-        getConfessions()
-        .then(async (res) => {
-            const response = await res.json()
-            
-            if(response.success){
-                setConfessions(response.data)
-            }
-        })
-        .catch(async (err: Response | Error)=>{
-            if(err instanceof Error){
-                console.log(err)
-            }else{
-                const {error} = await err.json()
-                setError({open: true, ...error})
-            }
-        })
-        .finally(() => {
-            setDataLoaded(true)
-        })
-    }, [])
+      })
+      .catch(async (err: Response | Error) => {
+        if (err instanceof Error) {
+          console.log(err);
+        } else {
+          const { error } = await err.json();
+          setSnackBar({ open: true, ...error });
+        }
+      })
+      .finally(() => {
+        setDataLoaded(true);
+      });
+  }, []);
 
-    const addEntry = (confession: any) => {
-        return HTTPClient.get(`/confessions/confession/${confession._id}/accept`)
-        .then(async (res) => {
-            const response = await res.json()
-            const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject)
-            setConfessions(updatedConfessions as any)
-        })
-    }
+  const addEntry = (confession: any) => HTTPClient.get(`/confessions/confession/${confession._id}/accept`)
+    .then(async (res) => {
+      const response = await res.json();
+      const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject);
+      setConfessions(updatedConfessions as any);
+    });
 
-    const setStatusFn = (confession: any)=>{
-        const status = confession.status===0?-1:0
-        return HTTPClient.put(`/confessions/confession/${confession._id}/status`, {status})
-        .then(async res=>{
-            const response = await res.json()
-            const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject)
-            setConfessions(updatedConfessions as any)
-        })
-    }
+  const setStatusFn = (confession: any) => {
+    const status = confession.status === 0 ? -1 : 0;
+    return HTTPClient.put(`/confessions/confession/${confession._id}/status`, { status })
+      .then(async (res) => {
+        const response = await res.json();
+        const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject);
+        setConfessions(updatedConfessions as any);
+      });
+  };
 
-    return (
-        <Container>
-            <Snackbar open={error.open} message={error.message} />
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>Text</TableCell>
-                            <TableCell>Embed</TableCell>
-                            <TableCell>Auth</TableCell>
-                            <TableCell>Entry</TableCell>
-                            <TableCell>Added by</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {confessions.map((confession: any) => (
-                            <StyledTableRow key={confession._id} status={confession.status} hover>
-                                <TableCell>
-                                    {confession._id}
-                                </TableCell>
-                                <TableCell>
-                                    {confession.text}
-                                </TableCell>
-                                <TableCell>
-                                    {confession.embed}
-                                </TableCell>
-                                <TableCell>
-                                    {confession.auth}
-                                </TableCell>
-                                <TableCell>
-                                    {confession.entryID}
-                                </TableCell>
-                                <TableCell>
-                                    {confession.addedBy}
-                                </TableCell>
-                                <TableCell>
-                                    <ActionButtons
-                                        confession={confession}
-                                        acceptFn={addEntry}
-                                        setStatusFn={setStatusFn}
-                                        deleteFn={setStatusFn}
-                                    />
-                                </TableCell>
-                            </StyledTableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-                {!dataLoaded && <LinearProgress />}
-            </TableContainer>
-        </Container>
-    )
+  return (
+    <Container>
+      <Snackbar open={snackBar.open} message={snackBar.message} />
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Text</TableCell>
+              <TableCell>Embed</TableCell>
+              <TableCell>Auth</TableCell>
+              <TableCell>Entry</TableCell>
+              <TableCell>Added by</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {confessions.map((confession: any) => (
+              <StyledTableRow key={confession._id} status={confession.status} hover>
+                <TableCell>
+                  {confession._id}
+                </TableCell>
+                <TableCell>
+                  {confession.text}
+                </TableCell>
+                <TableCell>
+                  {confession.embed}
+                </TableCell>
+                <TableCell>
+                  {confession.auth}
+                </TableCell>
+                <TableCell>
+                  {confession.entryID}
+                </TableCell>
+                <TableCell>
+                  {confession.addedBy}
+                </TableCell>
+                <TableCell>
+                  <ActionButtons
+                    confession={confession}
+                    acceptFn={addEntry}
+                    setStatusFn={setStatusFn}
+                    deleteFn={setStatusFn}
+                  />
+                </TableCell>
+              </StyledTableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {!dataLoaded && <LinearProgress />}
+      </TableContainer>
+    </Container>
+  );
 }

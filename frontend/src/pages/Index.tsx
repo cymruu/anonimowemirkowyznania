@@ -1,10 +1,10 @@
-import React from "react";
-import { RouteComponentProps } from "@reach/router";
+import React from 'react';
+import { RouteComponentProps } from '@reach/router';
 
-export function Index(props: RouteComponentProps){
-    return(
-        <div>
-            index
-        </div>
-    )
+export default function Index(props: RouteComponentProps) {
+  return (
+    <div>
+      index
+    </div>
+  );
 }
