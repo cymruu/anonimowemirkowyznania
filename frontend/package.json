@@ -26,16 +26,32 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
+    "env": {"browser": true},
     "extends": [
       "airbnb",
       "airbnb/hooks"
     ],
     "rules": {
-      "react/jsx-filename-extension": ["off"],
-      "import/extensions": ["off"],
-      "import/no-unresolved": ["off"],
-      "no-underscore-dangle": ["off"],
-      "no-unused-vars": ["off"]
+      "react/jsx-filename-extension": [
+        "off"
+      ],
+      "import/extensions": [
+        "off"
+      ],
+      "import/no-unresolved": [
+        "off"
+      ],
+      "no-underscore-dangle": [
+        "off"
+      ],
+      "no-unused-vars": [
+        "off"
+      ],
+      "@typescript-eslint/no-unused-vars": [
+        "error"
+      ],
+      "max-len": ["error", {"code": 120}],
+      "implicit-arrow-linebreak": "off"
     }
   },
   "browserslist": {

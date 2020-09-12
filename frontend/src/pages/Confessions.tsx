@@ -15,6 +15,7 @@ function replaceConfession(confessions: any, _id: string, patchObject: object) {
   return confessionsCopy;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Confessions(props: RouteComponentProps) {
   const [confessions, setConfessions] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);

@@ -6,9 +6,9 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Link as RouterLink, Router } from '@reach/router';
 import React, { useEffect, useState } from 'react';
-import { Confessions } from './pages/Confessions';
-import { Index } from './pages/Index';
-import { Login } from './pages/Login';
+import Confessions from './pages/Confessions';
+import Index from './pages/Index';
+import Login from './pages/Login';
 import HTTPClient from './service/HTTPClient';
 
 const useStyles = makeStyles((theme) => ({

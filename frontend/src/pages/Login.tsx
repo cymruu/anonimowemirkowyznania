@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useCallback } from 'react';
 import { navigate, RouteComponentProps } from '@reach/router';
 
