@@ -1,9 +1,9 @@
 import {
   Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Snackbar,
+  TableRow, Snackbar, Link,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { RouteComponentProps } from '@reach/router';
+import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import { ActionButtons } from '../components/ActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
 import HTTPClient from '../service/HTTPClient';
@@ -81,7 +81,9 @@ export default function Confessions(props: RouteComponentProps) {
             {confessions.map((confession: any) => (
               <StyledTableRow key={confession._id} status={confession.status} hover>
                 <TableCell>
-                  {confession._id}
+                  <Link component={RouterLink} to={`/confessions/${confession._id}`} color="inherit">
+                    {confession._id}
+                  </Link>
                 </TableCell>
                 <TableCell>
                   {confession.text}

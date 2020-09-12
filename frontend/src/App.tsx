@@ -6,6 +6,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Link as RouterLink, Router } from '@reach/router';
 import React, { useEffect, useState } from 'react';
+import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
 import Index from './pages/Index';
 import Login from './pages/Login';
@@ -66,6 +67,7 @@ function App() {
       <Router>
         <Index path="/" />
         <Confessions path="/confessions" />
+        <ConfessionDetails path="/confessions/:id" />
         <Login path="/login" />
       </Router>
     </>
