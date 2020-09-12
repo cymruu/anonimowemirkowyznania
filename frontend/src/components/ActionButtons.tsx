@@ -72,6 +72,7 @@ export function ActionButtons(props: ActionButtonsProps) {
       )}
       <Grid container direction="column">
         <SuccessButton
+          style={{ marginBottom: 5 }}
           disabled={isSending || confession.status === 1}
           variant="contained"
           onClick={(e) => actionWrapper(acceptFn)(confession, e)}
