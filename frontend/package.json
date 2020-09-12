@@ -51,7 +51,8 @@
         "error"
       ],
       "max-len": ["error", {"code": 120}],
-      "implicit-arrow-linebreak": "off"
+      "implicit-arrow-linebreak": "off",
+      "react/jsx-props-no-spreading": "off"
     }
   },
   "browserslist": {

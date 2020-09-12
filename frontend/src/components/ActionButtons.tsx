@@ -78,7 +78,7 @@ export function ActionButtons(props: ActionButtonsProps) {
         >
           {isSending ? <CircularProgress size={24} /> : 'Accept'}
         </SuccessButton>
-        <Button {...{ longPressHook }} disabled={isSending} variant="contained" color="secondary">
+        <Button {...longPressHook} disabled={isSending} variant="contained" color="secondary">
           {isSending ? <CircularProgress size={24} /> : text}
         </Button>
       </Grid>
