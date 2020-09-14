@@ -7,7 +7,7 @@ import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import ActionButtons from '../components/ActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
 import HTTPClient from '../service/HTTPClient';
-import { ApiAddEntry, ApiSetConfessionStatus } from '../service/api';
+import { ApiAddEntry, ApiDeleteEntry, ApiSetConfessionStatus } from '../service/api';
 
 function replaceConfession(confessions: any, _id: string, patchObject: object) {
   const confessionsCopy: any[] = [...confessions];
@@ -62,6 +62,13 @@ export default function Confessions(props: RouteComponentProps) {
       });
   };
 
+  const deleteEntryFn = (confession: any) => ApiDeleteEntry(confession)
+    .then(async (res) => {
+      const response = await res.json();
+      const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject);
+      setConfessions(updatedConfessions as any);
+    });
+
   return (
     <Container>
       <Snackbar open={snackBar.open} message={snackBar.message} />
@@ -106,7 +113,7 @@ export default function Confessions(props: RouteComponentProps) {
                     confession={confession}
                     acceptFn={addEntry}
                     setStatusFn={setStatusFn}
-                    deleteFn={setStatusFn}
+                    deleteFn={deleteEntryFn}
                   />
                 </TableCell>
               </StyledTableRow>

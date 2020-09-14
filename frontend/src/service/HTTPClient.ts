@@ -10,8 +10,8 @@ class HTTPClient {
     });
   }
 
-  private request(endpoint: string, method: string, body: object) {
-    return fetch(`api2/${endpoint}`, {
+  private request(endpoint: string, method: string, body?: object) {
+    return fetch(`/api2/${endpoint}`, {
       method,
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
@@ -24,6 +24,10 @@ class HTTPClient {
 
   put(endpoint: string, body: object) {
     return this.request(endpoint, 'put', body);
+  }
+
+  delete(endpoint:string) {
+    return this.request(endpoint, 'delete');
   }
 }
 

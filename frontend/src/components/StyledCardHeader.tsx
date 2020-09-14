@@ -5,8 +5,10 @@ import React from 'react';
 import statusToClass from '../utils/statusToClass';
 
 function StyledCardHeader(props: any) {
-  const { status, classes, children } = props;
-  return <CardHeader className={classes[statusToClass(status)]} {...props}>{children}</CardHeader>;
+  const {
+    status, classes, children, ...rest
+  } = props;
+  return <CardHeader className={classes[statusToClass(status)]} {...rest}>{children}</CardHeader>;
 }
 
 const tableBgOpacity = 0.2;

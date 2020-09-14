@@ -4,6 +4,7 @@ import { ActionType, createAction } from '../controllers/actions'
 import bodyBuilder from '../controllers/bodyBuildier'
 import * as wykopController from '../controllers/wykop'
 import logger from '../logger'
+import confession from '../models/confession'
 import confessionModel, { ConfessionStatus, IConfession } from '../models/confession'
 import statsModel from '../models/stats'
 import WykopHTTPClient from '../service/WykopHTTPClient'
@@ -11,7 +12,6 @@ import { RequestWithUser } from '../utils'
 import { WykopRequestQueue } from '../wykop'
 import { makeAPIResponse } from './apiV2'
 import { authentication } from './middleware/authentication'
-import confession from '../models/confession'
 
 export const confessionRouter = Router()
 
@@ -62,6 +62,29 @@ confessionRouter.get('/confession/:id',
 			}).catch(err => {
 				logger.info(err.toString())
 			})
+	})
+confessionRouter.delete('/confession/:id',
+	accessMiddleware('deleteEntry'),
+	getConfessionMiddleWare, (req: RequestWithConfession, res) => {
+		wykopController.deleteEntry(req.confession.entryID).then(async () => {
+			const action = await createAction(req.user._id, ActionType.DELETE_ENTRY).save()
+			req.confession.status = ConfessionStatus.DECLINED
+			req.confession.actions.push(action)
+			req.confession.save((err) => {
+				if (err) { return res.json({ success: false, response: { message: err } }) }
+				statsModel.addAction('deleted_confessions', req.user.username)
+				WykopRequestQueue.addTask(() => wykopController.sendPrivateMessage(
+					'sokytsinolop', `${req.user.username} usunął wpis \n ${req.confession.entryID}`,
+				))
+				const { status } = req.confession
+				return res.json(makeAPIResponse(res, {
+					message: `Usunięto wpis ID: ${req.confession.entryID}`,
+					patchObject: { status },
+				}))
+			})
+		}).catch(err => {
+			return res.json({ success: false, response: { message: err.toString() } })
+		})
 	})
 confessionRouter.get('/confession/:id/accept',
 	accessMiddleware('addEntry'),

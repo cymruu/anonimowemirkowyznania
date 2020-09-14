@@ -7,7 +7,7 @@ import { RouteComponentProps } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import ActionButtons from '../components/ActionButtons';
 import HTTPClient from '../service/HTTPClient';
-import { ApiAddEntry } from '../service/api';
+import { ApiAddEntry, ApiDeleteEntry, ApiSetConfessionStatus } from '../service/api';
 import StyledCardHeader from '../components/StyledCardHeader';
 
 export default function (props: RouteComponentProps & {id?: string}) {
@@ -23,6 +23,22 @@ export default function (props: RouteComponentProps & {id?: string}) {
   }, [id]);
 
   const addEntryFn = () => ApiAddEntry(confession).then(async (res) => {
+    const response = await res.json();
+    if (response.success) {
+      setConfession({ ...confession, ...response.data.patchObject });
+    }
+  });
+  const setStatusFn = () => {
+    const newStatus = confession.status === 0 ? -1 : 0;
+
+    return ApiSetConfessionStatus(confession, newStatus).then(async (res) => {
+      const response = await res.json();
+      if (response.success) {
+        setConfession({ ...confession, ...response.data.patchObject });
+      }
+    });
+  };
+  const deleteEntryFn = () => ApiDeleteEntry(confession).then(async (res) => {
     const response = await res.json();
     if (response.success) {
       setConfession({ ...confession, ...response.data.patchObject });
@@ -64,8 +80,8 @@ export default function (props: RouteComponentProps & {id?: string}) {
                   <ActionButtons
                     confession={confession}
                     acceptFn={addEntryFn}
-                    setStatusFn={() => Promise.resolve(undefined)}
-                    deleteFn={() => Promise.resolve(undefined)}
+                    setStatusFn={setStatusFn}
+                    deleteFn={deleteEntryFn}
                   />
                 </Box>
               </Grid>
