@@ -81,7 +81,7 @@ export default function Confessions(props: RouteComponentProps) {
             {confessions.map((confession: any) => (
               <StyledTableRow key={confession._id} status={confession.status} hover>
                 <TableCell>
-                  <Link component={RouterLink} to={`/confessions/${confession._id}`} color="inherit">
+                  <Link component={RouterLink} to={`/confessions/${confession._id}`}>
                     {confession._id}
                   </Link>
                 </TableCell>
@@ -89,7 +89,7 @@ export default function Confessions(props: RouteComponentProps) {
                   {confession.text}
                 </TableCell>
                 <TableCell>
-                  {confession.embed}
+                  {confession.embed ? 'yes' : 'no'}
                 </TableCell>
                 <TableCell>
                   {confession.auth}
