@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 class HTTPClient {
   get(endpoint: string) {
-    return fetch(`api2/${endpoint}`).then((response) => {
+    return fetch(`/api2/${endpoint}`).then((response) => {
       if (!response.ok) {
         throw response;
       }

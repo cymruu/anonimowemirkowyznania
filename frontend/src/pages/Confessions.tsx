@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
-import { ActionButtons } from '../components/ActionButtons';
+import ActionButtons from '../components/ActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
 import HTTPClient from '../service/HTTPClient';
 

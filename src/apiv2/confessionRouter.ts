@@ -46,9 +46,23 @@ confessionRouter.get('/', async (req: RequestWithUser, res) => {
 })
 
 
-confessionRouter.get('/confession/:id', getConfessionMiddleWare, (req, res) => {
-	res.json({ success: false })
-})
+confessionRouter.get('/confession/:id',
+	accessMiddleware('viewDetails'),
+	getConfessionMiddleWare, (req: RequestWithConfession, res) => {
+		req.confession.populate([
+			{
+				path: 'actions', options: { sort: { _id: -1 } },
+				populate: { path: 'user', select: 'username' },
+			},
+			{ path: 'survey' },
+		]).execPopulate()
+			.then(confession => {
+				return res.json(makeAPIResponse(res, confession))
+
+			}).catch(err => {
+				logger.info(err.toString())
+			})
+	})
 confessionRouter.get('/confession/:id/accept',
 	accessMiddleware('addEntry'),
 	getConfessionMiddleWare,

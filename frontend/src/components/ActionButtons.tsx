@@ -35,7 +35,7 @@ const getRedButtonProps = (confession: any, setStatusFn: buttonActionFunction, d
   }
 };
 
-export function ActionButtons(props: ActionButtonsProps) {
+export default function ActionButtons(props: ActionButtonsProps) {
   const [isSending, setSending] = useState(false);
   const [isDeclineDialogOpen, setDeclineDialogOpen] = useState(false);
 
