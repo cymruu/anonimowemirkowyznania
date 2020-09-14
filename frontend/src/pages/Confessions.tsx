@@ -7,6 +7,7 @@ import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import ActionButtons from '../components/ActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
 import HTTPClient from '../service/HTTPClient';
+import { ApiAddEntry, ApiSetConfessionStatus } from '../service/api';
 
 function replaceConfession(confessions: any, _id: string, patchObject: object) {
   const confessionsCopy: any[] = [...confessions];
@@ -44,7 +45,7 @@ export default function Confessions(props: RouteComponentProps) {
       });
   }, []);
 
-  const addEntry = (confession: any) => HTTPClient.get(`/confessions/confession/${confession._id}/accept`)
+  const addEntry = (confession: any) => ApiAddEntry(confession)
     .then(async (res) => {
       const response = await res.json();
       const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject);
@@ -53,7 +54,7 @@ export default function Confessions(props: RouteComponentProps) {
 
   const setStatusFn = (confession: any) => {
     const status = confession.status === 0 ? -1 : 0;
-    return HTTPClient.put(`/confessions/confession/${confession._id}/status`, { status })
+    return ApiSetConfessionStatus(confession, status)
       .then(async (res) => {
         const response = await res.json();
         const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject);

@@ -1,17 +1,20 @@
 import {
-  withStyles, TableRow, Theme, fade,
+  CardHeader, fade, Theme, withStyles,
 } from '@material-ui/core';
 import React from 'react';
 import statusToClass from '../utils/statusToClass';
 
-function StyledTableRow(props: any) {
+function StyledCardHeader(props: any) {
   const { status, classes, children } = props;
-  return <TableRow className={classes[statusToClass(status)]}>{children}</TableRow>;
+  return <CardHeader className={classes[statusToClass(status)]} {...props}>{children}</CardHeader>;
 }
 
 const tableBgOpacity = 0.2;
 
 export default withStyles((theme: Theme) => ({
+  root: {
+    marginBottom: '8px',
+  },
   declined: {
     backgroundColor: fade(theme.palette.error.light, tableBgOpacity),
   },
@@ -21,4 +24,4 @@ export default withStyles((theme: Theme) => ({
   added: {
     backgroundColor: fade(theme.palette.success.light, tableBgOpacity),
   },
-}))(StyledTableRow);
+}))(StyledCardHeader);
