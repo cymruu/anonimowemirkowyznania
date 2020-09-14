@@ -29,9 +29,9 @@ export default function (props: RouteComponentProps & {id?: string}) {
     }
   });
   const setStatusFn = () => {
-    const newStatus = confession.status === 0 ? -1 : 0;
+    const status = confession.status === 0 ? -1 : 0;
 
-    return ApiSetConfessionStatus(confession, newStatus).then(async (res) => {
+    return ApiSetConfessionStatus(confession, { status }).then(async (res) => {
       const response = await res.json();
       if (response.success) {
         setConfession({ ...confession, ...response.data.patchObject });

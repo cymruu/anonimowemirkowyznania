@@ -5,15 +5,15 @@ import useLongPress from '../utils/longPress';
 import ConfessionDeclineDialog from './ConfessionDeclineDialog';
 
 export type buttonActionFunction = (confession: any) => Promise<any>;
-
+export type setStatusType = (confession:any, reason?: string)=>Promise<any>;
 interface ActionButtonsProps {
     confession: any
     acceptFn: buttonActionFunction
-    setStatusFn: buttonActionFunction
+    setStatusFn: setStatusType
     deleteFn: buttonActionFunction
 }
 
-const getRedButtonProps = (confession: any, setStatusFn: buttonActionFunction, deleteFn: buttonActionFunction) => {
+const getRedButtonProps = (confession: any, setStatusFn: setStatusType, deleteFn: buttonActionFunction) => {
   switch (confession.status) {
     case -1:
       return {
@@ -37,35 +37,36 @@ const getRedButtonProps = (confession: any, setStatusFn: buttonActionFunction, d
 
 export default function ActionButtons(props: ActionButtonsProps) {
   const [isSending, setSending] = useState(false);
-  const [isDeclineDialogOpen, setDeclineDialogOpen] = useState(false);
+  const [displayDeclineDialog, setDeclineDialogOpen] = useState(false);
 
   const {
     acceptFn, setStatusFn, deleteFn, confession,
   } = props;
 
-  const actionWrapper = (actionFn: buttonActionFunction) =>
-    (confessionObj: object, event: Event | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      event.preventDefault();
+  const actionWrapper = (actionFn: Function, event: Event | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    return () => {
       setSending(true);
-      actionFn(confessionObj)
+      actionFn(confession)
         .then().finally(() => {
           setSending(false);
         });
     };
+  };
 
   const longPressFn = () => {
     if (confession.status === 0) setDeclineDialogOpen(true);
   };
 
   const { text, fn } = getRedButtonProps(confession, setStatusFn, deleteFn);
-  const longPressHook = useLongPress(longPressFn, (event) => actionWrapper(fn)(confession, event));
+  const longPressHook = useLongPress(longPressFn, (event) => actionWrapper(fn, event)());
   return (
     <>
-      {isDeclineDialogOpen
+      {displayDeclineDialog
       && (
       <ConfessionDeclineDialog
         confession={confession}
-        open={isDeclineDialogOpen}
+        open={displayDeclineDialog}
         setDeclineDialogOpen={setDeclineDialogOpen}
         setStatusFn={setStatusFn}
       />
@@ -75,7 +76,7 @@ export default function ActionButtons(props: ActionButtonsProps) {
           style={{ marginBottom: 5 }}
           disabled={isSending || confession.status === 1}
           variant="contained"
-          onClick={(e) => actionWrapper(acceptFn)(confession, e)}
+          onClick={(e) => actionWrapper(acceptFn, e)()}
         >
           {isSending ? <CircularProgress size={24} /> : 'Accept'}
         </SuccessButton>

@@ -1,9 +1,9 @@
 import {
-  Dialog, DialogActions, DialogContent, DialogTitle, Button, FormControl,
-  FormLabel, RadioGroup, FormControlLabel, Radio, TextField, Snackbar,
+  Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
+  FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField
 } from '@material-ui/core';
 import React, { SyntheticEvent, useState } from 'react';
-import { buttonActionFunction } from './ActionButtons';
+import { setStatusType } from './ActionButtons';
 
 export default function ConfessionDeclineDialog(
   {
@@ -13,15 +13,15 @@ export default function ConfessionDeclineDialog(
     confession: any,
     open: boolean,
     setDeclineDialogOpen: (value: boolean) => void,
-    setStatusFn: buttonActionFunction
+    setStatusFn: setStatusType
   },
 ) {
-  const [reason, setReason] = useState<string|null>(null);
+  const [reason, setReason] = useState<string|undefined>(undefined);
   const [error, setError] = useState({ open: false, message: undefined });
 
   const setStatusWrapped = (event: SyntheticEvent) => {
     event.preventDefault();
-    return setStatusFn(confession).then(() => {
+    return setStatusFn(confession, reason).then(() => {
       setDeclineDialogOpen(false);
     }).catch(async (err: Response | Error) => {
       if (err instanceof Error) {
