@@ -19,14 +19,24 @@ export default function (props: RouteComponentProps & {id?: string}) {
       if (response.success) {
         setConfession(response.data);
       }
+    }).catch((err) => {
+      console.log(err);
     });
   }, [id]);
+
+  const patchConfession = (response) => {
+    const updatedConfession = { ...confession, ...response.data.patchObject };
+    const { action } = response.data;
+    if (action) updatedConfession.actions.unshift(action);
+    setConfession(updatedConfession);
+  };
 
   const addEntryFn = () => ApiAddEntry(confession).then(async (res) => {
     const response = await res.json();
     if (response.success) {
-      setConfession({ ...confession, ...response.data.patchObject });
+      patchConfession(response);
     }
+    return response;
   });
   const setStatusFn = () => {
     const status = confession.status === 0 ? -1 : 0;
@@ -34,27 +44,32 @@ export default function (props: RouteComponentProps & {id?: string}) {
     return ApiSetConfessionStatus(confession, { status }).then(async (res) => {
       const response = await res.json();
       if (response.success) {
-        setConfession({ ...confession, ...response.data.patchObject });
+        patchConfession(response);
       }
+      return response;
     });
   };
   const deleteEntryFn = () => ApiDeleteEntry(confession).then(async (res) => {
     const response = await res.json();
     if (response.success) {
-      setConfession({ ...confession, ...response.data.patchObject });
+      patchConfession(response);
     }
+    return response;
   });
 
   const actionsList = confession?.actions?.map(({
     _id, action, time, user,
   }, index) => {
     let secondaryText = `${time}`;
-    if (user) {
+    if (user?.username) {
       secondaryText += ` ${user.username}`;
     }
     return (
       <ListItem key={_id}>
-        <ListItemText primary={`${index + 1}: ${action}`} secondary={secondaryText} />
+        <ListItemText
+          primary={`${index + 1}: ${action}`}
+          secondary={secondaryText}
+        />
       </ListItem>
     );
   });

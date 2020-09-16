@@ -4,7 +4,6 @@ import { ActionType, createAction } from '../controllers/actions'
 import bodyBuilder from '../controllers/bodyBuildier'
 import * as wykopController from '../controllers/wykop'
 import logger from '../logger'
-import confession from '../models/confession'
 import confessionModel, { ConfessionStatus, IConfession } from '../models/confession'
 import statsModel from '../models/stats'
 import WykopHTTPClient from '../service/WykopHTTPClient'
@@ -29,6 +28,8 @@ function getConfessionMiddleWare(req: RequestWithConfession, res: Response, next
 		return res.status(500)
 	})
 }
+
+//TODO: empty user in response action fields - populate username and send username
 
 confessionRouter.use(authentication)
 confessionRouter.get('/', async (req: RequestWithUser, res) => {
@@ -80,6 +81,7 @@ confessionRouter.delete('/confession/:id',
 				return res.json(makeAPIResponse(res, {
 					message: `Usunięto wpis ID: ${req.confession.entryID}`,
 					patchObject: { status },
+					action,
 				}))
 			})
 		}).catch(err => {
@@ -124,6 +126,7 @@ confessionRouter.get('/confession/:id/accept',
 						const { status, addedBy, entryID } = confession
 						return res.json(makeAPIResponse(res, {
 							patchObject: { status, addedBy, entryID },
+							action,
 						}))
 					})
 				})
@@ -145,7 +148,7 @@ confessionRouter.put('/confession/:id/status',
 		req.confession.actions.push(action)
 		req.confession.save()
 			.then(() => {
-				res.status(200).json(makeAPIResponse(res, { patchObject: { status: req.confession.status } }))
+				res.status(200).json(makeAPIResponse(res, { patchObject: { status: req.confession.status }, action }))
 			}).catch(err => {
 				logger.error(err.toString())
 				res.status(500).json(makeAPIResponse(res, null, { message: 'Internal server error' }))
