@@ -1,7 +1,7 @@
 import {
   Card, CardContent, Container, Divider,
-  Link, List, Grid, Box,
-  LinearProgress,
+  Link, Grid, Box,
+  LinearProgress, Typography, makeStyles, createStyles, Theme,
 } from '@material-ui/core';
 import { RouteComponentProps } from '@reach/router';
 import React, { useEffect, useState } from 'react';
@@ -11,6 +11,12 @@ import { ApiAddEntry, ApiDeleteEntry } from '../service/api';
 import StyledCardHeader from '../components/StyledCardHeader';
 import { toggleConfessionStatus } from './Confessions';
 import Action from '../components/Action';
+
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  cardContentHeader: {
+    marginBottom: theme.spacing(2),
+  },
+}));
 
 export default function (props: RouteComponentProps & {id?: string}) {
   const { id } = props;
@@ -55,7 +61,11 @@ export default function (props: RouteComponentProps & {id?: string}) {
     return response;
   });
 
-  const actionsList = confession?.actions?.map((action, i) => <Action action={action} index={confession.actions.length - i} />);
+  const actionsList = confession?.actions
+  ?.map((action, i) =>
+    <Action action={action} index={confession.actions.length - 1 - i} />);
+
+  const classes = useStyles();
 
   return (
     <Container>
@@ -93,9 +103,10 @@ export default function (props: RouteComponentProps & {id?: string}) {
           </CardContent>
           <Divider variant="middle" />
           <CardContent>
-            <List dense>
-              {actionsList}
-            </List>
+            <Typography variant="h5" className={classes.cardContentHeader}>
+              Actions:
+            </Typography>
+            {actionsList}
           </CardContent>
         </Card>
       ) : <LinearProgress />)}

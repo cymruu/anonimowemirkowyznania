@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     marginBottom: 5,
   },
   actionNumber: {
-    marginLeft: 15,
+    marginLeft: theme.spacing(2),
     backgroundColor: theme.palette.grey[500],
     borderRadius: 50,
     padding: 10,
