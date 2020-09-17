@@ -7,8 +7,9 @@ import { RouteComponentProps } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import ActionButtons from '../components/ActionButtons';
 import HTTPClient from '../service/HTTPClient';
-import { ApiAddEntry, ApiDeleteEntry, ApiSetConfessionStatus } from '../service/api';
+import { ApiAddEntry, ApiDeleteEntry } from '../service/api';
 import StyledCardHeader from '../components/StyledCardHeader';
+import { toggleConfessionStatus } from './Confessions';
 
 export default function (props: RouteComponentProps & {id?: string}) {
   const { id } = props;
@@ -38,17 +39,13 @@ export default function (props: RouteComponentProps & {id?: string}) {
     }
     return response;
   });
-  const setStatusFn = () => {
-    const status = confession.status === 0 ? -1 : 0;
-
-    return ApiSetConfessionStatus(confession, { status }).then(async (res) => {
-      const response = await res.json();
+  const setStatusFn = (confession2: any, note?: string) => toggleConfessionStatus(confession2, note)
+    .then((response) => {
       if (response.success) {
         patchConfession(response);
       }
       return response;
     });
-  };
   const deleteEntryFn = () => ApiDeleteEntry(confession).then(async (res) => {
     const response = await res.json();
     if (response.success) {

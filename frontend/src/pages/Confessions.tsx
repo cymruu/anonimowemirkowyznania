@@ -16,7 +16,7 @@ function replaceConfession(confessions: any, _id: string, patchObject: object) {
   return confessionsCopy;
 }
 
-const toggleConfessionStatus = (confession:any, note?:string) => {
+export const toggleConfessionStatus = (confession:any, note?:string) => {
   const status = confession.status === 0 ? -1 : 0;
   return ApiSetConfessionStatus(confession, { status, note })
     .then(async (res) => res.json());
