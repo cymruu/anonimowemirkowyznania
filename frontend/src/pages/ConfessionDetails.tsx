@@ -1,6 +1,6 @@
 import {
   Card, CardContent, Container, Divider,
-  Link, List, ListItem, ListItemText, Grid, Box,
+  Link, List, Grid, Box,
   LinearProgress,
 } from '@material-ui/core';
 import { RouteComponentProps } from '@reach/router';
@@ -10,6 +10,7 @@ import HTTPClient from '../service/HTTPClient';
 import { ApiAddEntry, ApiDeleteEntry } from '../service/api';
 import StyledCardHeader from '../components/StyledCardHeader';
 import { toggleConfessionStatus } from './Confessions';
+import Action from '../components/Action';
 
 export default function (props: RouteComponentProps & {id?: string}) {
   const { id } = props;
@@ -54,22 +55,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
     return response;
   });
 
-  const actionsList = confession?.actions?.map(({
-    _id, action, time, user,
-  }, index) => {
-    let secondaryText = `${time}`;
-    if (user?.username) {
-      secondaryText += ` ${user.username}`;
-    }
-    return (
-      <ListItem key={_id}>
-        <ListItemText
-          primary={`${index + 1}: ${action}`}
-          secondary={secondaryText}
-        />
-      </ListItem>
-    );
-  });
+  const actionsList = confession?.actions?.map((action, i) => <Action action={action} index={confession.actions.length - i} />);
 
   return (
     <Container>
