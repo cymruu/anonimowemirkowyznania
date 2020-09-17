@@ -16,6 +16,14 @@ function replaceConfession(confessions: any, _id: string, patchObject: object) {
   return confessionsCopy;
 }
 
+const toggleConfessionStatus = (confession:any, note?:string) => {
+  const status = confession.status === 0 ? -1 : 0;
+  return ApiSetConfessionStatus(confession, { status, note })
+    .then(async (res) => res.json());
+};
+
+export type toggleConfessionStatusFn = typeof toggleConfessionStatus
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Confessions(props: RouteComponentProps) {
   const [confessions, setConfessions] = useState([]);
@@ -52,15 +60,11 @@ export default function Confessions(props: RouteComponentProps) {
       setConfessions(updatedConfessions as any);
     });
 
-  const setStatusFn = (confession: any, note?: string) => {
-    const status = confession.status === 0 ? -1 : 0;
-    return ApiSetConfessionStatus(confession, { status, note })
-      .then(async (res) => {
-        const response = await res.json();
-        const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject);
-        setConfessions(updatedConfessions as any);
-      });
-  };
+  const setStatusFn = (confession: any, note?: string) => toggleConfessionStatus(confession, note)
+    .then((response) => {
+      const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject);
+      setConfessions(updatedConfessions as any);
+    });
 
   const deleteEntryFn = (confession: any) => ApiDeleteEntry(confession)
     .then(async (res) => {

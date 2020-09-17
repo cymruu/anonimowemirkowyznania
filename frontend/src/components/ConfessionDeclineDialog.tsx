@@ -3,7 +3,7 @@ import {
   FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField,
 } from '@material-ui/core';
 import React, { SyntheticEvent, useState } from 'react';
-import { setStatusType } from './ActionButtons';
+import { toggleConfessionStatusFn } from '../pages/Confessions';
 
 export default function ConfessionDeclineDialog(
   {
@@ -13,15 +13,17 @@ export default function ConfessionDeclineDialog(
     confession: any,
     open: boolean,
     setDeclineDialogOpen: (value: boolean) => void,
-    setStatusFn: setStatusType
+    setStatusFn: toggleConfessionStatusFn
   },
 ) {
   const [reason, setReason] = useState<string|null>(null);
+  const [customReason, setCustomReason] = useState<string>('');
   const [error, setError] = useState({ open: false, message: undefined });
 
   const setStatusWrapped = (event: SyntheticEvent) => {
     event.preventDefault();
-    return setStatusFn(confession, reason || '').then(() => {
+    const declineReason = reason === 'custom' ? customReason : reason;
+    return setStatusFn(confession, declineReason || '').then(() => {
       setDeclineDialogOpen(false);
     }).catch(async (err: Response | Error) => {
       if (err instanceof Error) {
@@ -50,12 +52,13 @@ export default function ConfessionDeclineDialog(
               <FormControlLabel value="custom" control={<Radio />} label="Custom" />
               <TextField
                 disabled={reason !== 'custom'}
+                value={customReason}
                 autoFocus
                 margin="dense"
-                id="name"
+                id="custom-reason-text"
                 label="Custom decline reason"
-                type="reason-text"
                 fullWidth
+                onChange={(e) => setCustomReason(e.target.value)}
               />
             </RadioGroup>
           </FormControl>
