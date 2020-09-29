@@ -11,6 +11,7 @@ import { ApiAddEntry, ApiDeleteEntry } from '../service/api';
 import StyledCardHeader from '../components/StyledCardHeader';
 import { toggleConfessionStatus } from './Confessions';
 import Action from '../components/Action';
+import EditTagsDialog from '../components/EditTagsDialog';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   cardContentHeader: {
@@ -21,6 +22,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 export default function (props: RouteComponentProps & {id?: string}) {
   const { id } = props;
   const [confession, setConfession] = useState<any>(undefined);
+  const [editTagsDialog, setEditTagsDialog] = useState<boolean>(false);
   useEffect(() => {
     HTTPClient.get(`/confessions/confession/${id}`).then(async (res) => {
       const response = await res.json();
@@ -63,7 +65,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
 
   const actionsList = confession?.actions
   ?.map((action, i) =>
-    <Action action={action} index={confession.actions.length - 1 - i} />);
+    <Action action={action} index={confession.actions.length - 1 - i} key={action._id} />);
 
   const classes = useStyles();
 
@@ -71,9 +73,19 @@ export default function (props: RouteComponentProps & {id?: string}) {
     <Container>
       {(confession ? (
         <Card>
+          <EditTagsDialog tags={confession.tags} open={editTagsDialog} onClose={() => setEditTagsDialog(false)} />
           <StyledCardHeader
             title={id}
-            subheader={confession.createdAt}
+            subheader={(
+              <Grid container>
+                <Box>
+                  {confession.createdAt}
+                </Box>
+                <Box mx={2} onClick={() => setEditTagsDialog(true)}>
+                  #
+                </Box>
+              </Grid>
+)}
             status={confession.status}
             action={(
               <Grid container alignItems="center">
@@ -95,7 +107,6 @@ export default function (props: RouteComponentProps & {id?: string}) {
               </Grid>
           )}
           />
-          <Divider variant="middle" />
           <CardContent>
             <div>
               {confession.text}
