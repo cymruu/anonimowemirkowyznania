@@ -4,3 +4,5 @@ export const ApiAddEntry = (confession: any) => HTTPClient.get(`/confessions/con
 export const ApiSetConfessionStatus = (confession: any, { status, note }:{ status: number, note?: string}) =>
   HTTPClient.put(`/confessions/confession/${confession._id}/status`, { status, note });
 export const ApiDeleteEntry = (confession: any) => HTTPClient.delete(`/confessions/confession/${confession._id}`);
+export const ApiUpdateConfessionTag = (confession: any, { tag, tagValue }: {tag: string, tagValue: boolean}) =>
+  HTTPClient.put(`/confessions/confession/${confession._id}/tags`, { tag, tagValue });

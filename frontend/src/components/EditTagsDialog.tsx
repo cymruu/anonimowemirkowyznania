@@ -5,14 +5,25 @@ import {
 import DoneIcon from '@material-ui/icons/Done';
 import ClearIcon from '@material-ui/icons/Clear';
 import React from 'react';
+import { ApiUpdateConfessionTag } from '../service/api';
 
-export default function EditTagsDialog({ tags, open, onClose }: {tags:any[], open:boolean, onClose: ()=>void}) {
+export default function EditTagsDialog({
+  confession, tags, open, onClose, patchConfession,
+}: {confession:any, tags:any[], open:boolean, onClose: ()=>void, patchConfession: (response)=>void}) {
+  const updateTag = (tag:string, tagValue: boolean) => {
+    ApiUpdateConfessionTag(confession, { tag, tagValue })
+      .then(async (res) => {
+        const response = await res.json();
+        patchConfession(response);
+      });
+  };
+
   const chips = tags?.map(([tag, value]) => (
     <Box m={1} key={tag}>
       <Chip
         color={value ? 'primary' : 'secondary'}
         label={tag}
-        onClick={() => null}
+        onClick={() => updateTag(tag, !value)}
         icon={value ? <DoneIcon /> : <ClearIcon />}
       />
     </Box>

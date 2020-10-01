@@ -73,7 +73,13 @@ export default function (props: RouteComponentProps & {id?: string}) {
     <Container>
       {(confession ? (
         <Card>
-          <EditTagsDialog tags={confession.tags} open={editTagsDialog} onClose={() => setEditTagsDialog(false)} />
+          <EditTagsDialog
+            confession={confession}
+            tags={confession.tags}
+            open={editTagsDialog}
+            onClose={() => setEditTagsDialog(false)}
+            patchConfession={patchConfession}
+          />
           <StyledCardHeader
             title={id}
             subheader={(

@@ -19,3 +19,11 @@ export function prepareArray(array, tag) {
 	}
 	return array
 }
+
+export function prepareArrayRefactored(tagArray: any[], tag: string, tagValue: boolean) {
+	const index = tagArray.findIndex(x => x[0] === tag)
+	if (index > -1) {
+		tagArray[index][1] = tagValue
+	}
+	return tagArray
+}

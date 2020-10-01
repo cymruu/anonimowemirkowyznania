@@ -1,4 +1,5 @@
 import { Response, Router } from 'express'
+import { prepareArrayRefactored } from '../controllers/tags'
 import { accessMiddleware } from '../controllers/access'
 import { ActionType, createAction } from '../controllers/actions'
 import bodyBuilder from '../controllers/bodyBuildier'
@@ -153,4 +154,24 @@ confessionRouter.put('/confession/:id/status',
 				logger.error(err.toString())
 				res.status(500).json(makeAPIResponse(res, null, { message: 'Internal server error' }))
 			})
+	})
+confessionRouter.put('/confession/:id/tags',
+	accessMiddleware('updateTags'),
+	getConfessionMiddleWare,
+	async (req: RequestWithConfession & {body :{tag: string, tagValue: boolean}}, res) => {
+		const tagValue = req.body.tagValue
+		const action = await createAction(
+			req.user._id,
+			ActionType.UPDATED_TAGS,
+			`${req.body.tag} ${tagValue ? '✓' : '✗'}`)
+			.save()
+		const newTags = prepareArrayRefactored(req.confession.tags, req.body.tag, tagValue)
+		req.confession.update({
+			$set: {
+				tags: newTags,
+			},
+			$push: { actions: action._id },
+		}).then(updateResult => {
+			return res.status(200).json(makeAPIResponse(res, { patchObject: { tags: newTags }, action }))
+		})
 	})
