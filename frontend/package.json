@@ -53,7 +53,8 @@
       "max-len": ["error", {"code": 120}],
       "implicit-arrow-linebreak": "off",
       "react/jsx-props-no-spreading": "off",
-      "react/require-default-props": ["error", {"ignoreFunctionalComponents": true}]
+      "react/require-default-props": ["error", {"ignoreFunctionalComponents": true}],
+      "max-classes-per-file": "off"
     }
   },
   "browserslist": {

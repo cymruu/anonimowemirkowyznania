@@ -24,42 +24,29 @@ export default function (props: RouteComponentProps & {id?: string}) {
   const [confession, setConfession] = useState<any>(undefined);
   const [editTagsDialog, setEditTagsDialog] = useState<boolean>(false);
   useEffect(() => {
-    HTTPClient.get(`/confessions/confession/${id}`).then(async (res) => {
-      const response = await res.json();
-      if (response.success) {
-        setConfession(response.data);
-      }
-    }).catch((err) => {
-      console.log(err);
+    HTTPClient.get(`/confessions/confession/${id}`).then(async (fetchedConfessions) => {
+      setConfession(fetchedConfessions);
     });
   }, [id]);
 
   const patchConfession = (response) => {
-    const updatedConfession = { ...confession, ...response.data.patchObject };
-    const { action } = response.data;
+    const updatedConfession = { ...confession, ...response.patchObject };
+    const { action } = response;
     if (action) updatedConfession.actions.unshift(action);
     setConfession(updatedConfession);
   };
 
-  const addEntryFn = () => ApiAddEntry(confession).then(async (res) => {
-    const response = await res.json();
-    if (response.success) {
-      patchConfession(response);
-    }
+  const addEntryFn = () => ApiAddEntry(confession).then(async (response) => {
+    patchConfession(response);
     return response;
   });
   const setStatusFn = (confession2: any, note?: string) => toggleConfessionStatus(confession2, note)
     .then((response) => {
-      if (response.success) {
-        patchConfession(response);
-      }
+      patchConfession(response);
       return response;
     });
-  const deleteEntryFn = () => ApiDeleteEntry(confession).then(async (res) => {
-    const response = await res.json();
-    if (response.success) {
-      patchConfession(response);
-    }
+  const deleteEntryFn = () => ApiDeleteEntry(confession).then(async (response) => {
+    patchConfession(response);
     return response;
   });
 
