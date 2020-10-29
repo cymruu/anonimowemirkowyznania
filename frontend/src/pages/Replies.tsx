@@ -5,7 +5,7 @@ import {
   TableRow, Snackbar,
 } from '@material-ui/core';
 import StyledTableRow from '../components/StyledTableRow';
-import HTTPClient from '../service/HTTPClient';
+import HTTPClient, { ApiError } from '../service/HTTPClient';
 import { ApiAddReply, ApiDeleteReply, ApiSetReplyStatus } from '../service/api';
 import { replaceInArray } from '../utils';
 import ActionButtons from '../components/ActionButtons';
@@ -22,44 +22,33 @@ export const toggleReplyStatus = (reply: IReply, note?: string) => {
 export default function Replies(props: RouteComponentProps) {
   const [replies, setReplies] = useState<IReply[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [snackBar, setSnackBar] = useState({ open: false, message: undefined });
+  const [snackBar, setSnackBar] = useState({ open: false, message: '' });
 
-  const addReply = (reply: IReply) => ApiAddReply(reply).then(async (res) => {
-    const response = await res.json();
-    const updatedReplies = replaceInArray(replies, reply._id, response.data.patchObject);
+  const addReply = (reply: IReply) => ApiAddReply(reply).then(async (response) => {
+    const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
     setReplies(updatedReplies);
   });
 
   const setStatusFn = (reply: IReply, note?: string) => toggleReplyStatus(reply, note)
     .then((response) => {
-      const updatedReplies = replaceInArray(reply, reply._id, response.data.patchObject);
+      const updatedReplies = replaceInArray(reply, reply._id, response.patchObject);
       setReplies(updatedReplies);
     });
 
   const deleteReplyFn = (reply: IReply) => ApiDeleteReply(reply)
-    .then(async (res) => {
-      const response = await res.json();
-      const updatedReplies = replaceInArray(replies, reply._id, response.data.patchObject);
+    .then(async (response) => {
+      const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
       setReplies(updatedReplies);
     });
 
   useEffect(() => {
     const getReplies = async () => HTTPClient.get('/replies');
     getReplies()
-      .then(async (res) => {
-        const response = await res.json();
-
-        if (response.success) {
-          setReplies(response.data);
-        }
+      .then(async (response) => {
+        setReplies(response);
       })
-      .catch(async (err: Response | Error) => {
-        if (err instanceof Error) {
-          console.log(err);
-        } else {
-          const { error } = await err.json();
-          setSnackBar({ open: true, ...error });
-        }
+      .catch((err: ApiError) => {
+        setSnackBar({ open: true, message: err.message });
       })
       .finally(() => {
         setDataLoaded(true);
