@@ -3,17 +3,17 @@ import React, { useState } from 'react';
 import SuccessButton from './SuccessButton';
 import useLongPress from '../utils/longPress';
 import ConfessionDeclineDialog from './ConfessionDeclineDialog';
-import { toggleConfessionStatusFn } from '../pages/Confessions';
 
 export type buttonActionFunction = (confession: any) => Promise<any>;
+export type setStatusFn = (confession, note) => Promise<any>
 interface ActionButtonsProps {
     model: any
     acceptFn: buttonActionFunction
-    setStatusFn: toggleConfessionStatusFn
+    setStatusFn: setStatusFn
     deleteFn: buttonActionFunction
 }
 
-const getRedButtonProps = (model: any, setStatusFn: toggleConfessionStatusFn, deleteFn: buttonActionFunction) => {
+const getRedButtonProps = (model: any, setStatusFn: setStatusFn, deleteFn: buttonActionFunction) => {
   switch (model.status) {
     case -1:
       return {

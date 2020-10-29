@@ -3,7 +3,7 @@ import {
   FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField,
 } from '@material-ui/core';
 import React, { SyntheticEvent, useState } from 'react';
-import { toggleConfessionStatusFn } from '../pages/Confessions';
+import { ApiError } from '../service/HTTPClient';
 
 export default function ConfessionDeclineDialog(
   {
@@ -13,26 +13,22 @@ export default function ConfessionDeclineDialog(
     confession: any,
     open: boolean,
     setDeclineDialogOpen: (value: boolean) => void,
-    setStatusFn: toggleConfessionStatusFn
+    setStatusFn: any // todo
   },
 ) {
   const [reason, setReason] = useState<string|null>(null);
   const [customReason, setCustomReason] = useState<string>('');
-  const [error, setError] = useState({ open: false, message: undefined });
+  const [error, setError] = useState({ open: false, message: '' });
 
   const setStatusWrapped = (event: SyntheticEvent) => {
     event.preventDefault();
     const declineReason = reason === 'custom' ? customReason : reason;
     return setStatusFn(confession, declineReason || '').then(() => {
       setDeclineDialogOpen(false);
-    }).catch(async (err: Response | Error) => {
-      if (err instanceof Error) {
-        console.log(err);
-      } else {
-        const { error: errorObj } = await err.json();
-        setError({ open: true, ...errorObj });
-      }
-    });
+    })
+      .catch((err: ApiError) => {
+        setError({ open: true, message: err.message });
+      });
   };
 
   return (

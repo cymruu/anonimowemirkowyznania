@@ -7,11 +7,11 @@ import { RouteComponentProps } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import ActionButtons from '../components/ActionButtons';
 import HTTPClient from '../service/HTTPClient';
-import { ApiAddEntry, ApiDeleteConfession } from '../service/api';
+import { ApiAddEntry, ApiDeleteConfession, ApiSetConfessionStatus } from '../service/api';
 import StyledCardHeader from '../components/StyledCardHeader';
-import { toggleConfessionStatus } from './Confessions';
 import Action from '../components/Action';
 import EditTagsDialog from '../components/EditTagsDialog';
+import { toggleStatus } from '../utils';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   cardContentHeader: {
@@ -40,11 +40,13 @@ export default function (props: RouteComponentProps & {id?: string}) {
     patchConfession(response);
     return response;
   });
-  const setStatusFn = (confession2: any, note?: string) => toggleConfessionStatus(confession2, note)
-    .then((response) => {
-      patchConfession(response);
-      return response;
-    });
+
+  const setStatusFn = (confession2: any, note?: string) =>
+    ApiSetConfessionStatus(confession2, { status: toggleStatus(confession2.status), note })
+      .then((response) => {
+        patchConfession(response);
+        return response;
+      });
   const deleteEntryFn = () => ApiDeleteConfession(confession).then(async (response) => {
     patchConfession(response);
     return response;

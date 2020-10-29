@@ -12,8 +12,6 @@ import { replaceInArray, toggleStatus } from '../utils';
 
 export type IConfession = any
 
-export type toggleConfessionStatusFn = typeof toggleConfessionStatus
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Confessions(props: RouteComponentProps) {
   const [confessions, setConfessions] = useState<IConfession[]>([]);
