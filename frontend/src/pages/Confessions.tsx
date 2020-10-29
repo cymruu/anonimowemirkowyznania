@@ -6,16 +6,15 @@ import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import ActionButtons from '../components/ActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
-import HTTPClient from '../service/HTTPClient';
-import { ApiAddEntry, ApiDeleteConfession, ApiSetConfessionStatus } from '../service/api';
+import HTTPClient, { ApiError } from '../service/HTTPClient';
+import { ApiAddEntry, ApiSetConfessionStatus, ApiDeleteConfession } from '../service/api';
 import { replaceInArray } from '../utils';
 
 export type IConfession = any
 
 export const toggleConfessionStatus = (confession: IConfession, note?:string) => {
   const status = confession.status === 0 ? -1 : 0;
-  return ApiSetConfessionStatus(confession, { status, note })
-    .then(async (res) => res.json());
+  return ApiSetConfessionStatus(confession, { status, note });
 };
 
 export type toggleConfessionStatusFn = typeof toggleConfessionStatus
@@ -24,48 +23,36 @@ export type toggleConfessionStatusFn = typeof toggleConfessionStatus
 export default function Confessions(props: RouteComponentProps) {
   const [confessions, setConfessions] = useState<IConfession[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [snackBar, setSnackBar] = useState({ open: false, message: undefined });
+  const [snackBar, setSnackBar] = useState({ open: false, message: '' });
 
   useEffect(() => {
-    const getConfessions = async () => HTTPClient.get('/confessions');
-    getConfessions()
-      .then(async (res) => {
-        const response = await res.json();
-
-        if (response.success) {
-          setConfessions(response.data);
-        }
+    HTTPClient.get('/confessions')
+      .then((fetchedConfessions) => {
+        setConfessions(fetchedConfessions);
       })
-      .catch(async (err: Response | Error) => {
-        if (err instanceof Error) {
-          console.log(err);
-        } else {
-          const { error } = await err.json();
-          setSnackBar({ open: true, ...error });
-        }
+      .catch((err: ApiError) => {
+        setSnackBar({ open: true, message: err.message });
       })
       .finally(() => {
         setDataLoaded(true);
       });
   }, []);
 
-  const addEntry = (confession: IConfession) => ApiAddEntry(confession)
-    .then(async (res) => {
-      const response = await res.json();
-      const updatedConfessions = replaceInArray(confessions, confession._id, response.data.patchObject);
+  const addEntry = (confession: any) => ApiAddEntry(confession)
+    .then(async (response) => {
+      const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
       setConfessions(updatedConfessions);
     });
 
   const setStatusFn = (confession: IConfession, note?: string) => toggleConfessionStatus(confession, note)
     .then((response) => {
-      const updatedConfessions = replaceInArray(confessions, confession._id, response.data.patchObject);
+      const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
       setConfessions(updatedConfessions);
     });
 
-  const deleteEntryFn = (confession: IConfession) => ApiDeleteConfession(confession)
-    .then(async (res) => {
-      const response = await res.json();
-      const updatedConfessions = replaceInArray(confessions, confession._id, response.data.patchObject);
+  const deleteEntryFn = (confession: any) => ApiDeleteConfession(confession)
+    .then(async (response) => {
+      const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
       setConfessions(updatedConfessions);
     });
 

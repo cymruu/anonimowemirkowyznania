@@ -1,21 +1,35 @@
-/* eslint-disable no-undef */
 /* eslint-disable class-methods-use-this */
-class HTTPClient {
-  get(endpoint: string) {
-    return fetch(`/api2/${endpoint}`).then((response) => {
-      if (!response.ok) {
-        throw response;
-      }
-      return response;
-    });
-  }
 
+interface IApiError {
+  message: string
+}
+export class ApiError extends Error {
+  constructor(errorObject: IApiError, status: number) {
+    super(`[${status}] ${errorObject.message}` || 'Unknow error');
+  }
+}
+
+class HTTPClient {
   private request(endpoint: string, method: string, body?: object) {
     return fetch(`/api2/${endpoint}`, {
       method,
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
+    }).then(async (res) => {
+      if (!res.ok) {
+        throw res;
+      } else {
+        const responseData = await res.json();
+        if (responseData.error) {
+          throw new ApiError(responseData.error, res.status);
+        }
+        return responseData.data;
+      }
     });
+  }
+
+  get(endpoint: string) {
+    return this.request(endpoint, 'GET');
   }
 
   post(endpoint: string, body: object) {
