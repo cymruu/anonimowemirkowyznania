@@ -8,14 +8,9 @@ import ActionButtons from '../components/ActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
 import HTTPClient, { ApiError } from '../service/HTTPClient';
 import { ApiAddEntry, ApiSetConfessionStatus, ApiDeleteConfession } from '../service/api';
-import { replaceInArray } from '../utils';
+import { replaceInArray, toggleStatus } from '../utils';
 
 export type IConfession = any
-
-export const toggleConfessionStatus = (confession: IConfession, note?:string) => {
-  const status = confession.status === 0 ? -1 : 0;
-  return ApiSetConfessionStatus(confession, { status, note });
-};
 
 export type toggleConfessionStatusFn = typeof toggleConfessionStatus
 
@@ -44,11 +39,12 @@ export default function Confessions(props: RouteComponentProps) {
       setConfessions(updatedConfessions);
     });
 
-  const setStatusFn = (confession: IConfession, note?: string) => toggleConfessionStatus(confession, note)
-    .then((response) => {
-      const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
-      setConfessions(updatedConfessions);
-    });
+  const setStatusFn = (confession: IConfession, note?: string) =>
+    ApiSetConfessionStatus(confession, { status: toggleStatus(confession.status), note })
+      .then((response) => {
+        const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
+        setConfessions(updatedConfessions);
+      });
 
   const deleteEntryFn = (confession: any) => ApiDeleteConfession(confession)
     .then(async (response) => {

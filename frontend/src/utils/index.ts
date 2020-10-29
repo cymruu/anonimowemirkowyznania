@@ -5,3 +5,5 @@ export function replaceInArray<T>(arr: T[], _id: string, patchObject: object) {
   arrCopy[index] = { ...arrCopy[index], ...patchObject };
   return arrCopy;
 }
+
+export const toggleStatus = (status: number) => (status === 0 ? -1 : 0);

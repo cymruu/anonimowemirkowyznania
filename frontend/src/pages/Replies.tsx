@@ -7,16 +7,10 @@ import {
 import StyledTableRow from '../components/StyledTableRow';
 import HTTPClient, { ApiError } from '../service/HTTPClient';
 import { ApiAddReply, ApiDeleteReply, ApiSetReplyStatus } from '../service/api';
-import { replaceInArray } from '../utils';
+import { replaceInArray, toggleStatus } from '../utils';
 import ActionButtons from '../components/ActionButtons';
 
 export type IReply = any
-
-export const toggleReplyStatus = (reply: IReply, note?: string) => {
-  const status = reply.status === 0 ? -1 : 0;
-  return ApiSetReplyStatus(reply, { status, note })
-    .then(async (res) => res.json());
-};
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Replies(props: RouteComponentProps) {
@@ -29,11 +23,12 @@ export default function Replies(props: RouteComponentProps) {
     setReplies(updatedReplies);
   });
 
-  const setStatusFn = (reply: IReply, note?: string) => toggleReplyStatus(reply, note)
-    .then((response) => {
-      const updatedReplies = replaceInArray(reply, reply._id, response.patchObject);
-      setReplies(updatedReplies);
-    });
+  const setStatusFn = (reply: IReply) =>
+    ApiSetReplyStatus(reply, { status: toggleStatus(reply.status) })
+      .then((response) => {
+        const updatedReplies = replaceInArray(reply, reply._id, response.patchObject);
+        setReplies(updatedReplies);
+      });
 
   const deleteReplyFn = (reply: IReply) => ApiDeleteReply(reply)
     .then(async (response) => {
