@@ -1,6 +1,7 @@
 import { Router, Response } from 'express'
 import { userRouter } from './userRouter'
 import { confessionRouter } from './confessionRouter'
+import { replyRouter } from './replyRouter'
 
 const apiRouter = Router()
 apiRouter.get('/', (req, res) => {
@@ -10,6 +11,7 @@ apiRouter.get('/', (req, res) => {
 
 apiRouter.use('/users', userRouter)
 apiRouter.use('/confessions', confessionRouter)
+apiRouter.use('/replies', replyRouter)
 
 export interface APIError {
 	message: string

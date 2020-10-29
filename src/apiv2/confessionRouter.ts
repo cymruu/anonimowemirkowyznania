@@ -17,7 +17,7 @@ export const confessionRouter = Router()
 
 type RequestWithConfession = RequestWithUser & { confession: IConfession }
 
-function getConfessionMiddleWare(req: RequestWithConfession, res: Response, next) {
+function getConfessionMiddleware(req: RequestWithConfession, res: Response, next) {
 	confessionModel.findById(req.params.id).then(confession => {
 		if (!confession) {
 			return res.status(404)
@@ -50,7 +50,7 @@ confessionRouter.get('/', async (req: RequestWithUser, res) => {
 
 confessionRouter.get('/confession/:id',
 	accessMiddleware('viewDetails'),
-	getConfessionMiddleWare, (req: RequestWithConfession, res) => {
+	getConfessionMiddleware, (req: RequestWithConfession, res) => {
 		req.confession.populate([
 			{
 				path: 'actions', options: { sort: { _id: -1 } },
@@ -67,7 +67,7 @@ confessionRouter.get('/confession/:id',
 	})
 confessionRouter.delete('/confession/:id',
 	accessMiddleware('deleteEntry'),
-	getConfessionMiddleWare, (req: RequestWithConfession, res) => {
+	getConfessionMiddleware, (req: RequestWithConfession, res) => {
 		wykopController.deleteEntry(req.confession.entryID).then(async () => {
 			const action = await createAction(req.user._id, ActionType.DELETE_ENTRY).save()
 			req.confession.status = ConfessionStatus.DECLINED
@@ -91,7 +91,7 @@ confessionRouter.delete('/confession/:id',
 	})
 confessionRouter.get('/confession/:id/accept',
 	accessMiddleware('addEntry'),
-	getConfessionMiddleWare,
+	getConfessionMiddleware,
 	(req: RequestWithConfession, res) => {
 		req.confession.populate('survey').execPopulate()
 			.then(async (confession) => {
@@ -135,7 +135,7 @@ confessionRouter.get('/confession/:id/accept',
 	})
 confessionRouter.put('/confession/:id/status',
 	accessMiddleware('setStatus'),
-	getConfessionMiddleWare,
+	getConfessionMiddleware,
 	async (req: RequestWithConfession, res) => {
 		if (!Object.values(ConfessionStatus).includes(req.body.status)) {
 			return res.status(400).json(makeAPIResponse(res, null, { message: 'Wrong status' }))
@@ -157,7 +157,7 @@ confessionRouter.put('/confession/:id/status',
 	})
 confessionRouter.put('/confession/:id/tags',
 	accessMiddleware('updateTags'),
-	getConfessionMiddleWare,
+	getConfessionMiddleware,
 	async (req: RequestWithConfession & {body :{tag: string, tagValue: boolean}}, res) => {
 		const tagValue = req.body.tagValue
 		const action = await createAction(

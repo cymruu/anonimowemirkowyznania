@@ -8,6 +8,7 @@ import { Link as RouterLink, Router } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
+import Replies from './pages/Replies';
 import Index from './pages/Index';
 import Login from './pages/Login';
 import HTTPClient from './service/HTTPClient';
@@ -50,7 +51,10 @@ function App() {
             <Link component={RouterLink} to="/confessions" color="inherit">confessions</Link>
           </Button>
           <Button color="inherit">
-            <Link component={RouterLink} to="/login" color="inherit">Login</Link>
+            <Link component={RouterLink} to="/replies" color="inherit">replies</Link>
+          </Button>
+          <Button color="inherit">
+            <Link component={RouterLink} to="/login" color="inherit">login</Link>
           </Button>
           {user && (
           <IconButton
@@ -68,6 +72,7 @@ function App() {
         <Index path="/" />
         <Confessions path="/confessions" />
         <ConfessionDetails path="/confessions/:id" />
+        <Replies path="/replies" />
         <Login path="/login" />
       </Router>
     </>

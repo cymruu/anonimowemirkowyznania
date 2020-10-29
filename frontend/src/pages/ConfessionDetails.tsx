@@ -88,7 +88,9 @@ export default function (props: RouteComponentProps & {id?: string}) {
                   {confession.createdAt}
                 </Box>
                 <Box mx={2} onClick={() => setEditTagsDialog(true)}>
-                  #
+                  <Typography color="primary">
+                    #
+                  </Typography>
                 </Box>
               </Grid>
 )}

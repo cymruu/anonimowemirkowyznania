@@ -188,7 +188,7 @@ apiRouter.route('/reply/accept/:reply_id').get(
 					},
 				})
 			}
-			if (reply.status === -1) {
+			if (reply.status === ConfessionStatus.DECLINED) {
 				return res.json({
 					success: false,
 					response: {
