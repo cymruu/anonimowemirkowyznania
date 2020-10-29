@@ -7,7 +7,7 @@ import { RouteComponentProps } from '@reach/router';
 import React, { useEffect, useState } from 'react';
 import ActionButtons from '../components/ActionButtons';
 import HTTPClient from '../service/HTTPClient';
-import { ApiAddEntry, ApiDeleteEntry } from '../service/api';
+import { ApiAddEntry, ApiDeleteConfession } from '../service/api';
 import StyledCardHeader from '../components/StyledCardHeader';
 import { toggleConfessionStatus } from './Confessions';
 import Action from '../components/Action';
@@ -55,7 +55,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
       }
       return response;
     });
-  const deleteEntryFn = () => ApiDeleteEntry(confession).then(async (res) => {
+  const deleteEntryFn = () => ApiDeleteConfession(confession).then(async (res) => {
     const response = await res.json();
     if (response.success) {
       patchConfession(response);
@@ -106,7 +106,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
                 )}
                 <Box>
                   <ActionButtons
-                    confession={confession}
+                    model={confession}
                     acceptFn={addEntryFn}
                     setStatusFn={setStatusFn}
                     deleteFn={deleteEntryFn}

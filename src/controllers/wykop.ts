@@ -4,7 +4,7 @@ import { createAction, ActionType } from '../controllers/actions'
 import archiveModel from '../models/archive'
 import logger from '../logger'
 import { CommentUpvoter } from 'wypokjs/dist/models/Upvoter'
-import { IConfession } from '../models/confession'
+import { ConfessionStatus, IConfession } from '../models/confession'
 import { IReply } from 'src/models/reply'
 import { IUser } from 'src/models/user'
 
@@ -72,7 +72,7 @@ export const acceptReply = async (reply: IReply, user: IUser) => {
 		reply.parentID.entryID, { body: entryBody, embed: reply.embed },
 	).then(async (response) => {
 		reply.commentID = response.id
-		reply.status = 1
+		reply.status = ConfessionStatus.ACCEPTED
 		reply.addedBy = user.username
 		const action = await createAction(user._id, ActionType.ACCEPT_REPLY).save()
 		reply.parentID.actions.push(action)

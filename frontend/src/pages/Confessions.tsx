@@ -7,16 +7,12 @@ import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import ActionButtons from '../components/ActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
 import HTTPClient from '../service/HTTPClient';
-import { ApiAddEntry, ApiDeleteEntry, ApiSetConfessionStatus } from '../service/api';
+import { ApiAddEntry, ApiDeleteConfession, ApiSetConfessionStatus } from '../service/api';
+import { replaceInArray } from '../utils';
 
-function replaceConfession(confessions: any, _id: string, patchObject: object) {
-  const confessionsCopy: any[] = [...confessions];
-  const index = confessionsCopy.findIndex((x) => x._id === _id);
-  confessionsCopy[index] = { ...confessionsCopy[index], ...patchObject };
-  return confessionsCopy;
-}
+export type IConfession = any
 
-export const toggleConfessionStatus = (confession:any, note?:string) => {
+export const toggleConfessionStatus = (confession: IConfession, note?:string) => {
   const status = confession.status === 0 ? -1 : 0;
   return ApiSetConfessionStatus(confession, { status, note })
     .then(async (res) => res.json());
@@ -26,7 +22,7 @@ export type toggleConfessionStatusFn = typeof toggleConfessionStatus
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Confessions(props: RouteComponentProps) {
-  const [confessions, setConfessions] = useState([]);
+  const [confessions, setConfessions] = useState<IConfession[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [snackBar, setSnackBar] = useState({ open: false, message: undefined });
 
@@ -53,24 +49,24 @@ export default function Confessions(props: RouteComponentProps) {
       });
   }, []);
 
-  const addEntry = (confession: any) => ApiAddEntry(confession)
+  const addEntry = (confession: IConfession) => ApiAddEntry(confession)
     .then(async (res) => {
       const response = await res.json();
-      const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject);
-      setConfessions(updatedConfessions as any);
+      const updatedConfessions = replaceInArray(confessions, confession._id, response.data.patchObject);
+      setConfessions(updatedConfessions);
     });
 
-  const setStatusFn = (confession: any, note?: string) => toggleConfessionStatus(confession, note)
+  const setStatusFn = (confession: IConfession, note?: string) => toggleConfessionStatus(confession, note)
     .then((response) => {
-      const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject);
-      setConfessions(updatedConfessions as any);
+      const updatedConfessions = replaceInArray(confessions, confession._id, response.data.patchObject);
+      setConfessions(updatedConfessions);
     });
 
-  const deleteEntryFn = (confession: any) => ApiDeleteEntry(confession)
+  const deleteEntryFn = (confession: IConfession) => ApiDeleteConfession(confession)
     .then(async (res) => {
       const response = await res.json();
-      const updatedConfessions = replaceConfession(confessions, confession._id, response.data.patchObject);
-      setConfessions(updatedConfessions as any);
+      const updatedConfessions = replaceInArray(confessions, confession._id, response.data.patchObject);
+      setConfessions(updatedConfessions);
     });
 
   return (
@@ -114,7 +110,7 @@ export default function Confessions(props: RouteComponentProps) {
                 </TableCell>
                 <TableCell>
                   <ActionButtons
-                    confession={confession}
+                    model={confession}
                     acceptFn={addEntry}
                     setStatusFn={setStatusFn}
                     deleteFn={deleteEntryFn}

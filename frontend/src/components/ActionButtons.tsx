@@ -7,14 +7,14 @@ import { toggleConfessionStatusFn } from '../pages/Confessions';
 
 export type buttonActionFunction = (confession: any) => Promise<any>;
 interface ActionButtonsProps {
-    confession: any
+    model: any
     acceptFn: buttonActionFunction
     setStatusFn: toggleConfessionStatusFn
     deleteFn: buttonActionFunction
 }
 
-const getRedButtonProps = (confession: any, setStatusFn: toggleConfessionStatusFn, deleteFn: buttonActionFunction) => {
-  switch (confession.status) {
+const getRedButtonProps = (model: any, setStatusFn: toggleConfessionStatusFn, deleteFn: buttonActionFunction) => {
+  switch (model.status) {
     case -1:
       return {
         text: 'Undecline',
@@ -40,14 +40,14 @@ export default function ActionButtons(props: ActionButtonsProps) {
   const [displayDeclineDialog, setDeclineDialogOpen] = useState(false);
 
   const {
-    acceptFn, setStatusFn, deleteFn, confession,
+    acceptFn, setStatusFn, deleteFn, model,
   } = props;
 
   const actionWrapper = (actionFn: Function, event: Event | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     return () => {
       setSending(true);
-      actionFn(confession)
+      actionFn(model)
         .then().finally(() => {
           setSending(false);
         });
@@ -55,17 +55,17 @@ export default function ActionButtons(props: ActionButtonsProps) {
   };
 
   const longPressFn = () => {
-    if (confession.status === 0) setDeclineDialogOpen(true);
+    if (model.status === 0) setDeclineDialogOpen(true);
   };
 
-  const { text, fn } = getRedButtonProps(confession, setStatusFn, deleteFn);
+  const { text, fn } = getRedButtonProps(model, setStatusFn, deleteFn);
   const longPressHook = useLongPress(longPressFn, (event) => actionWrapper(fn, event)());
   return (
     <>
       {displayDeclineDialog
       && (
       <ConfessionDeclineDialog
-        confession={confession}
+        confession={model}
         open={displayDeclineDialog}
         setDeclineDialogOpen={setDeclineDialogOpen}
         setStatusFn={setStatusFn}
@@ -74,7 +74,7 @@ export default function ActionButtons(props: ActionButtonsProps) {
       <Grid container direction="column">
         <SuccessButton
           style={{ marginBottom: 5 }}
-          disabled={isSending || confession.status === 1}
+          disabled={isSending || model.status === 1}
           variant="contained"
           onClick={(e) => actionWrapper(acceptFn, e)()}
         >

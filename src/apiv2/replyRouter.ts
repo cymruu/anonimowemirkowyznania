@@ -65,7 +65,8 @@ replyRouter.get('/reply/:id/accept',
 						}))
 					})
 					.catch((err) => {
-						logger.error(err.toString())
+						res.status(500)
+						return res.json(makeAPIResponse(res, null, { message: err.toString() }))
 					})
 			})
 	})

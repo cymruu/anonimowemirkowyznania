@@ -6,11 +6,42 @@ import {
 } from '@material-ui/core';
 import StyledTableRow from '../components/StyledTableRow';
 import HTTPClient from '../service/HTTPClient';
+import { ApiAddReply, ApiDeleteReply, ApiSetReplyStatus } from '../service/api';
+import { replaceInArray } from '../utils';
+import ActionButtons from '../components/ActionButtons';
+
+export type IReply = any
+
+export const toggleReplyStatus = (reply: IReply, note?: string) => {
+  const status = reply.status === 0 ? -1 : 0;
+  return ApiSetReplyStatus(reply, { status, note })
+    .then(async (res) => res.json());
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Replies(props: RouteComponentProps) {
-  const [replies, setReplies] = useState([]);
+  const [replies, setReplies] = useState<IReply[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [snackBar, setSnackBar] = useState({ open: false, message: undefined });
+
+  const addReply = (reply: IReply) => ApiAddReply(reply).then(async (res) => {
+    const response = await res.json();
+    const updatedReplies = replaceInArray(replies, reply._id, response.data.patchObject);
+    setReplies(updatedReplies);
+  });
+
+  const setStatusFn = (reply: IReply, note?: string) => toggleReplyStatus(reply, note)
+    .then((response) => {
+      const updatedReplies = replaceInArray(reply, reply._id, response.data.patchObject);
+      setReplies(updatedReplies);
+    });
+
+  const deleteReplyFn = (reply: IReply) => ApiDeleteReply(reply)
+    .then(async (res) => {
+      const response = await res.json();
+      const updatedReplies = replaceInArray(replies, reply._id, response.data.patchObject);
+      setReplies(updatedReplies);
+    });
 
   useEffect(() => {
     const getReplies = async () => HTTPClient.get('/replies');
@@ -72,7 +103,14 @@ export default function Replies(props: RouteComponentProps) {
                 <TableCell>
                   {reply.addedBy}
                 </TableCell>
-                <TableCell />
+                <TableCell>
+                  <ActionButtons
+                    model={reply}
+                    acceptFn={addReply}
+                    setStatusFn={setStatusFn}
+                    deleteFn={deleteReplyFn}
+                  />
+                </TableCell>
               </StyledTableRow>
             ))}
           </TableBody>
