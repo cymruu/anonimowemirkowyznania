@@ -7,3 +7,5 @@ export function replaceInArray<T>(arr: T[], _id: string, patchObject: object) {
 }
 
 export const toggleStatus = (status: number) => (status === 0 ? -1 : 0);
+
+export const noOpFn = () => undefined;

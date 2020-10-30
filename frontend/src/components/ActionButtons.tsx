@@ -2,18 +2,21 @@ import { Button, CircularProgress, Grid } from '@material-ui/core';
 import React, { useState } from 'react';
 import SuccessButton from './SuccessButton';
 import useLongPress from '../utils/longPress';
-import ConfessionDeclineDialog from './ConfessionDeclineDialog';
+import { noOpFn } from '../utils/index';
+import { IConfession } from '../pages/Confessions';
+import { IReply } from '../pages/Replies';
 
-export type buttonActionFunction = (confession: any) => Promise<any>;
-export type setStatusFn = (confession, note) => Promise<any>
-interface ActionButtonsProps {
-    model: any
+export type buttonActionFunction = (model: IConfession | IReply) => Promise<any>;
+export type setStatusFnT = (model: IConfession | IReply, note?: string) => Promise<any>
+export interface ActionButtonsProps {
+    model: IConfession | IReply
     acceptFn: buttonActionFunction
-    setStatusFn: setStatusFn
+    setStatusFn: setStatusFnT
     deleteFn: buttonActionFunction
+    longPressFn?: ()=>void
 }
 
-const getRedButtonProps = (model: any, setStatusFn: setStatusFn, deleteFn: buttonActionFunction) => {
+const getRedButtonProps = (model: IConfession | IReply, setStatusFn: setStatusFnT, deleteFn: buttonActionFunction) => {
   switch (model.status) {
     case -1:
       return {
@@ -37,53 +40,40 @@ const getRedButtonProps = (model: any, setStatusFn: setStatusFn, deleteFn: butto
 
 export default function ActionButtons(props: ActionButtonsProps) {
   const [isSending, setSending] = useState(false);
-  const [displayDeclineDialog, setDeclineDialogOpen] = useState(false);
 
   const {
-    acceptFn, setStatusFn, deleteFn, model,
+    acceptFn, setStatusFn, deleteFn, model, longPressFn,
   } = props;
 
-  const actionWrapper = (actionFn: Function, event: Event | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const actionWrapper = (
+    actionFn: buttonActionFunction,
+    event: Event | React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     event.preventDefault();
     return () => {
       setSending(true);
       actionFn(model)
-        .then().finally(() => {
+        .finally(() => {
           setSending(false);
         });
     };
   };
 
-  const longPressFn = () => {
-    if (model.status === 0) setDeclineDialogOpen(true);
-  };
-
   const { text, fn } = getRedButtonProps(model, setStatusFn, deleteFn);
-  const longPressHook = useLongPress(longPressFn, (event) => actionWrapper(fn, event)());
+  const longPressHook = useLongPress(longPressFn || noOpFn, (event) => actionWrapper(fn, event)());
   return (
-    <>
-      {displayDeclineDialog
-      && (
-      <ConfessionDeclineDialog
-        confession={model}
-        open={displayDeclineDialog}
-        setDeclineDialogOpen={setDeclineDialogOpen}
-        setStatusFn={setStatusFn}
-      />
-      )}
-      <Grid container direction="column">
-        <SuccessButton
-          style={{ marginBottom: 5 }}
-          disabled={isSending || model.status === 1}
-          variant="contained"
-          onClick={(e) => actionWrapper(acceptFn, e)()}
-        >
-          {isSending ? <CircularProgress size={24} /> : 'Accept'}
-        </SuccessButton>
-        <Button {...longPressHook} disabled={isSending} variant="contained" color="secondary">
-          {isSending ? <CircularProgress size={24} /> : text}
-        </Button>
-      </Grid>
-    </>
+    <Grid container direction="column">
+      <SuccessButton
+        style={{ marginBottom: 5 }}
+        disabled={isSending || model.status === 1}
+        variant="contained"
+        onClick={(e) => actionWrapper(acceptFn, e)()}
+      >
+        {isSending ? <CircularProgress size={24} /> : 'Accept'}
+      </SuccessButton>
+      <Button {...longPressHook} disabled={isSending} variant="contained" color="secondary">
+        {isSending ? <CircularProgress size={24} /> : text}
+      </Button>
+    </Grid>
   );
 }

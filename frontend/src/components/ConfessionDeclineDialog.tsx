@@ -2,18 +2,22 @@ import {
   Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
   FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField,
 } from '@material-ui/core';
-import React, { SyntheticEvent, useState } from 'react';
+import React, {
+  Dispatch, SetStateAction, SyntheticEvent, useState,
+} from 'react';
+import { IConfession } from '../pages/Confessions';
 import { ApiError } from '../service/HTTPClient';
+import { setStatusFnT } from './ActionButtons';
 
 export default function ConfessionDeclineDialog(
   {
-    confession, open, setDeclineDialogOpen, setStatusFn,
+    confession, isOpen, setDeclineDialogOpen, setStatusFn,
   }:
   {
-    confession: any,
-    open: boolean,
-    setDeclineDialogOpen: (value: boolean) => void,
-    setStatusFn: any // todo
+    confession: IConfession,
+    isOpen: boolean,
+    setDeclineDialogOpen: Dispatch<SetStateAction<boolean>>,
+    setStatusFn: setStatusFnT,
   },
 ) {
   const [reason, setReason] = useState<string|null>(null);
@@ -35,7 +39,7 @@ export default function ConfessionDeclineDialog(
     <>
       <Snackbar open={error.open} message={error.message} />
       <Dialog
-        open={open}
+        open={isOpen}
         onClose={() => setDeclineDialogOpen(false)}
       >
         <DialogTitle>Set confession decline reason</DialogTitle>

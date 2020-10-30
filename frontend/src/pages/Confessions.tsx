@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
-import ActionButtons from '../components/ActionButtons';
+import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
 import HTTPClient, { ApiError } from '../service/HTTPClient';
 import { ApiAddEntry, ApiSetConfessionStatus, ApiDeleteConfession } from '../service/api';
@@ -90,7 +90,7 @@ export default function Confessions(props: RouteComponentProps) {
                   {confession.addedBy}
                 </TableCell>
                 <TableCell>
-                  <ActionButtons
+                  <ConfessionActionButtons
                     model={confession}
                     acceptFn={addEntry}
                     setStatusFn={setStatusFn}
