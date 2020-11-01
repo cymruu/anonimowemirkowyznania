@@ -10,14 +10,14 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "@types/jest": "^26.0.12",
-    "@types/node": "^14.6.2",
-    "@types/react": "^16.9.49",
-    "@types/react-dom": "^16.9.8",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^14.14.6",
+    "@types/react": "^16.9.55",
+    "@types/react-dom": "^16.9.9",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "react-scripts": "3.4.3",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.5"
   },
   "scripts": {
     "start": "BROWSER=none react-scripts start",
@@ -26,7 +26,9 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "env": {"browser": true},
+    "env": {
+      "browser": true
+    },
     "extends": [
       "airbnb",
       "airbnb/hooks"
@@ -50,10 +52,20 @@
       "@typescript-eslint/no-unused-vars": [
         "error"
       ],
-      "max-len": ["error", {"code": 120}],
+      "max-len": [
+        "error",
+        {
+          "code": 120
+        }
+      ],
       "implicit-arrow-linebreak": "off",
       "react/jsx-props-no-spreading": "off",
-      "react/require-default-props": ["error", {"ignoreFunctionalComponents": true}],
+      "react/require-default-props": [
+        "error",
+        {
+          "ignoreFunctionalComponents": true
+        }
+      ],
       "max-classes-per-file": "off"
     }
   },
@@ -70,12 +82,11 @@
     ]
   },
   "devDependencies": {
-    "@types/reach__router": "^1.3.5",
-    "eslint": "^7.2.0",
+    "@types/reach__router": "^1.3.6",
     "eslint-config-airbnb": "^18.2.0",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-react": "^7.20.6",
-    "eslint-plugin-react-hooks": "^4.0.0"
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0"
   }
 }
