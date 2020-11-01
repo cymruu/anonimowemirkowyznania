@@ -9,22 +9,23 @@ export class ApiError extends Error {
   }
 }
 
-class HTTPClient {
+export class HTTPClient {
   private request(endpoint: string, method: string, body?: object) {
     return fetch(`/api2/${endpoint}`, {
       method,
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
     }).then(async (res) => {
-      if (!res.ok) {
-        throw res;
-      } else {
-        const responseData = await res.json();
-        if (responseData.error) {
-          throw new ApiError(responseData.error, res.status);
-        }
-        return responseData.data;
+      let responseData;
+      try {
+        responseData = await res.json();
+      } catch {
+        throw new ApiError({ message: 'API malformed response' }, res.status);
       }
+      if (responseData.error) {
+        throw new ApiError(responseData.error, res.status);
+      }
+      return responseData.data;
     });
   }
 
@@ -44,5 +45,3 @@ class HTTPClient {
     return this.request(endpoint, 'delete');
   }
 }
-
-export default new HTTPClient();

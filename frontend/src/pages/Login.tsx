@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { navigate, RouteComponentProps } from '@reach/router';
 
 import {
   TextField, Container, makeStyles, Button, Snackbar,
 } from '@material-ui/core';
-
-import HTTPClient from '../service/HTTPClient';
+import { APIContext } from '../App';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -23,8 +22,9 @@ export default function Login(props: RouteComponentProps) {
     username: '',
     password: '',
   });
-  const [result, setResult] = useState({ success: undefined, error: undefined });
+  const [result, setResult] = useState({ error: undefined });
   const [open, setOpen] = useState(false);
+  const { httpClient } = useContext(APIContext);
 
   const handleClose = (event: React.SyntheticEvent | React.MouseEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -35,17 +35,15 @@ export default function Login(props: RouteComponentProps) {
   };
 
   const loginRequest = useCallback(() => {
-    HTTPClient.post('/users/login', inputs).then(async (res) => {
-      const loginResult = await res.json();
-      setResult(loginResult);
-      if (!loginResult.success) {
-        setOpen(true);
-      }
-      if (loginResult.success) {
+    httpClient.post('/users/login', inputs)
+      .then(async () => {
         navigate('/confessions');
-      }
-    });
-  }, [inputs]);
+      })
+      .catch((err) => {
+        setOpen(true);
+        setResult({ error: err.message });
+      });
+  }, [inputs, httpClient]);
 
   function handleChange(event: any) {
     const { name, value } = event.target;

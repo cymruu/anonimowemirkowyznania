@@ -4,14 +4,15 @@ import {
   LinearProgress, Typography, makeStyles, createStyles, Theme,
 } from '@material-ui/core';
 import { RouteComponentProps } from '@reach/router';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ActionButtons from '../components/ActionButtons';
-import HTTPClient from '../service/HTTPClient';
+
 import { ApiAddEntry, ApiDeleteConfession, ApiSetConfessionStatus } from '../service/api';
 import StyledCardHeader from '../components/StyledCardHeader';
 import Action from '../components/Action';
 import EditTagsDialog from '../components/EditTagsDialog';
 import { toggleStatus } from '../utils';
+import { APIContext } from '../App';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   cardContentHeader: {
@@ -23,11 +24,12 @@ export default function (props: RouteComponentProps & {id?: string}) {
   const { id } = props;
   const [confession, setConfession] = useState<any>(undefined);
   const [editTagsDialog, setEditTagsDialog] = useState<boolean>(false);
+  const { httpClient } = useContext(APIContext);
   useEffect(() => {
-    HTTPClient.get(`/confessions/confession/${id}`).then(async (fetchedConfessions) => {
+    httpClient.get(`/confessions/confession/${id}`).then(async (fetchedConfessions) => {
       setConfession(fetchedConfessions);
     });
-  }, [id]);
+  }, [id, httpClient]);
 
   const patchConfession = (response) => {
     const updatedConfession = { ...confession, ...response.patchObject };

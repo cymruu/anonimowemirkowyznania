@@ -7,14 +7,14 @@ import { RequestWithUser } from 'src/utils'
 import { makeAPIResponse } from './apiV2'
 export const userRouter = Router()
 
-userRouter.get('/', authentication, (req:RequestWithUser, res) => {
+userRouter.get('/', authentication, (req: RequestWithUser, res) => {
 	res.json(makeAPIResponse(res, req.user))
 })
 
 userRouter.post('/login', async (req, res) => {
 	userModel.findOne({ username: req.body.username }).lean().then(user => {
 		if (!user || user.password !== req.body.password) {
-			return res.status(401).json({ success: false, error: 'Invalid login or password' })
+			return res.status(401).json(makeAPIResponse(res, null, { message: 'Invalid login or password' }))
 		}
 		if (user.password === req.body.password) {
 			const { password, ...userWithoutPassword } = user
@@ -24,7 +24,7 @@ userRouter.post('/login', async (req, res) => {
 				exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
 			}, config.secret)
 			res.cookie('token', token, { httpOnly: true })
-			res.json({ success: true, token })
+			return res.json(makeAPIResponse(res, { token }))
 		}
 		return res.status(500)
 	})

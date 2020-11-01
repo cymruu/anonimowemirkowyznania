@@ -5,13 +5,13 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Link as RouterLink, Router } from '@reach/router';
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
 import Replies from './pages/Replies';
 import Index from './pages/Index';
 import Login from './pages/Login';
-import HTTPClient from './service/HTTPClient';
+import { HTTPClient } from './service/HTTPClient';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,16 +25,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export const APIContext = createContext<{httpClient: HTTPClient}>({ httpClient: new HTTPClient() });
+
 function App() {
   const classes = useStyles();
   const [user, setUser] = useState(undefined);
+  const httpClient = new HTTPClient();
+
   useEffect(() => {
-    const getUser = () => HTTPClient.get('/users');
+    const getUser = () => httpClient.get('/users');
     getUser().then(async (res) => {
       const { data } = await res.json();
       setUser(data);
     }).catch(() => undefined);
-  }, []);
+  }, [httpClient]);
 
   return (
     <>
@@ -68,13 +72,15 @@ function App() {
           )}
         </Toolbar>
       </AppBar>
-      <Router>
-        <Index path="/" />
-        <Confessions path="/confessions" />
-        <ConfessionDetails path="/confessions/:id" />
-        <Replies path="/replies" />
-        <Login path="/login" />
-      </Router>
+      <APIContext.Provider value={{ httpClient }}>
+        <Router>
+          <Index path="/" />
+          <Confessions path="/confessions" />
+          <ConfessionDetails path="/confessions/:id" />
+          <Replies path="/replies" />
+          <Login path="/login" />
+        </Router>
+      </APIContext.Provider>
     </>
   );
 }

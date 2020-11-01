@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { RouteComponentProps } from '@reach/router';
 import {
   Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow, Snackbar,
 } from '@material-ui/core';
 import StyledTableRow from '../components/StyledTableRow';
-import HTTPClient, { ApiError } from '../service/HTTPClient';
+import { ApiError } from '../service/HTTPClient';
 import { ApiAddReply, ApiDeleteReply, ApiSetReplyStatus } from '../service/api';
 import { replaceInArray, toggleStatus } from '../utils';
 import ActionButtons from '../components/ActionButtons';
+import { APIContext } from '../App';
 
 export type IReply = any
 
@@ -17,6 +18,7 @@ export default function Replies(props: RouteComponentProps) {
   const [replies, setReplies] = useState<IReply[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [snackBar, setSnackBar] = useState({ open: false, message: '' });
+  const { httpClient } = useContext(APIContext);
 
   const addReply = (reply: IReply) => ApiAddReply(reply).then(async (response) => {
     const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
@@ -37,7 +39,7 @@ export default function Replies(props: RouteComponentProps) {
     });
 
   useEffect(() => {
-    const getReplies = async () => HTTPClient.get('/replies');
+    const getReplies = async () => httpClient.get('/replies');
     getReplies()
       .then(async (response) => {
         setReplies(response);
@@ -48,7 +50,7 @@ export default function Replies(props: RouteComponentProps) {
       .finally(() => {
         setDataLoaded(true);
       });
-  }, []);
+  }, [httpClient]);
 
   return (
     <Container>

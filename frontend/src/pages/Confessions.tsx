@@ -2,13 +2,14 @@ import {
   Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow, Snackbar, Link,
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
-import HTTPClient, { ApiError } from '../service/HTTPClient';
+import { ApiError } from '../service/HTTPClient';
 import { ApiAddEntry, ApiSetConfessionStatus, ApiDeleteConfession } from '../service/api';
 import { replaceInArray, toggleStatus } from '../utils';
+import { APIContext } from '../App';
 
 export type IConfession = any
 
@@ -17,9 +18,10 @@ export default function Confessions(props: RouteComponentProps) {
   const [confessions, setConfessions] = useState<IConfession[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [snackBar, setSnackBar] = useState({ open: false, message: '' });
+  const { httpClient } = useContext(APIContext);
 
   useEffect(() => {
-    HTTPClient.get('/confessions')
+    httpClient.get('/confessions')
       .then((fetchedConfessions) => {
         setConfessions(fetchedConfessions);
       })
@@ -29,7 +31,7 @@ export default function Confessions(props: RouteComponentProps) {
       .finally(() => {
         setDataLoaded(true);
       });
-  }, []);
+  }, [httpClient]);
 
   const addEntry = (confession: any) => ApiAddEntry(confession)
     .then(async (response) => {
