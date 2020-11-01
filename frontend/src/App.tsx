@@ -5,7 +5,10 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Link as RouterLink, Router } from '@reach/router';
-import React, { createContext, useEffect, useState } from 'react';
+import React, {
+  createContext, useEffect, useMemo, useState,
+} from 'react';
+import { useSnackbar } from 'notistack';
 import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
 import Replies from './pages/Replies';
@@ -30,14 +33,19 @@ export const APIContext = createContext<{httpClient: HTTPClient}>({ httpClient: 
 function App() {
   const classes = useStyles();
   const [user, setUser] = useState(undefined);
-  const httpClient = new HTTPClient();
+  const { enqueueSnackbar } = useSnackbar();
+  const httpClient = useMemo(() => new HTTPClient([
+    (err) => {
+      enqueueSnackbar(err.message);
+      return err;
+    },
+  ]), [enqueueSnackbar]);
 
   useEffect(() => {
-    const getUser = () => httpClient.get('/users');
-    getUser().then(async (res) => {
-      const { data } = await res.json();
-      setUser(data);
-    }).catch(() => undefined);
+    httpClient.swallow(httpClient.get('/users'))
+      .then(async (res) => {
+        setUser(res);
+      });
   }, [httpClient]);
 
   return (

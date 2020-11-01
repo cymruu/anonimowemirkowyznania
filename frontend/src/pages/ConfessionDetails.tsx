@@ -26,9 +26,10 @@ export default function (props: RouteComponentProps & {id?: string}) {
   const [editTagsDialog, setEditTagsDialog] = useState<boolean>(false);
   const { httpClient } = useContext(APIContext);
   useEffect(() => {
-    httpClient.get(`/confessions/confession/${id}`).then(async (fetchedConfessions) => {
-      setConfession(fetchedConfessions);
-    });
+    httpClient.swallow(httpClient.get(`/confessions/confession/${id}`))
+      .then(async (fetchedConfessions) => {
+        setConfession(fetchedConfessions);
+      });
   }, [id, httpClient]);
 
   const patchConfession = (response) => {

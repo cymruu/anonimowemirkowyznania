@@ -1,5 +1,7 @@
 /* eslint-disable class-methods-use-this */
 
+import { noOpFn } from '../utils';
+
 interface IApiError {
   message: string
 }
@@ -9,7 +11,14 @@ export class ApiError extends Error {
   }
 }
 
+type APIErrorInterceptorFn = (err: ApiError) => ApiError
 export class HTTPClient {
+  errInterceptors: APIErrorInterceptorFn[]
+
+  constructor(errInterceptors: APIErrorInterceptorFn[] = []) {
+    this.errInterceptors = errInterceptors;
+  }
+
   private request(endpoint: string, method: string, body?: object) {
     return fetch(`/api2/${endpoint}`, {
       method,
@@ -26,7 +35,11 @@ export class HTTPClient {
         throw new ApiError(responseData.error, res.status);
       }
       return responseData.data;
-    });
+    })
+      .catch((err) => {
+        throw this.errInterceptors
+          .reduce((errorObject, currentInterceptor) => currentInterceptor(errorObject), err);
+      });
   }
 
   get(endpoint: string) {
@@ -43,5 +56,9 @@ export class HTTPClient {
 
   delete(endpoint:string) {
     return this.request(endpoint, 'delete');
+  }
+
+  swallow(promise: Promise<any>) {
+    return new Promise<any>((resolve) => promise.then(resolve).catch(noOpFn));
   }
 }

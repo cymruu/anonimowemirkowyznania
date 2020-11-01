@@ -1,12 +1,11 @@
 import {
   Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Snackbar, Link,
+  TableRow, Link,
 } from '@material-ui/core';
 import React, { useEffect, useState, useContext } from 'react';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
-import { ApiError } from '../service/HTTPClient';
 import { ApiAddEntry, ApiSetConfessionStatus, ApiDeleteConfession } from '../service/api';
 import { replaceInArray, toggleStatus } from '../utils';
 import { APIContext } from '../App';
@@ -17,24 +16,20 @@ export type IConfession = any
 export default function Confessions(props: RouteComponentProps) {
   const [confessions, setConfessions] = useState<IConfession[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [snackBar, setSnackBar] = useState({ open: false, message: '' });
   const { httpClient } = useContext(APIContext);
 
   useEffect(() => {
-    httpClient.get('/confessions')
+    httpClient.swallow(httpClient.get('/confessions'))
       .then((fetchedConfessions) => {
         setConfessions(fetchedConfessions);
-      })
-      .catch((err: ApiError) => {
-        setSnackBar({ open: true, message: err.message });
       })
       .finally(() => {
         setDataLoaded(true);
       });
   }, [httpClient]);
 
-  const addEntry = (confession: any) => ApiAddEntry(confession)
-    .then(async (response) => {
+  const addEntry = (confession: IConfession) => ApiAddEntry(confession)
+    .then((response) => {
       const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
       setConfessions(updatedConfessions);
     });
@@ -46,15 +41,14 @@ export default function Confessions(props: RouteComponentProps) {
         setConfessions(updatedConfessions);
       });
 
-  const deleteEntryFn = (confession: any) => ApiDeleteConfession(confession)
-    .then(async (response) => {
+  const deleteEntryFn = (confession: IConfession) => ApiDeleteConfession(confession)
+    .then((response) => {
       const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
       setConfessions(updatedConfessions);
     });
 
   return (
     <Container>
-      <Snackbar open={snackBar.open} message={snackBar.message} />
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

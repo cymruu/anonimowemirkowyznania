@@ -2,10 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { RouteComponentProps } from '@reach/router';
 import {
   Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Snackbar,
+  TableRow,
 } from '@material-ui/core';
 import StyledTableRow from '../components/StyledTableRow';
-import { ApiError } from '../service/HTTPClient';
 import { ApiAddReply, ApiDeleteReply, ApiSetReplyStatus } from '../service/api';
 import { replaceInArray, toggleStatus } from '../utils';
 import ActionButtons from '../components/ActionButtons';
@@ -17,10 +16,9 @@ export type IReply = any
 export default function Replies(props: RouteComponentProps) {
   const [replies, setReplies] = useState<IReply[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [snackBar, setSnackBar] = useState({ open: false, message: '' });
   const { httpClient } = useContext(APIContext);
 
-  const addReply = (reply: IReply) => ApiAddReply(reply).then(async (response) => {
+  const addReply = (reply: IReply) => ApiAddReply(reply).then((response) => {
     const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
     setReplies(updatedReplies);
   });
@@ -33,19 +31,15 @@ export default function Replies(props: RouteComponentProps) {
       });
 
   const deleteReplyFn = (reply: IReply) => ApiDeleteReply(reply)
-    .then(async (response) => {
+    .then((response) => {
       const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
       setReplies(updatedReplies);
     });
 
   useEffect(() => {
-    const getReplies = async () => httpClient.get('/replies');
-    getReplies()
-      .then(async (response) => {
+    httpClient.swallow(httpClient.get('/replies'))
+      .then((response) => {
         setReplies(response);
-      })
-      .catch((err: ApiError) => {
-        setSnackBar({ open: true, message: err.message });
       })
       .finally(() => {
         setDataLoaded(true);
@@ -54,7 +48,6 @@ export default function Replies(props: RouteComponentProps) {
 
   return (
     <Container>
-      <Snackbar open={snackBar.open} message={snackBar.message} />
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

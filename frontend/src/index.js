@@ -1,11 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { SnackbarProvider } from 'notistack';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <App />,
+  <SnackbarProvider>
+    <App />
+  </SnackbarProvider>,
   // eslint-disable-next-line no-undef
   document.getElementById('root'),
 );
