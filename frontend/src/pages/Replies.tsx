@@ -5,7 +5,6 @@ import {
   TableRow,
 } from '@material-ui/core';
 import StyledTableRow from '../components/StyledTableRow';
-import { ApiAddReply, ApiDeleteReply, ApiSetReplyStatus } from '../service/api';
 import { replaceInArray, toggleStatus } from '../utils';
 import ActionButtons from '../components/ActionButtons';
 import { APIContext } from '../App';
@@ -16,21 +15,21 @@ export type IReply = any
 export default function Replies(props: RouteComponentProps) {
   const [replies, setReplies] = useState<IReply[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const { httpClient } = useContext(APIContext);
+  const { httpClient, apiClient } = useContext(APIContext);
 
-  const addReply = (reply: IReply) => ApiAddReply(reply).then((response) => {
+  const addReply = (reply: IReply) => apiClient.replies.add(reply).then((response) => {
     const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
     setReplies(updatedReplies);
   });
 
   const setStatusFn = (reply: IReply) =>
-    ApiSetReplyStatus(reply, { status: toggleStatus(reply.status) })
+    apiClient.replies.setStatus(reply, { status: toggleStatus(reply.status) })
       .then((response) => {
         const updatedReplies = replaceInArray(reply, reply._id, response.patchObject);
         setReplies(updatedReplies);
       });
 
-  const deleteReplyFn = (reply: IReply) => ApiDeleteReply(reply)
+  const deleteReplyFn = (reply: IReply) => apiClient.replies.delete(reply)
     .then((response) => {
       const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
       setReplies(updatedReplies);

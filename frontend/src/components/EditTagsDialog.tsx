@@ -4,17 +4,18 @@ import {
 } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
 import ClearIcon from '@material-ui/icons/Clear';
-import React from 'react';
-import { ApiUpdateConfessionTag } from '../service/api';
+import React, { useContext } from 'react';
+import { APIContext } from '../App';
 
 export default function EditTagsDialog({
   confession, tags, open, onClose, patchConfession,
 }: {confession:any, tags:any[], open:boolean, onClose: ()=>void, patchConfession: (response)=>void}) {
+  const { apiClient } = useContext(APIContext);
+
   const updateTag = (tag:string, tagValue: boolean) => {
-    ApiUpdateConfessionTag(confession, { tag, tagValue })
+    apiClient.confessions.setTag(confession, { tag, tagValue })
       .then(async (res) => {
-        const response = await res.json();
-        patchConfession(response);
+        patchConfession(res);
       });
   };
 

@@ -1,20 +1,55 @@
 import { IConfession } from '../pages/Confessions';
 import { IReply } from '../pages/Replies';
-import { HTTPClient as APIHTTPClient } from './HTTPClient';
+import { HTTPClient } from './HTTPClient';
 
-// TODO: refactor to use client from context
-const HTTPClient = new APIHTTPClient();
+abstract class BaseService {
+  abstract path: string
 
-export const ApiAddEntry = (confession: IConfession) =>
-  HTTPClient.get(`/confessions/confession/${confession._id}/accept`);
-export const ApiSetConfessionStatus = (confession: IConfession, { status, note }:{ status: number, note?: string}) =>
-  HTTPClient.put(`/confessions/confession/${confession._id}/status`, { status, note });
-export const ApiDeleteConfession = (confession: IConfession) =>
-  HTTPClient.delete(`/confessions/confession/${confession._id}`);
-export const ApiUpdateConfessionTag = (confession: IConfession, { tag, tagValue }: {tag: string, tagValue: boolean}) =>
-  HTTPClient.put(`/confessions/confession/${confession._id}/tags`, { tag, tagValue });
+  protected _httpClient: HTTPClient
 
-export const ApiAddReply = (reply: IReply) => HTTPClient.get(`/replies/reply/${reply._id}/accept`);
-export const ApiSetReplyStatus = (reply: IReply, { status }:{ status: number, note?: string}) =>
-  HTTPClient.put(`/replies/reply/${reply._id}/status`, { status });
-export const ApiDeleteReply = (reply: IReply) => HTTPClient.delete(`/replies/reply/${reply._id}`);
+  constructor(client: HTTPClient) {
+    this._httpClient = client;
+  }
+}
+
+class ConfessionApi extends BaseService {
+  path = '/confessions'
+
+  public add(confession: IConfession) {
+    return this._httpClient.get(`/confessions/confession/${confession._id}/accept`);
+  }
+
+  public setStatus(confession: IConfession, { status, note }: {status: number, note?: string}) {
+    return this._httpClient.put(`/confessions/confession/${confession._id}/status`, { status, note });
+  }
+
+  public delete(confession: IConfession) {
+    return this._httpClient.delete(`/confessions/confession/${confession._id}`);
+  }
+
+  public setTag(confession: IConfession, { tag, tagValue }: {tag: string, tagValue: boolean}) {
+    return this._httpClient.put(`/confessions/confession/${confession._id}/tags`, { tag, tagValue });
+  }
+}
+
+class ReplyApi extends BaseService {
+  path = '/replies'
+
+  add(reply: IReply) {
+    return this._httpClient.get(`/replies/reply/${reply._id}/accept`);
+  }
+
+  setStatus(reply: IReply, { status }:{ status: number}) {
+    return this._httpClient.put(`/replies/reply/${reply._id}/status`, { status });
+  }
+
+  delete(reply: IReply) {
+    return this._httpClient.delete(`/replies/reply/${reply._id}`);
+  }
+}
+export default function createAPIClient(client: HTTPClient) {
+  return {
+    confessions: new ConfessionApi(client),
+    replies: new ReplyApi(client),
+  };
+}

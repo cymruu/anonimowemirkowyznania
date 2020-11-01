@@ -15,6 +15,7 @@ import Replies from './pages/Replies';
 import Index from './pages/Index';
 import Login from './pages/Login';
 import { HTTPClient } from './service/HTTPClient';
+import createAPIClient from './service/api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,7 +29,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const APIContext = createContext<{httpClient: HTTPClient}>({ httpClient: new HTTPClient() });
+const defaultHTTPClient = new HTTPClient();
+
+export const APIContext = createContext<{
+  httpClient: HTTPClient,
+  apiClient: ReturnType<typeof createAPIClient>}>({
+    httpClient: defaultHTTPClient,
+    apiClient: createAPIClient(defaultHTTPClient),
+  });
 
 function App() {
   const classes = useStyles();
@@ -40,6 +48,7 @@ function App() {
       return err;
     },
   ]), [enqueueSnackbar]);
+  const apiClient = createAPIClient(httpClient);
 
   useEffect(() => {
     httpClient.swallow(httpClient.get('/users'))
@@ -80,7 +89,7 @@ function App() {
           )}
         </Toolbar>
       </AppBar>
-      <APIContext.Provider value={{ httpClient }}>
+      <APIContext.Provider value={{ httpClient, apiClient }}>
         <Router>
           <Index path="/" />
           <Confessions path="/confessions" />

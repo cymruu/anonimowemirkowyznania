@@ -6,7 +6,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
-import { ApiAddEntry, ApiSetConfessionStatus, ApiDeleteConfession } from '../service/api';
 import { replaceInArray, toggleStatus } from '../utils';
 import { APIContext } from '../App';
 
@@ -16,7 +15,7 @@ export type IConfession = any
 export default function Confessions(props: RouteComponentProps) {
   const [confessions, setConfessions] = useState<IConfession[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const { httpClient } = useContext(APIContext);
+  const { httpClient, apiClient } = useContext(APIContext);
 
   useEffect(() => {
     httpClient.swallow(httpClient.get('/confessions'))
@@ -28,20 +27,20 @@ export default function Confessions(props: RouteComponentProps) {
       });
   }, [httpClient]);
 
-  const addEntry = (confession: IConfession) => ApiAddEntry(confession)
+  const addEntry = (confession: IConfession) => apiClient.confessions.add(confession)
     .then((response) => {
       const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
       setConfessions(updatedConfessions);
     });
 
   const setStatusFn = (confession: IConfession, note?: string) =>
-    ApiSetConfessionStatus(confession, { status: toggleStatus(confession.status), note })
+    apiClient.confessions.setStatus(confession, { status: toggleStatus(confession.status), note })
       .then((response) => {
         const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
         setConfessions(updatedConfessions);
       });
 
-  const deleteEntryFn = (confession: IConfession) => ApiDeleteConfession(confession)
+  const deleteEntryFn = (confession: IConfession) => apiClient.confessions.delete(confession)
     .then((response) => {
       const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
       setConfessions(updatedConfessions);

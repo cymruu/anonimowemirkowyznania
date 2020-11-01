@@ -13,7 +13,7 @@ export class ApiError extends Error {
 
 type APIErrorInterceptorFn = (err: ApiError) => ApiError
 export class HTTPClient {
-  errInterceptors: APIErrorInterceptorFn[]
+  private errInterceptors: APIErrorInterceptorFn[]
 
   constructor(errInterceptors: APIErrorInterceptorFn[] = []) {
     this.errInterceptors = errInterceptors;
@@ -54,7 +54,7 @@ export class HTTPClient {
     return this.request(endpoint, 'put', body);
   }
 
-  delete(endpoint:string) {
+  delete(endpoint: string) {
     return this.request(endpoint, 'delete');
   }
 

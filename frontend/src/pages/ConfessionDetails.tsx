@@ -7,7 +7,6 @@ import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import ActionButtons from '../components/ActionButtons';
 
-import { ApiAddEntry, ApiDeleteConfession, ApiSetConfessionStatus } from '../service/api';
 import StyledCardHeader from '../components/StyledCardHeader';
 import Action from '../components/Action';
 import EditTagsDialog from '../components/EditTagsDialog';
@@ -24,7 +23,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
   const { id } = props;
   const [confession, setConfession] = useState<any>(undefined);
   const [editTagsDialog, setEditTagsDialog] = useState<boolean>(false);
-  const { httpClient } = useContext(APIContext);
+  const { httpClient, apiClient } = useContext(APIContext);
   useEffect(() => {
     httpClient.swallow(httpClient.get(`/confessions/confession/${id}`))
       .then(async (fetchedConfessions) => {
@@ -39,18 +38,19 @@ export default function (props: RouteComponentProps & {id?: string}) {
     setConfession(updatedConfession);
   };
 
-  const addEntryFn = () => ApiAddEntry(confession).then(async (response) => {
+  const addEntryFn = () => apiClient.confessions.add(confession).then(async (response) => {
     patchConfession(response);
     return response;
   });
 
   const setStatusFn = (confession2: any, note?: string) =>
-    ApiSetConfessionStatus(confession2, { status: toggleStatus(confession2.status), note })
+    apiClient.confessions.setStatus(confession2, { status: toggleStatus(confession2.status), note })
       .then((response) => {
         patchConfession(response);
         return response;
       });
-  const deleteEntryFn = () => ApiDeleteConfession(confession).then(async (response) => {
+
+  const deleteEntryFn = () => apiClient.confessions.delete(confession).then(async (response) => {
     patchConfession(response);
     return response;
   });
