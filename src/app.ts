@@ -34,6 +34,7 @@ import * as surveyController from './controllers/survey'
 import crypto from 'crypto'
 import logger from './logger'
 import DonationIntent from './models/donationIntent'
+import path from 'path'
 
 app.enable('trust proxy')
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -43,6 +44,12 @@ app.use(express.static('public'))
 app.use('/api', apiRouter)
 app.use('/api2', apiv2Router)
 app.use('/admin', adminRouter)
+const frontendStaticPath = path.join(__dirname, '..', 'frontend', 'build', 'static')
+const frontendIndex = path.join(__dirname, '..', 'frontend', 'build', 'index.html')
+app.use('/admin2/static', express.static(frontendStaticPath))
+app.use('/admin2/*', (req, res) => {
+	res.sendFile(frontendIndex)
+})
 app.use('/conversation', conversationRouter)
 app.use(auth(false))
 app.set('view engine', 'pug')

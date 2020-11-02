@@ -28,9 +28,14 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
 }));
+const makePath = (path: string) => {
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    return path;
+  }
+  return `/admin2${path}`;
+};
 
 const defaultHTTPClient = new HTTPClient();
-
 export const APIContext = createContext<{
   httpClient: HTTPClient,
   apiClient: ReturnType<typeof createAPIClient>}>({
@@ -69,13 +74,13 @@ function App() {
             Anonimowe Mirko Wyznania
           </Typography>
           <Button color="inherit">
-            <Link component={RouterLink} to="/confessions" color="inherit">confessions</Link>
+            <Link component={RouterLink} to={makePath('/confessions')} color="inherit">confessions</Link>
           </Button>
           <Button color="inherit">
-            <Link component={RouterLink} to="/replies" color="inherit">replies</Link>
+            <Link component={RouterLink} to={makePath('/replies')} color="inherit">replies</Link>
           </Button>
           <Button color="inherit">
-            <Link component={RouterLink} to="/login" color="inherit">login</Link>
+            <Link component={RouterLink} to={makePath('/login')} color="inherit">login</Link>
           </Button>
           {user && (
           <IconButton
@@ -91,11 +96,11 @@ function App() {
       </AppBar>
       <APIContext.Provider value={{ httpClient, apiClient }}>
         <Router>
-          <Index path="/" />
-          <Confessions path="/confessions" />
-          <ConfessionDetails path="/confessions/:id" />
-          <Replies path="/replies" />
-          <Login path="/login" />
+          <Index path={makePath('/')} />
+          <Confessions path={makePath('/confessions')} />
+          <ConfessionDetails path={makePath('/confessions/:id')} />
+          <Replies path={makePath('/replies')} />
+          <Login path={makePath('/login')} />
         </Router>
       </APIContext.Provider>
     </>
