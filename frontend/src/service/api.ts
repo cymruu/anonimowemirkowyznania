@@ -47,6 +47,7 @@ class ReplyApi extends BaseService {
     return this._httpClient.delete(`/replies/reply/${reply._id}`);
   }
 }
+
 export default function createAPIClient(client: HTTPClient) {
   return {
     confessions: new ConfessionApi(client),

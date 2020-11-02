@@ -6,6 +6,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import ClearIcon from '@material-ui/icons/Clear';
 import React, { useContext } from 'react';
 import { APIContext } from '../App';
+import { noOpFn } from '../utils';
 
 export default function EditTagsDialog({
   confession, tags, open, onClose, patchConfession,
@@ -16,7 +17,7 @@ export default function EditTagsDialog({
     apiClient.confessions.setTag(confession, { tag, tagValue })
       .then(async (res) => {
         patchConfession(res);
-      });
+      }).catch(noOpFn);
   };
 
   const chips = tags?.map(([tag, value]) => (

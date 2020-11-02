@@ -10,7 +10,7 @@ import ActionButtons from '../components/ActionButtons';
 import StyledCardHeader from '../components/StyledCardHeader';
 import Action from '../components/Action';
 import EditTagsDialog from '../components/EditTagsDialog';
-import { toggleStatus } from '../utils';
+import { noOpFn, toggleStatus } from '../utils';
 import { APIContext } from '../App';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -41,19 +41,19 @@ export default function (props: RouteComponentProps & {id?: string}) {
   const addEntryFn = () => apiClient.confessions.add(confession).then(async (response) => {
     patchConfession(response);
     return response;
-  });
+  }).catch(noOpFn);
 
   const setStatusFn = (confession2: any, note?: string) =>
     apiClient.confessions.setStatus(confession2, { status: toggleStatus(confession2.status), note })
       .then((response) => {
         patchConfession(response);
         return response;
-      });
+      }).catch(noOpFn);
 
   const deleteEntryFn = () => apiClient.confessions.delete(confession).then(async (response) => {
     patchConfession(response);
     return response;
-  });
+  }).catch(noOpFn);
 
   const actionsList = confession?.actions
   ?.map((action, i) =>

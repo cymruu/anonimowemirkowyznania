@@ -6,7 +6,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
-import { replaceInArray, toggleStatus } from '../utils';
+import { noOpFn, replaceInArray, toggleStatus } from '../utils';
 import { APIContext } from '../App';
 
 export type IConfession = any
@@ -31,20 +31,20 @@ export default function Confessions(props: RouteComponentProps) {
     .then((response) => {
       const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
       setConfessions(updatedConfessions);
-    });
+    }).catch(noOpFn);
 
   const setStatusFn = (confession: IConfession, note?: string) =>
     apiClient.confessions.setStatus(confession, { status: toggleStatus(confession.status), note })
       .then((response) => {
         const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
         setConfessions(updatedConfessions);
-      });
+      }).catch(noOpFn);
 
   const deleteEntryFn = (confession: IConfession) => apiClient.confessions.delete(confession)
     .then((response) => {
       const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
       setConfessions(updatedConfessions);
-    });
+    }).catch(noOpFn);
 
   return (
     <Container>
