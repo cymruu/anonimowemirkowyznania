@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { RouteComponentProps } from '@reach/router';
 import {
-  Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
+  Container, LinearProgress, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow,
 } from '@material-ui/core';
 import StyledTableRow from '../components/StyledTableRow';
@@ -10,6 +10,9 @@ import ActionButtons from '../components/ActionButtons';
 import { APIContext } from '../App';
 
 export type IReply = any
+
+const buildCommentLink = (reply: IReply) =>
+  `https://wykop.pl/wpis/${reply.parentID.entryID}/${reply.commentID ? `#${reply.commentID}` : ''}`;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Replies(props: RouteComponentProps) {
@@ -37,8 +40,8 @@ export default function Replies(props: RouteComponentProps) {
 
   useEffect(() => {
     httpClient.swallow(httpClient.get('/replies'))
-      .then((response) => {
-        setReplies(response);
+      .then((fetchedReplies) => {
+        setReplies(fetchedReplies);
       })
       .finally(() => {
         setDataLoaded(true);
@@ -61,7 +64,7 @@ export default function Replies(props: RouteComponentProps) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {replies.map((reply: any) => (
+            {replies.map((reply: IReply) => (
               <StyledTableRow key={reply._id} status={reply.status} hover>
                 <TableCell>
                   {reply._id}
@@ -76,7 +79,12 @@ export default function Replies(props: RouteComponentProps) {
                   {reply.auth}
                 </TableCell>
                 <TableCell>
-                  {reply.commentID}
+                  {reply.parentID.entryID && (
+                  <Link href={buildCommentLink(reply)} rel="noopener" target="_blank">
+                    {reply.parentID.entryID}
+                    {reply.commentID && `#${reply.commentID}`}
+                  </Link>
+                  )}
                 </TableCell>
                 <TableCell>
                   {reply.addedBy}

@@ -62,7 +62,7 @@ export default function Confessions(props: RouteComponentProps) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {confessions.map((confession: any) => (
+            {confessions.map((confession: IConfession) => (
               <StyledTableRow key={confession._id} status={confession.status} hover>
                 <TableCell>
                   <Link component={RouterLink} to={`/confessions/${confession._id}`}>
@@ -79,7 +79,11 @@ export default function Confessions(props: RouteComponentProps) {
                   {confession.auth}
                 </TableCell>
                 <TableCell>
-                  {confession.entryID}
+                  {confession.entryID && (
+                  <Link href={`https://wykop.pl/wpis/${confession.entryID}`} rel="noopener" target="_blank">
+                    {confession.entryID}
+                  </Link>
+                  )}
                 </TableCell>
                 <TableCell>
                   {confession.addedBy}
