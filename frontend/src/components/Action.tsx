@@ -27,7 +27,7 @@ export default function Action({ action, index }: {action:any, index: number}) {
         <Box display="flex">
           <Box flexGrow={1}>
             <Box display="flex" justifyContent="space-between">
-              <Typography variant="h6">
+              <Typography variant="subtitle1">
                 {actionText}
               </Typography>
               <Typography variant="caption">

@@ -1,9 +1,11 @@
 import {
   Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Link,
+  TableRow, Link, Tooltip,
 } from '@material-ui/core';
 import React, { useEffect, useState, useContext } from 'react';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
+import SurveyIcon from '@material-ui/icons/Poll';
+import EmbedIcon from '@material-ui/icons/Attachment';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
 import { noOpFn, replaceInArray, toggleStatus } from '../utils';
@@ -68,6 +70,10 @@ export default function Confessions(props: RouteComponentProps) {
                   <Link component={RouterLink} to={`/confessions/${confession._id}`}>
                     {confession._id}
                   </Link>
+                  <div>
+                    {confession.survey && <Tooltip title="confession with survey"><SurveyIcon /></Tooltip>}
+                    {confession.embed && <Tooltip title="confession with embeded content"><EmbedIcon /></Tooltip>}
+                  </div>
                 </TableCell>
                 <TableCell>
                   {confession.text}

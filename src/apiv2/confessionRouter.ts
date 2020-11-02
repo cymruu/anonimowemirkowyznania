@@ -35,7 +35,7 @@ function getConfessionMiddleware(req: RequestWithConfession, res: Response, next
 confessionRouter.use(authentication)
 confessionRouter.get('/', async (req: RequestWithUser, res) => {
 	confessionModel
-		.find({}, ['_id', 'text', 'status', 'embed', 'auth', 'entryID', 'addedBy'])
+		.find({}, ['_id', 'text', 'status', 'embed', 'auth', 'entryID', 'addedBy', 'survey'])
 		.sort({ _id: -1 })
 		.lean()
 		.limit(100)
@@ -166,12 +166,14 @@ confessionRouter.put('/confession/:id/tags',
 			`${req.body.tag} ${tagValue ? '✓' : '✗'}`)
 			.save()
 		const newTags = prepareArrayRefactored(req.confession.tags, req.body.tag, tagValue)
-		req.confession.update({
+		req.confession.updateOne({
 			$set: {
 				tags: newTags,
 			},
 			$push: { actions: action._id },
 		}).then(updateResult => {
 			return res.status(200).json(makeAPIResponse(res, { patchObject: { tags: newTags }, action }))
+		}).catch(err => {
+			return res.status(500).json(makeAPIResponse(res, null, { message: err.toString() }))
 		})
 	})

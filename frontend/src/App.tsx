@@ -2,7 +2,7 @@ import {
   AppBar, Button, IconButton, Link, makeStyles, Toolbar, Typography,
 } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Link as RouterLink, Router } from '@reach/router';
 import React, {
@@ -84,7 +84,7 @@ function App() {
             aria-haspopup="true"
             color="inherit"
           >
-            <AccountCircle />
+            <AccountCircleIcon />
           </IconButton>
           )}
         </Toolbar>

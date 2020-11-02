@@ -1,23 +1,24 @@
 import {
-  Card, CardContent, Container, Divider,
-  Link, Grid, Box,
-  LinearProgress, Typography, makeStyles, createStyles, Theme,
+  Box, Card, CardContent, Container, Divider,
+  Grid,
+  LinearProgress, Link,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
 } from '@material-ui/core';
+import EmbedIcon from '@material-ui/icons/Attachment';
+import SurveyIcon from '@material-ui/icons/Poll';
+import RadioIcon from '@material-ui/icons/RadioButtonUnchecked';
 import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
-import ActionButtons from '../components/ActionButtons';
-
-import StyledCardHeader from '../components/StyledCardHeader';
-import Action from '../components/Action';
-import EditTagsDialog from '../components/EditTagsDialog';
-import { noOpFn, toggleStatus } from '../utils';
 import { APIContext } from '../App';
-
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  cardContentHeader: {
-    marginBottom: theme.spacing(2),
-  },
-}));
+import Action from '../components/Action';
+import ActionButtons from '../components/ActionButtons';
+import EditTagsDialog from '../components/EditTagsDialog';
+import StyledCardHeader from '../components/StyledCardHeader';
+import { noOpFn, toggleStatus } from '../utils';
 
 export default function (props: RouteComponentProps & {id?: string}) {
   const { id } = props;
@@ -55,11 +56,12 @@ export default function (props: RouteComponentProps & {id?: string}) {
     return response;
   }).catch(noOpFn);
 
-  const actionsList = confession?.actions
-  ?.map((action, i) =>
-    <Action action={action} index={confession.actions.length - 1 - i} key={action._id} />);
-
-  const classes = useStyles();
+  const actionsList = (
+    <Box mt={2}>
+      {confession?.actions?.map((action, i) =>
+        <Action action={action} index={confession.actions.length - 1 - i} key={action._id} />)}
+    </Box>
+  );
 
   return (
     <Container>
@@ -111,12 +113,56 @@ export default function (props: RouteComponentProps & {id?: string}) {
             <div>
               {confession.text}
             </div>
-          </CardContent>
-          <Divider variant="middle" />
-          <CardContent>
-            <Typography variant="h5" className={classes.cardContentHeader}>
-              Actions:
-            </Typography>
+            <Divider variant="middle" />
+            {confession.embed && (
+            <>
+              <Box display="flex" alignItems="center">
+                <Box mr={2}>
+                  <EmbedIcon />
+                </Box>
+                <Typography variant="subtitle1">
+                  Embed:
+                  {' '}
+                  <Link href={confession.embed} rel="noopener" target="_blank">
+                    {confession.embed}
+                  </Link>
+                </Typography>
+              </Box>
+              <Divider variant="middle" />
+            </>
+            )}
+            {confession.survey && (
+              <>
+                <Box>
+                  <Box>
+                    <Box display="flex" alignItems="center">
+                      <Box mr={2}>
+                        <SurveyIcon />
+                      </Box>
+                      <Typography variant="subtitle1">
+                        Survey question:
+                        {' '}
+                        {confession.survey.question}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <List>
+                    {confession.survey.answers.map((answer) => (
+                      <ListItem
+                        key={answer}
+                        dense
+                      >
+                        <ListItemIcon>
+                          <RadioIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={answer} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+                <Divider variant="middle" />
+              </>
+            )}
             {actionsList}
           </CardContent>
         </Card>
