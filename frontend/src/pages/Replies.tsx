@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { RouteComponentProps } from '@reach/router';
 import {
   Container, LinearProgress, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow,
+  Tooltip
 } from '@material-ui/core';
+import EmbedIcon from '@material-ui/icons/Attachment';
+import { RouteComponentProps } from '@reach/router';
+import React, { useContext, useEffect, useState } from 'react';
+import { APIContext } from '../App';
+import ActionButtons from '../components/ActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
 import { noOpFn, replaceInArray, toggleStatus } from '../utils';
-import ActionButtons from '../components/ActionButtons';
-import { APIContext } from '../App';
 
 export type IReply = any
 
@@ -68,12 +70,19 @@ export default function Replies(props: RouteComponentProps) {
               <StyledTableRow key={reply._id} status={reply.status} hover>
                 <TableCell>
                   {reply._id}
+                  <div>
+                    {reply.embed && <Tooltip title="reply with embeded content"><EmbedIcon /></Tooltip>}
+                  </div>
                 </TableCell>
                 <TableCell>
                   {reply.text}
                 </TableCell>
                 <TableCell>
-                  {reply.embed ? 'yes' : 'no'}
+                  {reply.embed && (
+                    <Link href={reply.embed} rel="noopener" target="_blank">
+                      {reply.embed}
+                    </Link>
+                  )}
                 </TableCell>
                 <TableCell>
                   {reply.auth}

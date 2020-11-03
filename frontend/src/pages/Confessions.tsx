@@ -1,15 +1,16 @@
 import {
-  Container, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Link, Tooltip,
+  Container, LinearProgress,
+  Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
+  TableRow, Tooltip
 } from '@material-ui/core';
-import React, { useEffect, useState, useContext } from 'react';
-import { Link as RouterLink, RouteComponentProps } from '@reach/router';
-import SurveyIcon from '@material-ui/icons/Poll';
 import EmbedIcon from '@material-ui/icons/Attachment';
+import SurveyIcon from '@material-ui/icons/Poll';
+import { Link as RouterLink, RouteComponentProps } from '@reach/router';
+import React, { useContext, useEffect, useState } from 'react';
+import { APIContext } from '../App';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import StyledTableRow from '../components/StyledTableRow';
 import { noOpFn, replaceInArray, toggleStatus } from '../utils';
-import { APIContext } from '../App';
 
 export type IConfession = any
 
@@ -79,7 +80,11 @@ export default function Confessions(props: RouteComponentProps) {
                   {confession.text}
                 </TableCell>
                 <TableCell>
-                  {confession.embed ? 'yes' : 'no'}
+                  {confession.embed && (
+                    <Link href={confession.embed} rel="noopener" target="_blank">
+                      {confession.embed}
+                    </Link>
+                  )}
                 </TableCell>
                 <TableCell>
                   {confession.auth}
