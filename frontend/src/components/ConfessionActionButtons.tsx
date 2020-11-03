@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import ConfessionDeclineDialog from './ConfessionDeclineDialog';
 import ActionButtons, { ActionButtonsProps } from './ActionButtons';
+import ConfessionDeclineDialog from './ConfessionDeclineDialog';
 
 export default function ConfessionActionButtons(props: ActionButtonsProps) {
   const { model, setStatusFn } = props;

@@ -1,5 +1,5 @@
 import {
-  withStyles, TableRow, Theme, fade,
+  fade, TableRow, Theme, withStyles,
 } from '@material-ui/core';
 import React from 'react';
 import statusToClass from '../utils/statusToClass';

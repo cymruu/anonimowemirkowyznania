@@ -1,10 +1,10 @@
 import { Button, CircularProgress, Grid } from '@material-ui/core';
 import React, { useState } from 'react';
-import SuccessButton from './SuccessButton';
-import useLongPress from '../utils/longPress';
-import { noOpFn } from '../utils/index';
 import { IConfession } from '../pages/Confessions';
 import { IReply } from '../pages/Replies';
+import { noOpFn } from '../utils/index';
+import useLongPress from '../utils/longPress';
+import SuccessButton from './SuccessButton';
 
 export type buttonActionFunction = (model: IConfession | IReply) => Promise<any>;
 export type setStatusFnT = (model: IConfession | IReply, note?: string) => Promise<any>

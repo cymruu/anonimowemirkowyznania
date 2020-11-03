@@ -2,8 +2,8 @@ import {
   Box,
   Chip, Dialog, DialogTitle,
 } from '@material-ui/core';
-import DoneIcon from '@material-ui/icons/Done';
 import ClearIcon from '@material-ui/icons/Clear';
+import DoneIcon from '@material-ui/icons/Done';
 import React, { useContext } from 'react';
 import { APIContext } from '../App';
 import { noOpFn } from '../utils';

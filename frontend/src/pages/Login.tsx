@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useCallback, useContext } from 'react';
-import { navigate, RouteComponentProps } from '@reach/router';
-
 import {
-  TextField, Container, makeStyles, Button, Snackbar,
+  Button, Container, makeStyles, Snackbar, TextField,
 } from '@material-ui/core';
+import { navigate, RouteComponentProps } from '@reach/router';
+import React, { useCallback, useContext, useState } from 'react';
 import { APIContext } from '../App';
 
 const useStyles = makeStyles((theme) => ({

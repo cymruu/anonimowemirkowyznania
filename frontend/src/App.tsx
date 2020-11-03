@@ -1,21 +1,21 @@
 import {
-  AppBar, Button, IconButton, Link, makeStyles, Toolbar, Typography,
+  AppBar, Button, IconButton, Link, makeStyles, Toolbar, Typography
 } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Link as RouterLink, Router } from '@reach/router';
-import React, {
-  createContext, useEffect, useMemo, useState,
-} from 'react';
 import { useSnackbar } from 'notistack';
+import React, {
+  createContext, useEffect, useMemo, useState
+} from 'react';
 import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
-import Replies from './pages/Replies';
 import Index from './pages/Index';
 import Login from './pages/Login';
-import { HTTPClient } from './service/HTTPClient';
+import Replies from './pages/Replies';
 import createAPIClient from './service/api';
+import { HTTPClient } from './service/HTTPClient';
 
 const useStyles = makeStyles((theme) => ({
   root: {
