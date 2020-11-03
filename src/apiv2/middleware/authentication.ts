@@ -14,5 +14,4 @@ export function authentication(req: Request, res: Response, next) {
 	}
 	(req as RequestWithUser).user = decoded
 	next()
-
 }

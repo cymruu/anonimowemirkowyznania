@@ -29,3 +29,8 @@ userRouter.post('/login', async (req, res) => {
 		return res.status(500)
 	})
 })
+// TODO: should require a token to actually logout user
+userRouter.get('/logout', (req, res) => {
+	res.clearCookie('token')
+	res.json(makeAPIResponse(res, {}))
+})

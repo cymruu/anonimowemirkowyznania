@@ -1,5 +1,5 @@
 import {
-  AppBar, Button, IconButton, Link, makeStyles, Toolbar, Typography
+  AppBar, Button, IconButton, Link, makeStyles, Toolbar, Typography,
 } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -7,12 +7,13 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { Link as RouterLink, Router } from '@reach/router';
 import { useSnackbar } from 'notistack';
 import React, {
-  createContext, useEffect, useMemo, useState
+  createContext, useEffect, useMemo, useState,
 } from 'react';
 import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
 import Index from './pages/Index';
 import Login from './pages/Login';
+import Logout from './pages/Logout';
 import Replies from './pages/Replies';
 import createAPIClient from './service/api';
 import { HTTPClient } from './service/HTTPClient';
@@ -57,7 +58,7 @@ function App() {
 
   useEffect(() => {
     httpClient.swallow(httpClient.get('/users'))
-      .then(async (res) => {
+      .then((res) => {
         setUser(res);
       });
   }, [httpClient]);
@@ -79,19 +80,22 @@ function App() {
           <Button color="inherit">
             <Link component={RouterLink} to={makePath('/replies')} color="inherit">replies</Link>
           </Button>
-          <Button color="inherit">
-            <Link component={RouterLink} to={makePath('/login')} color="inherit">login</Link>
-          </Button>
-          {user && (
-          <IconButton
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            color="inherit"
-          >
-            <AccountCircleIcon />
-          </IconButton>
-          )}
+          {user ? (
+            <>
+              <IconButton
+                color="inherit"
+              >
+                <AccountCircleIcon />
+              </IconButton>
+              <Button color="inherit">
+                <Link component={RouterLink} to={makePath('/logout')} color="inherit">logout</Link>
+              </Button>
+            </>
+          ) : (
+            <Button color="inherit">
+              <Link component={RouterLink} to={makePath('/login')} color="inherit">login</Link>
+            </Button>
+          ) }
         </Toolbar>
       </AppBar>
       <APIContext.Provider value={{ httpClient, apiClient }}>
@@ -100,7 +104,8 @@ function App() {
           <Confessions path={makePath('/confessions')} />
           <ConfessionDetails path={makePath('/confessions/:id')} />
           <Replies path={makePath('/replies')} />
-          <Login path={makePath('/login')} />
+          <Login path={makePath('/login')} setUser={setUser} />
+          <Logout path={makePath('/logout')} setUser={setUser} />
         </Router>
       </APIContext.Provider>
     </>

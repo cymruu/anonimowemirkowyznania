@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  Button, Container, makeStyles, Snackbar, TextField,
+  Button, Container, makeStyles, TextField,
 } from '@material-ui/core';
 import { navigate, RouteComponentProps } from '@reach/router';
-import React, { useCallback, useContext, useState } from 'react';
+import React, {
+  Dispatch, useCallback, useContext, useState,
+} from 'react';
 import { APIContext } from '../App';
 
 const useStyles = makeStyles((theme) => ({
@@ -15,34 +16,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login(props: RouteComponentProps) {
+export default function Login(props: RouteComponentProps & {setUser: Dispatch<any>}) {
+  const { setUser } = props;
   const classes = useStyles();
   const [inputs, setInputs] = useState({
     username: '',
     password: '',
   });
-  const [result, setResult] = useState({ error: undefined });
-  const [open, setOpen] = useState(false);
   const { httpClient } = useContext(APIContext);
 
-  const handleClose = (event: React.SyntheticEvent | React.MouseEvent, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen(false);
-  };
-
   const loginRequest = useCallback(() => {
-    httpClient.post('/users/login', inputs)
-      .then(async () => {
-        navigate('/confessions');
-      })
-      .catch((err) => {
-        setOpen(true);
-        setResult({ error: err.message });
+    httpClient.swallow(httpClient.post('/users/login', inputs))
+      .then(async ({ token }) => {
+        navigate('/confessions')
+          .then(() => {
+            setUser(token);
+          });
       });
-  }, [inputs, httpClient]);
+  }, [inputs, httpClient, setUser]);
 
   function handleChange(event: any) {
     const { name, value } = event.target;
@@ -89,16 +80,6 @@ export default function Login(props: RouteComponentProps) {
         >
           Login
         </Button>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          open={open}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          message={result.error}
-        />
       </form>
     </Container>
   );
