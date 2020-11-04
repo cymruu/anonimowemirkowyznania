@@ -77,7 +77,7 @@ export default function Confessions(props: RouteComponentProps) {
                     {confession.embed && <Tooltip title="confession with embeded content"><EmbedIcon /></Tooltip>}
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell style={{ maxWidth: 300 }}>
                   {confession.text}
                 </TableCell>
                 <TableCell style={{ maxWidth: 150, textOverflow: 'ellipsis', overflow: 'hidden' }}>
