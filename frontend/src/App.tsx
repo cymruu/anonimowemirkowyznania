@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
 }));
-const makePath = (path: string) => {
+export const makePath = (path: string) => {
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     return path;
   }
