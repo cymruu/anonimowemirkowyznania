@@ -75,7 +75,7 @@ export default function Replies(props: RouteComponentProps) {
                     {reply.embed && <Tooltip title="reply with embeded content"><EmbedIcon /></Tooltip>}
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell style={{ maxWidth: 300 }}>
                   {reply.text}
                 </TableCell>
                 <TableCell style={{ maxWidth: 150, textOverflow: 'ellipsis', overflow: 'hidden' }}>
@@ -87,8 +87,12 @@ export default function Replies(props: RouteComponentProps) {
                 <TableCell>
                   {reply.parentID.entryID && (
                   <Link href={buildCommentLink(reply)} rel="noopener" target="_blank">
-                    {reply.parentID.entryID}
-                    {reply.commentID && `#${reply.commentID}`}
+                    <div>
+                      {reply.parentID.entryID}
+                    </div>
+                    <div>
+                      {reply.commentID && `#${reply.commentID}`}
+                    </div>
                   </Link>
                   )}
                 </TableCell>
