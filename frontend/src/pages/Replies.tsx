@@ -1,13 +1,14 @@
 import {
   Container, LinearProgress, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow,
-  Tooltip
+  Tooltip,
 } from '@material-ui/core';
 import EmbedIcon from '@material-ui/icons/Attachment';
 import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { APIContext } from '../App';
 import ActionButtons from '../components/ActionButtons';
+import ShortEmebed from '../components/ShortEmbed';
 import StyledTableRow from '../components/StyledTableRow';
 import { noOpFn, replaceInArray, toggleStatus } from '../utils';
 
@@ -77,12 +78,8 @@ export default function Replies(props: RouteComponentProps) {
                 <TableCell>
                   {reply.text}
                 </TableCell>
-                <TableCell>
-                  {reply.embed && (
-                    <Link href={reply.embed} rel="noopener" target="_blank">
-                      {reply.embed}
-                    </Link>
-                  )}
+                <TableCell style={{ maxWidth: 150, textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                  <ShortEmebed url={reply.embed} />
                 </TableCell>
                 <TableCell>
                   {reply.auth}
