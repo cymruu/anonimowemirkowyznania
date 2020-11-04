@@ -31,7 +31,7 @@ export default function Replies(props: RouteComponentProps) {
   const setStatusFn = (reply: IReply) =>
     apiClient.replies.setStatus(reply, { status: toggleStatus(reply.status) })
       .then((response) => {
-        const updatedReplies = replaceInArray(reply, reply._id, response.patchObject);
+        const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
         setReplies(updatedReplies);
       }).catch(noOpFn);
 

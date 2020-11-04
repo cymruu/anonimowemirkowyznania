@@ -1,8 +1,9 @@
 import { Response, Router } from 'express'
 import { accessMiddleware } from '../controllers/access'
+import { ActionType, createAction } from '../controllers/actions'
 import * as wykopController from '../controllers/wykop'
 import logger from '../logger'
-import { ConfessionStatus } from '../models/confession'
+import confession, { ConfessionStatus } from '../models/confession'
 import replyModel, { IReply } from '../models/reply'
 import { RequestWithUser } from '../utils'
 import { makeAPIResponse } from './apiV2'
@@ -13,16 +14,17 @@ export const replyRouter = Router()
 type RequestWithReply = RequestWithUser & { reply: IReply }
 
 function getReplyMiddleware(req: RequestWithReply, res: Response, next) {
-	replyModel.findById(req.params.id).then(reply => {
-		if (!reply) {
-			return res.status(404)
-		}
-		req.reply = reply
-		return next()
-	}).catch(err => {
-		logger.error(err.toString())
-		return res.status(500)
-	})
+	replyModel.findById(req.params.id)
+		.then(reply => {
+			if (!reply) {
+				return res.status(404)
+			}
+			req.reply = reply
+			return next()
+		}).catch(err => {
+			logger.error(err.toString())
+			return res.status(500)
+		})
 }
 
 replyRouter.use(authentication)
@@ -70,3 +72,52 @@ replyRouter.get('/reply/:id/accept',
 					})
 			})
 	})
+replyRouter.get('/reply/:id/accept',
+	accessMiddleware('addEntry'),
+	getReplyMiddleware,
+	(req: RequestWithReply, res) => {
+		if (req.reply.commentID) {
+			return res.status(400)
+				.json(makeAPIResponse(res, null, { message: 'The reply is already added' }))
+		}
+		if (req.reply.status === ConfessionStatus.DECLINED) {
+			return res.status(400)
+				.json(makeAPIResponse(res, null, {
+					message: 'The reply is marked as dangerous. Change status before adding',
+				}))
+		}
+		wykopController.acceptReply(req.reply, req.user).then(async reply => {
+			const { status, addedBy, commentID } = reply
+			const action = await createAction(req.user._id, ActionType.ACCEPT_REPLY).save()
+			confession.updateOne({ _id: req.reply.parentID }, { $push: { actions: action } })
+			return res.json(makeAPIResponse(res, {
+				patchObject: { status, addedBy, commentID },
+				action,
+			}))
+		}).catch(err => {
+			res.status(500).json(makeAPIResponse(res, null, { message: err.toString() }))
+		})
+	},
+)
+replyRouter.put('/reply/:id/status',
+	accessMiddleware('setStatus'),
+	getReplyMiddleware,
+	async (req: RequestWithReply, res) => {
+		if (!Object.values(ConfessionStatus).includes(req.body.status)) {
+			return res.status(400).json(makeAPIResponse(res, null, { message: 'Wrong status' }))
+		}
+		req.reply.status = req.body.status
+		const actionType = ActionType.REPLY_CHANGE_STATUS
+		const action = await createAction(req.user._id, actionType).save()
+		// TODO: refactor in other places how the action is added to parent - this is correct way
+		await confession.updateOne({ _id: req.reply.parentID }, { $push: { actions: action } })
+		req.reply.save()
+			.then(() => {
+				res.status(200).json(makeAPIResponse(res, { patchObject: { status: req.reply.status }, action }))
+			})
+			.catch(err => {
+				logger.error(err.toString())
+				res.status(500).json(makeAPIResponse(res, null, { message: 'Internal server error' }))
+			})
+	},
+)

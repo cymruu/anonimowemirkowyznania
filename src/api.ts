@@ -222,8 +222,7 @@ apiRouter.route('/reply/danger/:reply_id/').get(
 			reply.status = reply.status === ConfessionStatus.DECLINED ?
 				ConfessionStatus.WAITING : ConfessionStatus.DECLINED
 			const newStatusStr = reply.status === 0 ? 'warning' : 'danger'
-			const actionType = reply.status === ConfessionStatus.WAITING ?
-				ActionType.REVERT_DECLINE : ActionType.DECLINE
+			const actionType = ActionType.REPLY_CHANGE_STATUS
 			const action = await createAction(req.user._id, actionType).save()
 			reply.parentID.actions.push(action)
 			reply.parentID.save()

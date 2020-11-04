@@ -11,6 +11,7 @@ const actionTypes = {
 	7: 'Usunięto odpowiedź',
 	8: 'Zaakceptowano nową odpowiedź',
 	9: 'Zmodyfikowano tagi wpisu',
+	10: 'Zmieniono status odpowiedzi',
 }
 
 export enum ActionType {
@@ -24,6 +25,7 @@ export enum ActionType {
 	DELETE_REPLY,
 	ACCEPT_REPLY,
 	UPDATED_TAGS,
+	REPLY_CHANGE_STATUS,
 }
 
 export function createAction(userId: string, actionType: ActionType, note?: string) {
