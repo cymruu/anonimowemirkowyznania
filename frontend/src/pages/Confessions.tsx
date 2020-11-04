@@ -7,7 +7,7 @@ import EmbedIcon from '@material-ui/icons/Attachment';
 import SurveyIcon from '@material-ui/icons/Poll';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
-import { APIContext } from '../App';
+import { APIContext, makePath } from '../App';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import ShortEmebed from '../components/ShortEmbed';
 import StyledTableRow from '../components/StyledTableRow';
@@ -69,7 +69,7 @@ export default function Confessions(props: RouteComponentProps) {
             {confessions.map((confession: IConfession) => (
               <StyledTableRow key={confession._id} status={confession.status} hover>
                 <TableCell>
-                  <Link component={RouterLink} to={`/confessions/${confession._id}`}>
+                  <Link component={RouterLink} to={makePath(`/confessions/${confession._id}`)}>
                     {confession._id}
                   </Link>
                   <div>
