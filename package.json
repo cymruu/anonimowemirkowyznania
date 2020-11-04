@@ -11,6 +11,8 @@
     "start": "node dist/app.js",
     "lint": "npx eslint . --ext .ts",
     "lint-fix": "npx eslint . --ext .ts --fix",
+    "gcp-build": "tsc -p . && cd frontend && npm install && npm run-script build",
+    "deploy": "gcloud app deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "sokytsinolop",
@@ -26,7 +28,8 @@
     "pug": "^2.0.4",
     "winston": "^3.2.1",
     "ws": "^7.2.3",
-    "wypokjs": "^0.1.10"
+    "wypokjs": "^0.1.10",
+    "stripe": "^8.119.0"
   },
   "repository": {
     "type": "git",
@@ -40,7 +43,6 @@
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "eslint": "^6.8.0",
-    "stripe": "^8.119.0",
     "typescript": "^3.9.7"
   }
 }

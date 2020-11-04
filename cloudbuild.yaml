@@ -1,0 +1,15 @@
+steps:
+- name: node
+  entrypoint: npm
+  args: ['install']
+- name: node
+  entrypoint: npm
+  args: ['run', 'gcp-build']
+- name: node
+  dir: frontend
+  entrypoint: npm
+  args: ['install']
+- name: node
+  dir: frontend
+  entrypoint: npm
+  args: ['run', 'build']

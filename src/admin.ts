@@ -27,7 +27,6 @@ adminRouter.post('/login', (req: RequestWithUser, res) => {
 			return res.render('./admin/login.pug', { user: {}, error: 'Nie znaleziono uzytkownia' })
 		}
 		if (user.password === req.body.password) {
-			//success login
 			delete user.password
 			const token = jwt.sign({
 				_id: user._id,

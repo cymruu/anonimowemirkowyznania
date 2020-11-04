@@ -2,11 +2,6 @@ declare let PhusionPassenger: any
 if (!process.env.NODE_ENV) {
 	process.env.NODE_ENV = 'production'
 }
-let _port: number | string = 1337
-if (typeof (PhusionPassenger) !== 'undefined') {
-	PhusionPassenger.configure({ autoInstall: false })
-	_port = 'passenger'
-}
 import config from './config'
 import http from 'http'
 import express from 'express'
@@ -47,7 +42,7 @@ app.use('/admin', adminRouter)
 const frontendStaticPath = path.join(__dirname, '..', 'frontend', 'build', 'static')
 const frontendIndex = path.join(__dirname, '..', 'frontend', 'build', 'index.html')
 app.use('/admin2/static', express.static(frontendStaticPath))
-app.use('/admin2*', (req, res) => {
+app.use('/admin2/*', (req, res) => {
 	res.sendFile(frontendIndex)
 })
 app.use('/conversation', conversationRouter)
@@ -213,7 +208,10 @@ app.get('/link/:linkId/:from', function(req, res) {
 		res.redirect(ad.out)
 	})
 })
-const server = http.createServer(app)
+export const server = http.createServer(app)
+
+const _port = (process.env.NODE_ENV === 'development') ? 1337 : (process.env.PORT || 8080)
+
 server.listen(_port, () => {
 	logger.info(`Server started on port: ${_port} [${process.env.NODE_ENV}]`)
 })

@@ -1,33 +1,17 @@
-import { Server as WebSocketServer } from 'ws'
 import url from 'url'
-import * as conversationController from './conversations'
-import logger from '../logger'
+import { Server as WebSocketServer } from 'ws'
 import config from '../config'
-import fs from 'fs'
-import { createServer } from 'https'
-let server
+import logger from '../logger'
+import * as conversationController from './conversations'
 
 const serverCreatedCallback = () => {
 	logger.info(`Websocket server started ${config.websocketPort}`)
 }
 
-if (process.env.NODE_ENV === 'production' && fs.existsSync('./certs/cert.key') && fs.existsSync('./certs/cert.pem')) {
-	const options = { key: undefined, cert: undefined }
-	logger.info('Loading certificates for Websockets server')
-	options.key = fs.readFileSync('./certs/cert.key')
-	options.cert = fs.readFileSync('./certs/cert.pem')
-
-	server = createServer(options, (_, res) => {
-		res.writeHead(200)
-		res.end('AMW secure chat server\n')
-	})
-	server.listen(config.websocketPort, serverCreatedCallback)
-}
-
-export const isSecureServer = !!server
+export const isSecureServer = true
 
 export const wss = new WebSocketServer(
-	{ server, port: isSecureServer ? undefined : config.websocketPort },
+	{ port: config.websocketPort },
 	serverCreatedCallback,
 )
 
