@@ -30,7 +30,7 @@ function getReplyMiddleware(req: RequestWithReply, res: Response, next) {
 replyRouter.use(authentication)
 replyRouter.get('/', async (req: RequestWithUser, res) => {
 	replyModel
-		.find({}, ['_id', 'text', 'status', 'embed', 'auth', 'commentID', 'addedBy'])
+		.find({}, ['_id', 'text', 'status', 'alias', 'embed', 'auth', 'commentID', 'addedBy'])
 		.populate('parentID', 'entryID')
 		.sort({ _id: -1 })
 		.lean()

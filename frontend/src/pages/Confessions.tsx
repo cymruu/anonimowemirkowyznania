@@ -62,7 +62,6 @@ export default function Confessions(props: RouteComponentProps) {
               <TableCell>Embed</TableCell>
               <TableCell>Auth</TableCell>
               <TableCell>Entry</TableCell>
-              <TableCell>Added by</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -93,9 +92,6 @@ export default function Confessions(props: RouteComponentProps) {
                     {confession.entryID}
                   </Link>
                   )}
-                </TableCell>
-                <TableCell>
-                  {confession.addedBy}
                 </TableCell>
                 <TableCell>
                   <ConfessionActionButtons

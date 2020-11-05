@@ -58,6 +58,7 @@ export default function Replies(props: RouteComponentProps) {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
+              <TableCell>Nick</TableCell>
               <TableCell>Text</TableCell>
               <TableCell>Embed</TableCell>
               <TableCell>Auth</TableCell>
@@ -75,7 +76,10 @@ export default function Replies(props: RouteComponentProps) {
                     {reply.embed && <Tooltip title="reply with embeded content"><EmbedIcon /></Tooltip>}
                   </div>
                 </TableCell>
-                <TableCell style={{ maxWidth: 300 }}>
+                <TableCell>
+                  {reply.alias}
+                </TableCell>
+                <TableCell style={{ wordBreak: 'break-word' }}>
                   {reply.text}
                 </TableCell>
                 <TableCell style={{ maxWidth: 150, textOverflow: 'ellipsis', overflow: 'hidden' }}>
@@ -96,7 +100,7 @@ export default function Replies(props: RouteComponentProps) {
                   </Link>
                   )}
                 </TableCell>
-                <TableCell>
+                <TableCell style={{ maxWidth: 50, textOverflow: 'ellipsis', overflow: 'hidden' }}>
                   {reply.addedBy}
                 </TableCell>
                 <TableCell>
