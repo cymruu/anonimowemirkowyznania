@@ -12,7 +12,7 @@ import http from 'http'
 import express from 'express'
 import Stripe from 'stripe'
 const stripe = new Stripe(config.stripe.secret,
-	{ apiVersion: '2020-03-02' })
+	{ apiVersion: '2020-08-27' })
 const app = express()
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
