@@ -15,7 +15,7 @@ import { noOpFn, replaceInArray, toggleStatus } from '../utils';
 export type IReply = any
 
 const buildCommentLink = (reply: IReply) =>
-  `https://wykop.pl/wpis/${reply.parentID.entryID}/${reply.commentID ? `#${reply.commentID}` : ''}`;
+  `https://wykop.pl/wpis/${reply.parentID.entryID}/${reply.commentID ? `#comment-${reply.commentID}` : ''}`;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Replies(props: RouteComponentProps) {
