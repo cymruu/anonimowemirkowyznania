@@ -1,11 +1,12 @@
 import {
   Button, Container, makeStyles, TextField,
 } from '@material-ui/core';
-import { navigate, RouteComponentProps } from '@reach/router';
+import { RouteComponentProps } from '@reach/router';
 import React, {
   Dispatch, useCallback, useContext, useState,
 } from 'react';
 import { APIContext } from '../App';
+import { absoluteNavigate } from '../components/AbsoluteLink';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -28,7 +29,7 @@ export default function Login(props: RouteComponentProps & {setUser: Dispatch<an
   const loginRequest = useCallback(() => {
     httpClient.swallow(httpClient.post('/users/login', inputs))
       .then(async ({ token }) => {
-        navigate('/confessions')
+        absoluteNavigate('/confessions')
           .then(() => {
             setUser(token);
           });

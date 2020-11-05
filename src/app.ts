@@ -47,6 +47,7 @@ app.use('/admin', adminRouter)
 const frontendStaticPath = path.join(__dirname, '..', 'frontend', 'build', 'static')
 const frontendIndex = path.join(__dirname, '..', 'frontend', 'build', 'index.html')
 app.use('/admin2/static', express.static(frontendStaticPath))
+app.use('/admin/static/*', (req, res) => res.send(404))
 app.use(['/admin2', '/admin2/*'], (req, res) => {
 	res.sendFile(frontendIndex)
 })
