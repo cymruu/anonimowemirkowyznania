@@ -35,7 +35,7 @@ function getConfessionMiddleware(req: RequestWithConfession, res: Response, next
 confessionRouter.use(authentication)
 confessionRouter.get('/', async (req: RequestWithUser, res) => {
 	confessionModel
-		.find({}, ['_id', 'text', 'status', 'embed', 'auth', 'entryID', 'addedBy', 'survey'])
+		.find({}, ['_id', 'text', 'status', 'embed', 'auth', 'entryID', 'survey'])
 		.sort({ _id: -1 })
 		.lean()
 		.limit(100)

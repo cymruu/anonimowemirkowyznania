@@ -40,7 +40,6 @@ export const APIContext = createContext<{
   });
 
 function App() {
-
   const classes = useStyles();
   const [user, setUser] = useState(undefined);
   const { enqueueSnackbar } = useSnackbar();
@@ -98,7 +97,7 @@ function App() {
         <Router basepath={process.env.PUBLIC_URL}>
           <Index path="/" />
           <Confessions path="/confessions" />
-          <ConfessionDetails path="/confessions/id" />
+          <ConfessionDetails path="/confessions/:id" />
           <Replies path="/replies" />
           <Login path="/login" setUser={setUser} />
           <Logout path="/logout" setUser={setUser} />
