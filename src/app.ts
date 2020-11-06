@@ -169,7 +169,10 @@ app.get('/contact', (req, res) => {
 	res.render('contact')
 })
 app.get('/donate', (req, res) => {
-	res.render('donate')
+	res.render('donate', {
+		stripe_pub: config.stripe.publishable,
+		return_url: `${config.siteURL}/donate/success`,
+	})
 })
 app.get('/donate/success', (req, res) => {
 	res.render('donate_success')
