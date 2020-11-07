@@ -6,13 +6,9 @@ import userModel from './models/user'
 import * as conversationController from './controllers/conversations'
 import config from './config'
 import auth from './controllers/authorization'
-import { wss, isSecureServer } from './controllers/wsServer'
 
 function renderConversationRoute(res, params) {
 	return res.render('conversation', {
-		websocketPort: config.websocketPort,
-		isSecureServer: isSecureServer || false,
-		siteURL: config.siteURL,
 		...params,
 	})
 }
@@ -85,11 +81,6 @@ conversationRouter.post('/:conversationid/:auth?', (req: RequestWithUser, res) =
 			if (err) { return res.send(err) }
 			conversationController.getConversation(req.params.conversationid, req.params.auth, (err, conversation) => {
 				if (err) { return res.send(err) }
-				wss.sendToChannel(req.params.conversationid, JSON.stringify({
-					type: 'newMessage',
-					msg: req.body.text,
-					username: 'Użytkownik mikrobloga',
-				}))
 				return renderConversationRoute(res, { conversation })
 			})
 		})
