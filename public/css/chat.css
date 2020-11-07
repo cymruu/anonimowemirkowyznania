@@ -1,11 +1,3 @@
-.status-circle {
-    background-color:#969994;
-    height:15px;
-    width:15px;
-    -webkit-border-radius:7.5px;
-    -moz-border-radius:7.5px;
-    border-radius: 7.5px;
-}
 .time{
   font-size: 12px;
 }

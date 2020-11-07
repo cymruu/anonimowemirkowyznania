@@ -2,7 +2,7 @@ extends ./base.pug
 block content
   link(href="/css/chat.css", rel="stylesheet")
   .alert.alert-warning
-    |Aby zachować dostęp do tej konwersacji koniecznie zapisz jej adres (OPowi wyznania link do każdej z konwersacji wyświetla się na stronie podsumowania wyznania)
+    | Aby zachować dostęp do tej konwersacji koniecznie zapisz jej adres (autorowi wyznania link do każdej konwersacji wyświetla się na stronie podsumowania wyznania)
   .container
     .row
       .panel.panel-default
@@ -25,17 +25,5 @@ block content
                 button.btn.btn-default.sendMessage(type='submit') Wyślij
         if conversation
           p.status-info.
-            Status połączenia WebSocket (jeśli nie ma połączenia wyłącz javascript, aby wysyłać wiadomości)
+            Odśwież stronę, aby wyświetlić nowe wiadomości.
             SHIFT+ENTER aby wstawić nową linię #[div.status-circle]
-            
-block script
-  if conversation
-    script(type="text/javascript").
-      document.getElementById("messageForm").addEventListener("submit", function(event){
-      event.preventDefault();
-      });
-      const conversationId = '#{conversation._id}';
-      const websocketPort = '#{websocketPort}'; 
-      const isSecureServer = #{isSecureServer}; 
-      const authCode = '#{conversation.auth}';
-    script(src="/js/chat.js" type="text/javascript")
