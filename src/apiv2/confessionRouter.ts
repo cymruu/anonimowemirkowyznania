@@ -186,7 +186,7 @@ confessionRouter.get('/confession/:id/ip',
 			.select('_id IPAdress')
 			.then(confession => {
 				if (!confession) {
-					res.status(4040).json(makeAPIResponse(res, null, { message: 'not found' }))
+					res.status(404).json(makeAPIResponse(res, null, { message: 'not found' }))
 				}
 				return res.status(200).json(makeAPIResponse(res, confession))
 			}).catch(err => {
@@ -194,3 +194,17 @@ confessionRouter.get('/confession/:id/ip',
 				return res.sendStatus(500)
 			})
 	})
+confessionRouter.get('/confession/:id/otherFromIp',
+	accessMiddleware('viewDetails'),
+	getConfessionMiddleware,
+	(req: RequestWithConfession, res) => {
+		confessionModel
+			.find({ IPAdress: req.confession.IPAdress }, { _id: 1, status: 1 })
+			.sort({ _id: -1 })
+			.then(confessions => {
+				return res.json(makeAPIResponse(res, { confessions }))
+			}).catch(err => {
+				return res.status(500).json(makeAPIResponse(res, null, { message: 'internal server error' }))
+			})
+	},
+)
