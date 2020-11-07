@@ -34,8 +34,8 @@ export default function ConfessionDeclineDialog(
         setError({ open: true, message: err.message });
       });
   };
-
-  return (
+  
+  return ( 
     <>
       <Snackbar open={error.open} message={error.message} />
       <Dialog
@@ -47,8 +47,7 @@ export default function ConfessionDeclineDialog(
           <FormControl component="fieldset">
             <FormLabel component="legend">Select reason:</FormLabel>
             <RadioGroup name="reason" value={reason} onChange={(e) => setReason(e.target.value)}>
-              <FormControlLabel value="reason 1" control={<Radio />} label="Reason 1" />
-              <FormControlLabel value="reason 2" control={<Radio />} label="Reason 2" />
+              <FormControlLabel value="Wpis może zostać dodany z twojego konta" control={<Radio />} label="Wpis może zostać dodany z twojego konta" />
               <FormControlLabel value="custom" control={<Radio />} label="Custom" />
               <TextField
                 disabled={reason !== 'custom'}
