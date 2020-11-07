@@ -6,7 +6,9 @@ import {
 import EmbedIcon from '@material-ui/icons/Attachment';
 import SurveyIcon from '@material-ui/icons/Poll';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useContext, useEffect, useState, useReducer,
+} from 'react';
 import { APIContext } from '../App';
 import { AbsoluteLink } from '../components/AbsoluteLink';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
@@ -16,16 +18,31 @@ import { noOpFn, replaceInArray, toggleStatus } from '../utils';
 
 export type IConfession = any
 
+type State = IConfession[]
+type Action =
+  | {type: 'set', confessions: State}
+  | {type: 'replace', id: string, patchObject: object}
+
+function confessionsReducer(state: State, action:Action) {
+  switch (action.type) {
+    case 'set':
+      return action.confessions;
+    case 'replace':
+      return replaceInArray(state, action.id, action.patchObject);
+    default: return state;
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Confessions(props: RouteComponentProps) {
-  const [confessions, setConfessions] = useState<IConfession[]>([]);
+  const [confessions, setConfessions] = useReducer(confessionsReducer, []);
   const [dataLoaded, setDataLoaded] = useState(false);
   const { httpClient, apiClient } = useContext(APIContext);
 
   useEffect(() => {
     httpClient.swallow(httpClient.get('/confessions'))
       .then((fetchedConfessions) => {
-        setConfessions(fetchedConfessions);
+        setConfessions({ type: 'set', confessions: fetchedConfessions });
       })
       .finally(() => {
         setDataLoaded(true);
@@ -34,21 +51,18 @@ export default function Confessions(props: RouteComponentProps) {
 
   const addEntry = (confession: IConfession) => apiClient.confessions.add(confession)
     .then((response) => {
-      const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
-      setConfessions(updatedConfessions);
+      setConfessions({ type: 'replace', id: confession._id, patchObject: response.patchObject });
     }).catch(noOpFn);
 
   const setStatusFn = (confession: IConfession, note?: string) =>
     apiClient.confessions.setStatus(confession, { status: toggleStatus(confession.status), note })
       .then((response) => {
-        const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
-        setConfessions(updatedConfessions);
+        setConfessions({ type: 'replace', id: confession._id, patchObject: response.patchObject });
       }).catch(noOpFn);
 
   const deleteEntryFn = (confession: IConfession) => apiClient.confessions.delete(confession)
     .then((response) => {
-      const updatedConfessions = replaceInArray(confessions, confession._id, response.patchObject);
-      setConfessions(updatedConfessions);
+      setConfessions({ type: 'replace', id: confession._id, patchObject: response.patchObject });
     }).catch(noOpFn);
 
   return (
