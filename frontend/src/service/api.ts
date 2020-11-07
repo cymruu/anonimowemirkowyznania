@@ -30,6 +30,10 @@ class ConfessionApi extends BaseService {
   public setTag(confession: IConfession, { tag, tagValue }: {tag: string, tagValue: boolean}) {
     return this._httpClient.put(`/confessions/confession/${confession._id}/tags`, { tag, tagValue });
   }
+
+  public getIp(confession: IConfession) {
+    return this._httpClient.get(`/confessions/confession/${confession._id}/ip`);
+  }
 }
 
 class ReplyApi extends BaseService {

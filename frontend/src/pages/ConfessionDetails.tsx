@@ -6,7 +6,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import EmbedIcon from '@material-ui/icons/Attachment';
 import SurveyIcon from '@material-ui/icons/Poll';
@@ -18,12 +18,14 @@ import Action from '../components/Action';
 import ActionButtons from '../components/ActionButtons';
 import EditTagsDialog from '../components/EditTagsDialog';
 import StyledCardHeader from '../components/StyledCardHeader';
+import ViewIPDialog from '../components/ViewIPDialog';
 import { noOpFn, toggleStatus } from '../utils';
 
 export default function (props: RouteComponentProps & {id?: string}) {
   const { id } = props;
   const [confession, setConfession] = useState<any>(undefined);
   const [editTagsDialog, setEditTagsDialog] = useState<boolean>(false);
+  const [viewIpDialog, setViewIpDialog] = useState<boolean>(false);
   const { httpClient, apiClient } = useContext(APIContext);
   useEffect(() => {
     httpClient.swallow(httpClient.get(`/confessions/confession/${id}`))
@@ -67,6 +69,11 @@ export default function (props: RouteComponentProps & {id?: string}) {
     <Container>
       {(confession ? (
         <Card>
+          <ViewIPDialog
+            confession={confession}
+            open={viewIpDialog}
+            onClose={() => setEditTagsDialog(false)}
+          />
           <EditTagsDialog
             confession={confession}
             tags={confession.tags}
@@ -84,6 +91,11 @@ export default function (props: RouteComponentProps & {id?: string}) {
                 <Box mx={2} onClick={() => setEditTagsDialog(true)}>
                   <Typography color="primary">
                     #
+                  </Typography>
+                </Box>
+                <Box mx={2} onClick={() => setViewIpDialog(true)}>
+                  <Typography color="primary">
+                    IP
                   </Typography>
                 </Box>
               </Grid>

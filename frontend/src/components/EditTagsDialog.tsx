@@ -1,16 +1,17 @@
 import {
   Box,
-  Chip, Dialog, DialogTitle,
+  Chip, Dialog, DialogContent, DialogTitle,
 } from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
 import DoneIcon from '@material-ui/icons/Done';
 import React, { useContext } from 'react';
 import { APIContext } from '../App';
+import { IConfession } from '../pages/Confessions';
 import { noOpFn } from '../utils';
 
 export default function EditTagsDialog({
   confession, tags, open, onClose, patchConfession,
-}: {confession:any, tags:any[], open:boolean, onClose: ()=>void, patchConfession: (response)=>void}) {
+}: {confession: IConfession, tags:any[], open: boolean, onClose: ()=>void, patchConfession: (response)=>void}) {
   const { apiClient } = useContext(APIContext);
 
   const updateTag = (tag:string, tagValue: boolean) => {
@@ -35,7 +36,9 @@ export default function EditTagsDialog({
       <DialogTitle>
         Edit tags
       </DialogTitle>
-      {chips}
+      <DialogContent>
+        {chips}
+      </DialogContent>
     </Dialog>
   );
 }
