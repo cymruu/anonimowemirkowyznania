@@ -23,6 +23,10 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
+  header: {
+    backgroundColor: '#d2d2d2',
+    marginBottom: 10,
+  },
   menuButton: {
     marginRight: theme.spacing(2),
   },
@@ -34,13 +38,15 @@ const useStyles = makeStyles((theme) => ({
 const defaultHTTPClient = new HTTPClient();
 export const APIContext = createContext<{
   httpClient: HTTPClient,
-  apiClient: ReturnType<typeof createAPIClient>}>({
-    httpClient: defaultHTTPClient,
-    apiClient: createAPIClient(defaultHTTPClient),
-  });
+  apiClient: ReturnType<typeof createAPIClient>
+}>({
+  httpClient: defaultHTTPClient,
+  apiClient: createAPIClient(defaultHTTPClient),
+});
 
 function App() {
   const classes = useStyles();
+
   const [user, setUser] = useState(undefined);
   const { enqueueSnackbar } = useSnackbar();
   const httpClient = useMemo(() => new HTTPClient([
@@ -61,7 +67,7 @@ function App() {
   return (
     <>
       <CssBaseline />
-      <AppBar position="static">
+      <AppBar position="static" color="default" className={classes.header}>
         <Toolbar>
           <IconButton className={classes.menuButton} edge="start" color="inherit" aria-label="menu">
             <MenuIcon />

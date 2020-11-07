@@ -4,6 +4,7 @@ import { ActionType, createAction } from '../controllers/actions'
 import * as wykopController from '../controllers/wykop'
 import logger from '../logger'
 import confession, { ConfessionStatus } from '../models/confession'
+import reply from '../models/reply'
 import replyModel, { IReply } from '../models/reply'
 import { RequestWithUser } from '../utils'
 import { makeAPIResponse } from './apiV2'
@@ -42,6 +43,7 @@ replyRouter.get('/', async (req: RequestWithUser, res) => {
 			res.status(500).send(500)
 		})
 })
+
 replyRouter.get('/reply/:id/accept',
 	accessMiddleware('addReply'),
 	getReplyMiddleware,
@@ -72,6 +74,37 @@ replyRouter.get('/reply/:id/accept',
 					})
 			})
 	})
+
+replyRouter.delete('/reply/:id/',
+	accessMiddleware('deleteReply'),
+	getReplyMiddleware,
+	(req: RequestWithReply, res) => {
+		wykopController.deleteEntryComment(req.reply.commentID)
+			.then(() => {
+				return req.reply.populate([{ path: 'parentID', select: ['entryID', 'actions'] }]).execPopulate()
+					.then(async reply => {
+						const action = await createAction(
+							req.user._id,
+							ActionType.DELETE_REPLY,
+							`reply_id: ${req.params.reply_id}`,
+						).save()
+						reply.parentID.actions.push(action)
+						reply.status = ConfessionStatus.DECLINED,
+						reply.commentID = null
+						return Promise.all([reply.save(), reply.parentID.save()]).then(_ => {
+							return res.json(makeAPIResponse(res,
+								{ action, patchObject: {
+									status: reply.status,
+									commentID: reply.commentID,
+								} },
+							))
+						})
+					}).catch(err => {
+						res.status(500).json(makeAPIResponse(res, null, { message: err.toString() }))
+					})
+			})
+	})
+
 replyRouter.get('/reply/:id/accept',
 	accessMiddleware('addEntry'),
 	getReplyMiddleware,

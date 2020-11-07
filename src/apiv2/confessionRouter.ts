@@ -16,18 +16,19 @@ import { authentication } from './middleware/authentication'
 export const confessionRouter = Router()
 
 type RequestWithConfession = RequestWithUser & { confession: IConfession }
-
+//TODO: add select fields
 function getConfessionMiddleware(req: RequestWithConfession, res: Response, next) {
-	confessionModel.findById(req.params.id).then(confession => {
-		if (!confession) {
-			return res.status(404)
-		}
-		req.confession = confession
-		return next()
-	}).catch(err => {
-		logger.error(err.toString())
-		return res.status(500)
-	})
+	confessionModel.findById(req.params.id)
+		.then(confession => {
+			if (!confession) {
+				res.status(4040).json(makeAPIResponse(res, null, { message: 'not found' }))
+			}
+			req.confession = confession
+			return next()
+		}).catch(err => {
+			logger.error(err.toString())
+			return res.status(500)
+		})
 }
 
 //TODO: empty user in response action fields - populate username and send username
@@ -176,4 +177,20 @@ confessionRouter.put('/confession/:id/tags',
 		}).catch(err => {
 			return res.status(500).json(makeAPIResponse(res, null, { message: err.toString() }))
 		})
+	})
+confessionRouter.get('/confession/:id/ip',
+	accessMiddleware('viewDetails'),
+	accessMiddleware('viewIP'),
+	(req: RequestWithConfession, res) => {
+		confessionModel.findById(req.params.id)
+			.select('_id IPAdress')
+			.then(confession => {
+				if (!confession) {
+					res.status(4040).json(makeAPIResponse(res, null, { message: 'not found' }))
+				}
+				return res.status(200).json(makeAPIResponse(res, confession))
+			}).catch(err => {
+				logger.error(err.toString())
+				return res.sendStatus(500)
+			})
 	})

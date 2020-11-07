@@ -5,7 +5,9 @@ import {
 } from '@material-ui/core';
 import EmbedIcon from '@material-ui/icons/Attachment';
 import { RouteComponentProps } from '@reach/router';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useContext, useEffect, useReducer, useState,
+} from 'react';
 import { APIContext } from '../App';
 import ActionButtons from '../components/ActionButtons';
 import ShortEmebed from '../components/ShortEmbed';
@@ -14,37 +16,49 @@ import { noOpFn, replaceInArray, toggleStatus } from '../utils';
 
 export type IReply = any
 
+type State = IReply[]
+type Action =
+  | {type: 'set', replies: State}
+  | {type: 'replace', id: string, patchObject: object}
+
+function repliesReducer(state: State, action:Action) {
+  switch (action.type) {
+    case 'set':
+      return action.replies;
+    case 'replace':
+      return replaceInArray(state, action.id, action.patchObject);
+    default: return state;
+  }
+}
+
 const buildCommentLink = (reply: IReply) =>
   `https://wykop.pl/wpis/${reply.parentID.entryID}/${reply.commentID ? `#comment-${reply.commentID}` : ''}`;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Replies(props: RouteComponentProps) {
-  const [replies, setReplies] = useState<IReply[]>([]);
+  const [replies, setReplies] = useReducer(repliesReducer, []);
   const [dataLoaded, setDataLoaded] = useState(false);
   const { httpClient, apiClient } = useContext(APIContext);
 
   const addReply = (reply: IReply) => apiClient.replies.add(reply).then((response) => {
-    const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
-    setReplies(updatedReplies);
+    setReplies({ type: 'replace', id: reply._id, patchObject: response.patchObject });
   }).catch(noOpFn);
 
   const setStatusFn = (reply: IReply) =>
     apiClient.replies.setStatus(reply, { status: toggleStatus(reply.status) })
       .then((response) => {
-        const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
-        setReplies(updatedReplies);
+        setReplies({ type: 'replace', id: reply._id, patchObject: response.patchObject });
       }).catch(noOpFn);
 
   const deleteReplyFn = (reply: IReply) => apiClient.replies.delete(reply)
     .then((response) => {
-      const updatedReplies = replaceInArray(replies, reply._id, response.patchObject);
-      setReplies(updatedReplies);
+      setReplies({ type: 'replace', id: reply._id, patchObject: response.patchObject });
     }).catch(noOpFn);
 
   useEffect(() => {
     httpClient.swallow(httpClient.get('/replies'))
       .then((fetchedReplies) => {
-        setReplies(fetchedReplies);
+        setReplies({ type: 'set', replies: fetchedReplies });
       })
       .finally(() => {
         setDataLoaded(true);

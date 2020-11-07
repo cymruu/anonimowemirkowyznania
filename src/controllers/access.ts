@@ -1,7 +1,9 @@
 const permissions = [
 	'addEntry', 'deleteEntry', 'addReply', 'deleteReply', 'setStatus', 'viewDetails', 'updateTags', 'accessPanel',
 	'accessMessages', 'accessModsList', 'canChangeUserPermissions', 'viewIP', 'accessDonations', 'addDonations',
-]
+] as const
+
+type permissionType = typeof permissions[number]
 
 const permissionObject = {}
 permissions.forEach((p, i) => {
@@ -30,7 +32,7 @@ export function getFlagPermissions(flag) {
 	})
 	return r
 }
-export function accessMiddleware(permission) {
+export function accessMiddleware(permission: permissionType) {
 	return function(req, res, next) {
 		if (!req.user || !checkIfIsAllowed(req.user.flags, permission)) {
 			return res.json({ success: false, response: { message: 'You\'re not allowed to perform this action' } })

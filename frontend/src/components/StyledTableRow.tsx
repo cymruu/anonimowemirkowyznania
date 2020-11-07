@@ -9,16 +9,14 @@ function StyledTableRow(props: any) {
   return <TableRow className={classes[statusToClass(status)]}>{children}</TableRow>;
 }
 
-const tableBgOpacity = 0.2;
-
 export default withStyles((theme: Theme) => ({
   declined: {
-    backgroundColor: fade(theme.palette.error.light, tableBgOpacity),
+    backgroundColor: fade(theme.palette.error.light, 0.195),
   },
   pending: {
-    backgroundColor: fade(theme.palette.warning.light, tableBgOpacity),
+    backgroundColor: fade(theme.palette.warning.light, 0.1),
   },
   added: {
-    backgroundColor: fade(theme.palette.success.light, tableBgOpacity),
+    backgroundColor: fade(theme.palette.success.light, 0.2),
   },
 }))(StyledTableRow);
