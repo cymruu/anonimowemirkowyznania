@@ -34,6 +34,10 @@ class ConfessionApi extends BaseService {
   public getIp(confession: IConfession) {
     return this._httpClient.get(`/confessions/confession/${confession._id}/ip`);
   }
+
+  public getFromIp(confession: IConfession) {
+    return this._httpClient.get(`/confessions/confession/${confession._id}/otherFromIp`);
+  }
 }
 
 class ReplyApi extends BaseService {

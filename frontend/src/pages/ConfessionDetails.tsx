@@ -15,10 +15,11 @@ import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { APIContext } from '../App';
 import Action from '../components/Action';
-import ActionButtons from '../components/ActionButtons';
+import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import EditTagsDialog from '../components/EditTagsDialog';
 import StyledCardHeader from '../components/StyledCardHeader';
 import ViewIPDialog from '../components/ViewIPDialog';
+import OtherFromIpDialog from '../components/OtherFromIpDialog';
 import { noOpFn, toggleStatus } from '../utils';
 
 export default function (props: RouteComponentProps & {id?: string}) {
@@ -26,6 +27,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
   const [confession, setConfession] = useState<any>(undefined);
   const [editTagsDialog, setEditTagsDialog] = useState<boolean>(false);
   const [viewIpDialog, setViewIpDialog] = useState<boolean>(false);
+  const [viewOtherFromThisIp, setViewOtherFromThisIp] = useState<boolean>(false);
   const { httpClient, apiClient } = useContext(APIContext);
   useEffect(() => {
     httpClient.swallow(httpClient.get(`/confessions/confession/${id}`))
@@ -81,6 +83,11 @@ export default function (props: RouteComponentProps & {id?: string}) {
             onClose={() => setEditTagsDialog(false)}
             patchConfession={patchConfession}
           />
+          <OtherFromIpDialog
+            confession={confession}
+            open={viewOtherFromThisIp}
+            onClose={() => setViewOtherFromThisIp(false)}
+          />
           <StyledCardHeader
             title={id}
             subheader={(
@@ -98,6 +105,11 @@ export default function (props: RouteComponentProps & {id?: string}) {
                     IP
                   </Typography>
                 </Box>
+                <Box mx={2} onClick={() => setViewOtherFromThisIp(true)}>
+                  <Typography color="primary">
+                    Other confessions from this IP
+                  </Typography>
+                </Box>
               </Grid>
 )}
             status={confession.status}
@@ -111,7 +123,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
                 </Box>
                 )}
                 <Box>
-                  <ActionButtons
+                  <ConfessionActionButtons
                     model={confession}
                     acceptFn={addEntryFn}
                     setStatusFn={setStatusFn}

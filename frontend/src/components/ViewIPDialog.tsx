@@ -10,12 +10,14 @@ export default function ViewIPDialog({
   const { apiClient } = useContext(APIContext);
   const [IpAddress, setIpAddres] = useState<string>('');
   useEffect(() => {
-    apiClient.confessions.getIp(confession)
-      .then((res) => {
-        setIpAddres(res.IPAdress);
-      })
-      .catch(noOpFn);
-  });
+    if (open) {
+      apiClient.confessions.getIp(confession)
+        .then((res) => {
+          setIpAddres(res.IPAdress);
+        })
+        .catch(noOpFn);
+    }
+  }, [apiClient, confession, open]);
 
   return (
     <Dialog open={open} onClose={onClose}>

@@ -86,7 +86,7 @@ replyRouter.delete('/reply/:id/',
 						const action = await createAction(
 							req.user._id,
 							ActionType.DELETE_REPLY,
-							`reply_id: ${req.params.reply_id}`,
+							`reply_id: ${req.params.id}`,
 						).save()
 						reply.parentID.actions.push(action)
 						reply.status = ConfessionStatus.DECLINED,
