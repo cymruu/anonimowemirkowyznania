@@ -74,7 +74,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
           <ViewIPDialog
             confession={confession}
             open={viewIpDialog}
-            onClose={() => setEditTagsDialog(false)}
+            onClose={() => setViewIpDialog(false)}
           />
           <EditTagsDialog
             confession={confession}
