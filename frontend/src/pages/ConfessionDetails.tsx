@@ -15,7 +15,7 @@ import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { APIContext } from '../App';
 import Action from '../components/Action';
-import ActionButtons from '../components/ActionButtons';
+import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import EditTagsDialog from '../components/EditTagsDialog';
 import StyledCardHeader from '../components/StyledCardHeader';
 import ViewIPDialog from '../components/ViewIPDialog';
@@ -111,7 +111,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
                 </Box>
                 )}
                 <Box>
-                  <ActionButtons
+                  <ConfessionActionButtons
                     model={confession}
                     acceptFn={addEntryFn}
                     setStatusFn={setStatusFn}
