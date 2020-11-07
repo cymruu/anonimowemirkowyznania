@@ -14,7 +14,7 @@ export default function EditTagsDialog({
 }: {confession: IConfession, tags:any[], open: boolean, onClose: ()=>void, patchConfession: (response)=>void}) {
   const { apiClient } = useContext(APIContext);
 
-  const updateTag = (tag:string, tagValue: boolean) => {
+  const updateTag = (tag: string, tagValue: boolean) => {
     apiClient.confessions.setTag(confession, { tag, tagValue })
       .then(async (res) => {
         patchConfession(res);
