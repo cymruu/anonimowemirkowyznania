@@ -14,6 +14,7 @@ import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
 import Index from './pages/Index';
 import Login from './pages/Login';
+import Permissions from './pages/Permissions';
 import Logout from './pages/Logout';
 import Replies from './pages/Replies';
 import createAPIClient from './service/api';
@@ -47,7 +48,7 @@ export const APIContext = createContext<{
 function App() {
   const classes = useStyles();
 
-  const [user, setUser] = useState(undefined);
+  const [user, setUser] = useState<any>(undefined);
   const { enqueueSnackbar } = useSnackbar();
   const httpClient = useMemo(() => new HTTPClient([
     (err) => {
@@ -57,8 +58,10 @@ function App() {
   ]), [enqueueSnackbar]);
   const apiClient = createAPIClient(httpClient);
 
+  const hasPermission = (permission: string) => !!user?.permissions[permission];
+
   useEffect(() => {
-    httpClient.swallow(httpClient.get('/users'))
+    httpClient.swallow(httpClient.get('/users/me'))
       .then((res) => {
         setUser(res);
       });
@@ -81,6 +84,11 @@ function App() {
           <Button color="inherit">
             <AbsoluteLink component={RouterLink} to="/replies" color="inherit">replies</AbsoluteLink>
           </Button>
+          {hasPermission('accessModsList') && (
+          <Button color="inherit">
+            <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>
+          </Button>
+          )}
           {user ? (
             <>
               <IconButton
@@ -105,6 +113,7 @@ function App() {
           <Confessions path="/confessions" />
           <ConfessionDetails path="/confessions/:id" />
           <Replies path="/replies" />
+          <Permissions path="/permissions" />
           <Login path="/login" setUser={setUser} />
           <Logout path="/logout" setUser={setUser} />
         </Router>

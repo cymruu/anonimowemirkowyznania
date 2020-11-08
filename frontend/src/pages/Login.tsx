@@ -28,10 +28,10 @@ export default function Login(props: RouteComponentProps & {setUser: Dispatch<an
 
   const loginRequest = useCallback(() => {
     httpClient.swallow(httpClient.post('/users/login', inputs))
-      .then(async ({ token }) => {
+      .then((user) => {
         absoluteNavigate('/confessions')
           .then(() => {
-            setUser(token);
+            setUser(user);
           });
       });
   }, [inputs, httpClient, setUser]);
