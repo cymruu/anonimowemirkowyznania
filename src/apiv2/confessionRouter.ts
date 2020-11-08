@@ -132,6 +132,12 @@ confessionRouter.get('/confession/:id/accept',
 						}))
 					})
 				})
+					.catch(err => {
+						return res
+							.status(500).json(
+								makeAPIResponse(res, null, { message: err.toString() }),
+							)
+					})
 			})
 	})
 confessionRouter.put('/confession/:id/status',
