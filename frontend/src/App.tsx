@@ -14,6 +14,7 @@ import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
 import Index from './pages/Index';
 import Login from './pages/Login';
+import Permissions from './pages/Permissions';
 import Logout from './pages/Logout';
 import Replies from './pages/Replies';
 import createAPIClient from './service/api';
@@ -58,7 +59,7 @@ function App() {
   const apiClient = createAPIClient(httpClient);
 
   useEffect(() => {
-    httpClient.swallow(httpClient.get('/users'))
+    httpClient.swallow(httpClient.get('/users/me'))
       .then((res) => {
         setUser(res);
       });
@@ -80,6 +81,9 @@ function App() {
           </Button>
           <Button color="inherit">
             <AbsoluteLink component={RouterLink} to="/replies" color="inherit">replies</AbsoluteLink>
+          </Button>
+          <Button color="inherit">
+            {true && <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>}
           </Button>
           {user ? (
             <>
@@ -105,6 +109,7 @@ function App() {
           <Confessions path="/confessions" />
           <ConfessionDetails path="/confessions/:id" />
           <Replies path="/replies" />
+          <Permissions path="/permissions" />
           <Login path="/login" setUser={setUser} />
           <Logout path="/logout" setUser={setUser} />
         </Router>
