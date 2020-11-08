@@ -48,7 +48,7 @@ export const APIContext = createContext<{
 function App() {
   const classes = useStyles();
 
-  const [user, setUser] = useState(undefined);
+  const [user, setUser] = useState<any>(undefined);
   const { enqueueSnackbar } = useSnackbar();
   const httpClient = useMemo(() => new HTTPClient([
     (err) => {
@@ -57,6 +57,8 @@ function App() {
     },
   ]), [enqueueSnackbar]);
   const apiClient = createAPIClient(httpClient);
+
+  const hasPermission = (permission: string) => !!user?.permissions[permission];
 
   useEffect(() => {
     httpClient.swallow(httpClient.get('/users/me'))
@@ -82,9 +84,11 @@ function App() {
           <Button color="inherit">
             <AbsoluteLink component={RouterLink} to="/replies" color="inherit">replies</AbsoluteLink>
           </Button>
+          {hasPermission('accessModsList') && (
           <Button color="inherit">
-            {true && <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>}
+            <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>
           </Button>
+          )}
           {user ? (
             <>
               <IconButton

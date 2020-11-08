@@ -52,7 +52,11 @@ userRouter.post('/login', async (req, res) => {
 				exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
 			}, config.secret)
 			res.cookie('token', token, { httpOnly: true })
-			return res.json(makeAPIResponse(res, { token }))
+			return res.json(makeAPIResponse(res, {
+				...userWithoutPassword,
+				token,
+				permissions: getFlagPermissions(userWithoutPassword.flags),
+			}))
 		}
 		return res.status(500)
 	})

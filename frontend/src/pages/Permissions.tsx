@@ -12,12 +12,12 @@ export default function Permissions(props: RouteComponentProps) {
   const { httpClient } = useContext(APIContext);
   const [mods, setMods] = useState<any[]>([]);
 
-  const setPermission = (user: any, permission: string) => httpClient.put(`/users/${user._id}/setPermission`, { permission })
-    .then((res) => {
-  
-      setMods(replaceInArray(mods, user._id, res.patchObject));
-    })
-    .catch(noOpFn);
+  const setPermission = (user: any, permission: string) =>
+    httpClient.put(`/users/${user._id}/setPermission`, { permission })
+      .then((res) => {
+        setMods(replaceInArray(mods, user._id, res.patchObject));
+      })
+      .catch(noOpFn);
 
   useEffect(() => {
     httpClient.swallow(httpClient.get('/users'))
