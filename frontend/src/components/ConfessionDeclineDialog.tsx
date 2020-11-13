@@ -34,7 +34,9 @@ export default function ConfessionDeclineDialog(
         setError({ open: true, message: err.message });
       });
   };
-  const perdefinedReson = 'Wpis może zostać dodany z twojego konta';
+  const perdefinedReasons = ['Wpis może zostać dodany z twojego konta', 'Błędny link do obrazka'].map((x) => (
+    <FormControlLabel value={x} control={<Radio />} label={x} />
+  ));
 
   return (
     <>
@@ -48,7 +50,7 @@ export default function ConfessionDeclineDialog(
           <FormControl component="fieldset">
             <FormLabel component="legend">Select reason:</FormLabel>
             <RadioGroup name="reason" value={reason} onChange={(e) => setReason(e.target.value)}>
-              <FormControlLabel value={perdefinedReson} control={<Radio />} label={perdefinedReson} />
+              {perdefinedReasons}
               <FormControlLabel value="custom" control={<Radio />} label="Custom" />
               <TextField
                 disabled={reason !== 'custom'}
