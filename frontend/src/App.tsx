@@ -12,6 +12,7 @@ import React, {
 import { AbsoluteLink } from './components/AbsoluteLink';
 import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
+import Conversations from './pages/Conversations';
 import Index from './pages/Index';
 import Login from './pages/Login';
 import Permissions from './pages/Permissions';
@@ -89,6 +90,11 @@ function App() {
             <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>
           </Button>
           )}
+          {hasPermission('accessMessages') && (
+          <Button color="inherit">
+            <AbsoluteLink component={RouterLink} to="/conversations" color="inherit">conversations</AbsoluteLink>
+          </Button>
+          )}
           {user ? (
             <>
               <IconButton
@@ -114,6 +120,7 @@ function App() {
           <ConfessionDetails path="/confessions/:id" />
           <Replies path="/replies" />
           <Permissions path="/permissions" />
+          <Conversations path="/conversations" />
           <Login path="/login" setUser={setUser} />
           <Logout path="/logout" setUser={setUser} />
         </Router>
