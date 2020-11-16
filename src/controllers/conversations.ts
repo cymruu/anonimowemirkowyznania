@@ -74,11 +74,11 @@ export function newMessage(conversationId, auth, text, IPAdress, cb) {
 			if (!conversation) { return cb('nie odnaleziono konwersacji') }
 			let isOP = false
 			let userObject = null
-			if (typeof conversation.userID !== 'undefined' && conversation.userID._id.toString() === auth) {
+			if (conversation.userID !== undefined && conversation.userID._id.toString() === auth) {
 				isOP = true
 				userObject = conversation.userID._id
 			}
-			if (typeof conversation.parentID !== 'undefined' && conversation.parentID.auth === auth) {
+			if (conversation.parentID !== undefined && conversation.parentID.auth === auth) {
 				isOP = true
 			}
 			conversationModel.findOneAndUpdate({ _id: conversationId },

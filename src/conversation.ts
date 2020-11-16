@@ -61,7 +61,7 @@ conversationRouter.get('/:conversationid/:auth?', (req: RequestWithUser, res) =>
 	if (!req.params.conversationid) {
 		return res.sendStatus(400)
 	}
-	if (!req.params.auth && typeof req.user !== 'undefined' && req.user._id) { req.params.auth = 'U_' + req.user._id }
+	if (!req.params.auth && req.user !== undefined && req.user._id) { req.params.auth = req.user._id.toString() }
 	conversationController.getConversation(req.params.conversationid, req.params.auth, (err, conversation) => {
 		if (err) { return res.send(err) }
 		return renderConversationRoute(res, { conversation })
@@ -71,7 +71,7 @@ conversationRouter.post('/:conversationid/:auth?', (req: RequestWithUser, res) =
 	if (!req.params.conversationid) {
 		return res.sendStatus(400)
 	}
-	if (!req.params.auth && typeof req.user !== 'undefined' && req.user._id) { req.params.auth = 'U_' + req.user._id }
+	if (!req.params.auth && req.user !== undefined && req.user._id) { req.params.auth = req.user._id.toString() }
 	conversationController.newMessage(
 		req.params.conversationid,
 		req.params.auth,
