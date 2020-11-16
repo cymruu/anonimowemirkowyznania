@@ -3,10 +3,12 @@ import userModel from '../models/user'
 import jwt from 'jsonwebtoken'
 import config from '../config'
 import { authentication } from './middleware/authentication'
-import { RequestWithUser } from 'src/utils'
+import { RequestWithUser } from '../utils'
 import { makeAPIResponse } from './apiV2'
 import { accessMiddleware, flipPermission, getFlagPermissions } from '../controllers/access'
 import user from '../models/user'
+import conversation from '../models/conversation'
+import logger from '../logger'
 export const userRouter = Router()
 
 userRouter.get('/me', authentication, (req: RequestWithUser, res) => {
@@ -39,6 +41,21 @@ userRouter.put('/:id/setPermission',
 		})
 	})
 
+userRouter.get('/conversations',
+	authentication,
+	accessMiddleware('accessMessages'),
+	(req: RequestWithUser, res) => {
+		conversation.find(
+			{ 'userID': req.user._id }, { _id: 1 },
+			{ sort: { 'messages.time': -1 }, limit: 50 },
+		).then(conversations => {
+			return res.json(makeAPIResponse(res, conversations))
+		}).catch(err => {
+			logger.error(err.toString())
+			res.sendStatus(500)
+		})
+	})
+
 userRouter.post('/login', async (req, res) => {
 	userModel.findOne({ username: req.body.username }).lean().then(user => {
 		if (!user || user.password !== req.body.password) {
@@ -58,7 +75,7 @@ userRouter.post('/login', async (req, res) => {
 				permissions: getFlagPermissions(userWithoutPassword.flags),
 			}))
 		}
-		return res.status(500)
+		return res.sendStatus(500)
 	})
 })
 // TODO: should require a token to actually logout user
