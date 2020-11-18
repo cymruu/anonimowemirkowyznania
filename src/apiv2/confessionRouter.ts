@@ -12,10 +12,11 @@ import { RequestWithUser } from '../utils'
 import { WykopRequestQueue } from '../wykop'
 import { makeAPIResponse } from './apiV2'
 import { authentication } from './middleware/authentication'
+import { ISurvey } from 'src/models/survey'
 
 export const confessionRouter = Router()
 
-type RequestWithConfession = RequestWithUser & { confession: IConfession }
+type RequestWithConfession<T = any> = RequestWithUser<T> & { confession: IConfession }
 //TODO: add select fields
 function getConfessionMiddleware(req: RequestWithConfession, res: Response, next) {
 	confessionModel.findById(req.params.id)
@@ -90,10 +91,15 @@ confessionRouter.delete('/confession/:id',
 			return res.json({ success: false, response: { message: err.toString() } })
 		})
 	})
-confessionRouter.get('/confession/:id/accept',
+export interface AcceptConfessionOptions {
+	includeEmbed?: boolean
+	includeSurvey?: boolean
+	isPlus18?: boolean
+}
+confessionRouter.post('/confession/:id/accept',
 	accessMiddleware('addEntry'),
 	getConfessionMiddleware,
-	(req: RequestWithConfession, res) => {
+	(req: RequestWithConfession<AcceptConfessionOptions>, res) => {
 		req.confession.populate('survey').execPopulate()
 			.then(async (confession) => {
 				if (confession.entryID && confession.status === ConfessionStatus.ACCEPTED) {
@@ -109,12 +115,14 @@ confessionRouter.get('/confession/:id/accept',
 						)
 				}
 				const entryBody = await bodyBuilder.getEntryBody(confession, req.user)
-				const adultMedia = confession.tags.map(x => x[0]).includes('#nsfw')
+				const adultMedia = req.body.isPlus18 || confession.tags.map(x => x[0]).includes('#nsfw')
+				const embed = req.body.includeEmbed ? confession.embed : undefined
+
 				let promise
-				if (confession.survey) {
-					promise = WykopHTTPClient.acceptSurvey(confession as any, entryBody, adultMedia)
+				if (confession.survey && req.body.includeSurvey) {
+					promise = WykopHTTPClient.acceptSurvey(confession.survey as ISurvey, entryBody, embed, adultMedia)
 				} else {
-					promise = wykopController.acceptConfession(confession, entryBody, adultMedia)
+					promise = wykopController.acceptConfession(entryBody, embed, adultMedia)
 				}
 				promise.then(async (response) => {
 					confession.entryID = response.id

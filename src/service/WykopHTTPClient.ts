@@ -60,16 +60,15 @@ class WykopHTTPClientClass {
 			})
 
 	}
-	public acceptSurvey(confession: IConfession & {survey: ISurvey}, entryBody: string, adultMedia: boolean) {
+	public acceptSurvey(survey: ISurvey, entryBody: string, embed: string, adultMedia: boolean) {
 		const formData = {
 			body: entryBody,
-			'survey[question]': confession.survey.question,
-			'survey[answers]': confession.survey.answers.map(x => x),
+			'survey[question]': survey.question,
+			'survey[answers]': survey.answers.map(x => x),
 			attachment: undefined,
 			...adultMedia ? { adultmedia: 'on' } : undefined,
 		}
-		// eslint-disable-next-line max-len
-		const attachmentPromise = confession.embed ? this.uploadAttachment(confession.embed) : Promise.resolve(undefined)
+		const attachmentPromise = embed ? this.uploadAttachment(embed) : Promise.resolve(undefined)
 		return attachmentPromise.then(attachmentHash => {
 			formData.attachment = attachmentHash
 			return this._http.post(`/ajax2/wpis/dodaj/hash/${this.hash}`, qs.stringify(formData))

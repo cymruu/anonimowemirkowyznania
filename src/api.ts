@@ -15,6 +15,7 @@ import { guardMiddleware } from './utils/apiGuard'
 import bodyBuilder from './controllers/bodyBuildier'
 import WykopHTTPClient from './service/WykopHTTPClient'
 import { WykopRequestQueue } from './wykop'
+import { ISurvey } from './models/survey'
 
 //TODO: move connnection to separate file
 mongoose.connect(config.mongoURL,
@@ -63,9 +64,9 @@ apiRouter.route('/confession/accept/:confession_id').get(
 			const adultMedia = confession.tags.map(x => x[0]).includes('#nsfw')
 			let promise
 			if (confession.survey) {
-				promise = WykopHTTPClient.acceptSurvey(confession as any, entryBody, adultMedia)
+				promise = WykopHTTPClient.acceptSurvey(confession.survey as ISurvey, entryBody, confession.embed, adultMedia)
 			} else {
-				promise = wykopController.acceptConfession(confession, entryBody, adultMedia)
+				promise = wykopController.acceptConfession(entryBody, confession.embed, adultMedia)
 			}
 			promise.then(async (response) => {
 				confession.entryID = response.id
