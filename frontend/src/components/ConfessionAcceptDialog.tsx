@@ -1,13 +1,12 @@
 import {
   Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
-  FormControlLabel, FormGroup, FormLabel, Radio, RadioGroup, Snackbar, TextField,
+  FormControlLabel, FormGroup, FormLabel,
 } from '@material-ui/core';
 import React, {
   Dispatch, SetStateAction, SyntheticEvent, useState,
 } from 'react';
 import { IConfession } from '../pages/Confessions';
 import { AcceptConfessionOptions } from '../service/api';
-import { ApiError } from '../service/HTTPClient';
 
 export default function ConfessionAcceptDialog(
   {
@@ -20,9 +19,19 @@ export default function ConfessionAcceptDialog(
     acceptFn: any,
   },
 ) {
-  const [state, setState] = useState<AcceptConfessionOptions>({ includeEmbed: true, includeSurvey: true, isPlus18: false });
+  const [state, setState] = useState<AcceptConfessionOptions>({
+    includeEmbed: true,
+    includeSurvey: true,
+    isPlus18: false,
+  });
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [event.target.name]: event.target.checked });
+  };
+  const acceptWrapped = (event: SyntheticEvent) => {
+    event.preventDefault();
+    return acceptFn(confession, state).then(() => {
+      setAcceptDialogOpen(false);
+    });
   };
   return (
     <>
@@ -54,7 +63,7 @@ export default function ConfessionAcceptDialog(
           <Button onClick={() => setAcceptDialogOpen(false)} color="primary">
             Close
           </Button>
-          <Button color="primary" autoFocus>
+          <Button color="primary" autoFocus onClick={acceptWrapped}>
             Accept confession
           </Button>
         </DialogActions>

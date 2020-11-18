@@ -68,7 +68,7 @@ export default function ActionButtons(props: ActionButtonsProps) {
     <Grid container direction="column">
       <SuccessButton
         style={{ marginBottom: 5 }}
-        disabled={isSending || model.status === 1}
+        disabled={isSending || model.status !== 0}
         variant="contained"
         {...longPressAcceptHook}
       >
