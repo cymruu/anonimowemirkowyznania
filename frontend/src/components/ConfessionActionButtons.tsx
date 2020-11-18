@@ -1,16 +1,30 @@
 import React, { useState } from 'react';
 import ActionButtons, { ActionButtonsProps } from './ActionButtons';
+import ConfessionAcceptDialog from './ConfessionAcceptDialog';
 import ConfessionDeclineDialog from './ConfessionDeclineDialog';
 
 export default function ConfessionActionButtons(props: ActionButtonsProps) {
-  const { model, setStatusFn } = props;
+  const { model, setStatusFn, acceptFn } = props;
+  const [displayAcceptDialog, setAcceptDialogOpen] = useState(false);
   const [displayDeclineDialog, setDeclineDialogOpen] = useState(false);
-  const longPressFn = () => {
+  const longPressAcceptFn = () => {
+    if (model.status === 0) setAcceptDialogOpen(true);
+  };
+  const longPressDeclineFn = () => {
     if (model.status === 0) setDeclineDialogOpen(true);
   };
 
   return (
     <>
+      {displayAcceptDialog
+      && (
+      <ConfessionAcceptDialog
+        confession={model}
+        isOpen={displayAcceptDialog}
+        setAcceptDialogOpen={setAcceptDialogOpen}
+        acceptFn={acceptFn}
+      />
+      )}
       {displayDeclineDialog
       && (
       <ConfessionDeclineDialog
@@ -20,7 +34,11 @@ export default function ConfessionActionButtons(props: ActionButtonsProps) {
         setStatusFn={setStatusFn}
       />
       )}
-      <ActionButtons {...props} longPressFn={longPressFn} />
+      <ActionButtons
+        {...props}
+        longPressDeclineFn={longPressDeclineFn}
+        longPressAcceptFn={longPressAcceptFn}
+      />
     </>
   );
 }

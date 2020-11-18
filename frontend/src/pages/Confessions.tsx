@@ -49,7 +49,7 @@ export default function Confessions(props: RouteComponentProps) {
       });
   }, [httpClient]);
 
-  const addEntry = (confession: IConfession) => apiClient.confessions.add(confession)
+  const addEntry = (confession: IConfession, options?) => apiClient.confessions.add(confession, options)
     .then((response) => {
       setConfessions({ type: 'replace', id: confession._id, patchObject: response.patchObject });
     }).catch(noOpFn);

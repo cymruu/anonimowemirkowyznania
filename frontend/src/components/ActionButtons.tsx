@@ -13,7 +13,8 @@ export interface ActionButtonsProps {
     acceptFn: buttonActionFunction
     setStatusFn: setStatusFnT
     deleteFn: buttonActionFunction
-    longPressFn?: ()=>void
+    longPressDeclineFn?: ()=>void
+    longPressAcceptFn?: ()=>void
 }
 
 const getRedButtonProps = (model: IConfession | IReply, setStatusFn: setStatusFnT, deleteFn: buttonActionFunction) => {
@@ -42,7 +43,8 @@ export default function ActionButtons(props: ActionButtonsProps) {
   const [isSending, setSending] = useState(false);
 
   const {
-    acceptFn, setStatusFn, deleteFn, model, longPressFn,
+    acceptFn, setStatusFn, deleteFn, model,
+    longPressDeclineFn, longPressAcceptFn,
   } = props;
 
   const actionWrapper = (
@@ -60,18 +62,19 @@ export default function ActionButtons(props: ActionButtonsProps) {
   };
 
   const { text, fn } = getRedButtonProps(model, setStatusFn, deleteFn);
-  const longPressHook = useLongPress(longPressFn || noOpFn, (event) => actionWrapper(fn, event)());
+  const longPressAcceptHook = useLongPress(longPressAcceptFn || noOpFn, (event) => actionWrapper(acceptFn, event)());
+  const longPressDeclineHook = useLongPress(longPressDeclineFn || noOpFn, (event) => actionWrapper(fn, event)());
   return (
     <Grid container direction="column">
       <SuccessButton
         style={{ marginBottom: 5 }}
         disabled={isSending || model.status === 1}
         variant="contained"
-        onClick={(e) => actionWrapper(acceptFn, e)()}
+        {...longPressAcceptHook}
       >
         {isSending ? <CircularProgress size={24} /> : 'Accept'}
       </SuccessButton>
-      <Button {...longPressHook} disabled={isSending} variant="contained" color="secondary">
+      <Button {...longPressDeclineHook} disabled={isSending} variant="contained" color="secondary">
         {isSending ? <CircularProgress size={24} /> : text}
       </Button>
     </Grid>

@@ -46,8 +46,8 @@ export const deleteEntryComment = (entryCommentId) => {
 
 export const sendPrivateMessage = (receiver, body) => service.Pm.SendMessage(receiver, body)
 
-export const acceptConfession = (confession: IConfession, entryBody: string, adultmedia: boolean = false) => {
-	return service.Entries.Add({ body: entryBody, embed: confession.embed, adultmedia })
+export const acceptConfession = (entryBody: string, embed, adultmedia: boolean = false) => {
+	return service.Entries.Add({ body: entryBody, embed, adultmedia })
 }
 
 export const addNotificationComment = function(confession, user) {

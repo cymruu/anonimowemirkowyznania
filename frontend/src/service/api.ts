@@ -12,11 +12,17 @@ abstract class BaseService {
   }
 }
 
+export interface AcceptConfessionOptions {
+  includeEmbed?: boolean
+  includeSurvey?: boolean
+  isPlus18?: boolean
+}
+
 class ConfessionApi extends BaseService {
   path = '/confessions'
 
-  public add(confession: IConfession) {
-    return this._httpClient.get(`/confessions/confession/${confession._id}/accept`);
+  public add(confession: IConfession, options: AcceptConfessionOptions = { includeEmbed: true, includeSurvey: true }) {
+    return this._httpClient.post(`/confessions/confession/${confession._id}/accept`, options);
   }
 
   public setStatus(confession: IConfession, { status, note }: {status: number, note?: string}) {
