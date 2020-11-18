@@ -67,8 +67,10 @@ app.post('/', async (req, res) => {
 	} else {
 		delete req.body.survey
 	}
-	req.body.text = req.body.text || ''
-	confession.text = req.body.text
+	if (!req.body.text) {
+		return res.sendStatus(400)
+	}
+	confession.text = req.body.text || ''
 	confession.IPAdress = req.ip
 	confession.remotePort = req.connection.remotePort.toString()
 	confession.embed = req.body.embed
