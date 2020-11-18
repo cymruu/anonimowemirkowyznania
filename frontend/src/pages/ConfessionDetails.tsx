@@ -21,6 +21,7 @@ import StyledCardHeader from '../components/StyledCardHeader';
 import ViewIPDialog from '../components/ViewIPDialog';
 import OtherFromIpDialog from '../components/OtherFromIpDialog';
 import { noOpFn, toggleStatus } from '../utils';
+import { IConfession } from './Confessions';
 
 export default function (props: RouteComponentProps & {id?: string}) {
   const { id } = props;
@@ -43,10 +44,11 @@ export default function (props: RouteComponentProps & {id?: string}) {
     setConfession(updatedConfession);
   };
 
-  const addEntryFn = () => apiClient.confessions.add(confession).then(async (response) => {
-    patchConfession(response);
-    return response;
-  }).catch(noOpFn);
+  const addEntryFn = (conf: IConfession, options?) =>
+    apiClient.confessions.add(conf, options).then(async (response) => {
+      patchConfession(response);
+      return response;
+    }).catch(noOpFn);
 
   const setStatusFn = (confession2: any, note?: string) =>
     apiClient.confessions.setStatus(confession2, { status: toggleStatus(confession2.status), note })
