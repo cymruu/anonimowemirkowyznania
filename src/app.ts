@@ -35,7 +35,6 @@ const stripe = new Stripe(config.stripe.secret,
 	{ apiVersion: '2020-08-27' })
 const app = express()
 
-
 app.enable('trust proxy')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
