@@ -91,7 +91,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
             onClose={() => setViewOtherFromThisIp(false)}
           />
           <StyledCardHeader
-            title={id}
+            title={`${id} / ${confession.auth}`}
             subheader={(
               <Grid container>
                 <Box>

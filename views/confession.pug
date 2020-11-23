@@ -14,7 +14,7 @@ block content
       |Wpis
       if confession.entryID
         a(href=`http://wykop.pl/wpis/${confession.entryID}` target="_blank")  #{confession.entryID}
-    .panel-body(style='white-space:pre-wrap;')
+    .panel-body(style='white-space:pre-wrap;word-break: break-word;')
       |#{confession.text}
       if confession.survey
         hr
