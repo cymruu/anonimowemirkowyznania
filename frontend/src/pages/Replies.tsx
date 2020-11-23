@@ -93,7 +93,7 @@ export default function Replies(props: RouteComponentProps) {
                 <TableCell>
                   {reply.alias}
                 </TableCell>
-                <TableCell style={{ wordBreak: 'break-word' }}>
+                <TableCell style={{ wordBreak: 'break-word', whiteSpace: 'pre-line' }}>
                   {reply.text}
                 </TableCell>
                 <TableCell style={{ maxWidth: 150, textOverflow: 'ellipsis', overflow: 'hidden' }}>

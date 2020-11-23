@@ -91,7 +91,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
             onClose={() => setViewOtherFromThisIp(false)}
           />
           <StyledCardHeader
-            title={id}
+            title={`${id} / ${confession.auth}`}
             subheader={(
               <Grid container>
                 <Box>
@@ -136,7 +136,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
           )}
           />
           <CardContent>
-            <div>
+            <div style={{ whiteSpace: 'pre-line' }}>
               {confession.text}
             </div>
             <Divider variant="middle" />
