@@ -136,7 +136,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
           )}
           />
           <CardContent>
-            <div>
+            <div style={{ whiteSpace: 'pre-line' }}>
               {confession.text}
             </div>
             <Divider variant="middle" />
