@@ -6,26 +6,28 @@ import userModel from './models/user'
 import * as conversationController from './controllers/conversations'
 import config from './config'
 import auth from './controllers/authorization'
+import { csrfErrorHander, csrfProtection } from './csrf'
 
-function renderConversationRoute(res, params) {
+function renderConversationRoute(req, res, params) {
 	return res.render('conversation', {
+		csrfToken: (req as any).csrfToken(),
 		...params,
 	})
 }
 
 conversationRouter.use(auth(false))
-conversationRouter.get('/:parent/new', (req: RequestWithUser, res, next) => {
+conversationRouter.get('/:parent/new', csrfProtection, (req: RequestWithUser, res, next) => {
 	if (req.params.parent.substr(0, 2) === 'U_') {
 		const username = req.params.parent.substr(2)
 		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function(err, userObject) {
 			if (err) { return res.sendStatus(503) }
 			if (!userObject) { return res.sendStatus(404) }
-			return renderConversationRoute(res, { type: 'user', userObject })
+			return renderConversationRoute(req, res, { type: 'user', userObject })
 		})
 	} else {
 		confessionModel.findById(req.params.parent, (err, confession) => {
 			if (err) { return res.sendStatus(404) }
-			return renderConversationRoute(res, { type: 'confession', confession })
+			return renderConversationRoute(req, res, { type: 'confession', confession })
 		})
 	}
 })
@@ -38,7 +40,7 @@ function createConversationMiddleware(req: RequestWithUser, res) {
 		})
 	})
 }
-conversationRouter.post('/:parent/new', (req: RequestWithUser, res, next) => {
+conversationRouter.post('/:parent/new', csrfErrorHander, (req: RequestWithUser, res, next) => {
 	if (!req.body.text) { return res.sendStatus(400) }
 	if (req.params.parent.substr(0, 2) === 'U_') {
 		const username = req.params.parent.substr(2)
@@ -57,17 +59,17 @@ conversationRouter.post('/:parent/new', (req: RequestWithUser, res, next) => {
 		})
 	}
 }, createConversationMiddleware)
-conversationRouter.get('/:conversationid/:auth?', (req: RequestWithUser, res) => {
+conversationRouter.get('/:conversationid/:auth?', csrfProtection, (req: RequestWithUser, res) => {
 	if (!req.params.conversationid) {
 		return res.sendStatus(400)
 	}
 	if (!req.params.auth && req.user !== undefined && req.user._id) { req.params.auth = req.user._id.toString() }
 	conversationController.getConversation(req.params.conversationid, req.params.auth, (err, conversation) => {
 		if (err) { return res.send(err) }
-		return renderConversationRoute(res, { conversation })
+		return renderConversationRoute(req, res, { conversation })
 	})
 })
-conversationRouter.post('/:conversationid/:auth?', (req: RequestWithUser, res) => {
+conversationRouter.post('/:conversationid/:auth?', csrfErrorHander, (req: RequestWithUser, res) => {
 	if (!req.params.conversationid) {
 		return res.sendStatus(400)
 	}
@@ -81,7 +83,7 @@ conversationRouter.post('/:conversationid/:auth?', (req: RequestWithUser, res) =
 			if (err) { return res.send(err) }
 			conversationController.getConversation(req.params.conversationid, req.params.auth, (err, conversation) => {
 				if (err) { return res.send(err) }
-				return renderConversationRoute(res, { conversation })
+				return res.redirect(`/conversation/${req.params.conversationid}/${req.params.auth || ''}`)
 			})
 		})
 })

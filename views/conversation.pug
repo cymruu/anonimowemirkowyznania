@@ -21,6 +21,7 @@ block content
           form(id="messageForm" method="post")
             .input-group
               textarea#messageBox.form-control(type='text', name='text' autocomplete='off')
+              input(name="_csrf", type="hidden", value=csrfToken)
               span.input-group-btn
                 button.btn.btn-default.sendMessage(type='submit') Wyślij
         if conversation
