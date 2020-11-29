@@ -25,12 +25,14 @@ import * as surveyController from './controllers/survey'
 import * as tagController from './controllers/tags'
 import * as wykopController from './controllers/wykop'
 import conversationRouter from './conversation'
+import { csrfErrorHander, csrfProtection } from './csrf'
 import logger from './logger'
 import advertismentModel from './models/ads'
 import confessionModel from './models/confession'
 import DonationIntent from './models/donationIntent'
 import replyModel from './models/reply'
 import statsModel from './models/stats'
+
 const stripe = new Stripe(config.stripe.secret,
 	{ apiVersion: '2020-08-27' })
 const app = express()
@@ -54,10 +56,10 @@ app.use('/conversation', conversationRouter)
 app.use(auth(false))
 app.set('view engine', 'pug')
 
-app.get('/', (req, res) => {
-	res.render('index')
+app.get('/', csrfProtection, (req, res) => {
+	res.render('index', { csrfToken: (req as any).csrfToken() })
 })
-app.post('/', async (req, res) => {
+app.post('/', csrfProtection, csrfErrorHander, async (req, res) => {
 	const confession = new confessionModel()
 	if (req.body.survey && req.body.survey.question) {
 		req.body.survey.answers = req.body.survey.answers.filter((e) => { return e })
@@ -108,17 +110,17 @@ app.get('/confession/:confessionid/:auth', (req, res) => {
 			})
 	}
 })
-app.get('/reply/:confessionid', (req, res) => {
+app.get('/reply/:confessionid', csrfProtection, (req, res) => {
 	confessionModel.findById(req.params.confessionid, (err, confession) => {
 		if (err) { return res.sendStatus(404) }
 		wykopController.getParticipants(confession.entryID).then(participants => {
-			res.render('reply', { confession, participants })
+			res.render('reply', { confession, participants, csrfToken: (req as any).csrfToken() })
 		}).catch(_ => {
-			res.render('reply', { confession, participants: [] })
+			res.render('reply', { confession, participants: [], csrfToken: (req as any).csrfToken() })
 		})
 	})
 })
-app.post('/reply/:confessionid', (req, res) => {
+app.post('/reply/:confessionid', csrfProtection, csrfErrorHander, (req, res) => {
 	confessionModel.findById(req.params.confessionid, (err, confession) => {
 		if (err) { return res.sendStatus(404) }
 		if (confession) {
