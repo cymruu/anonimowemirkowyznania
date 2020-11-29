@@ -107,6 +107,7 @@ block content
         small.form-text.text-muted 
           | Bezpośredni link do obrazka (zakończony rozszerzeniem pliku np. https://i.imgur.com/3qajQcs.png), lub link do youtube, streamable.
       .form-group
+        input(name="_csrf", type="hidden", value=csrfToken)
         button.btn.btn-large.btn-success(type="submit") Wyślij
       if (participants && participants.length > 0)
         div.panel.panel-default

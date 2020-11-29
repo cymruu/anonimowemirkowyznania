@@ -99,6 +99,7 @@ block content
         input.form-control(type="url", name="embed", placeholder="URL do obrazka", maxlength=3000)
         small.form-text.text-muted 
           | Bezpośredni link do obrazka (zakończony rozszerzeniem pliku np. https://i.imgur.com/3qajQcs.png), lub link do youtube, streamable.
+      input(name="_csrf", type="hidden", value=csrfToken)
       button.btn.btn-large.btn-success(type="submit") Wyślij
       button#addSurvey.btn.btn-default.btn-large.pull-right(type="button") Dodaj ankietę
       div.surveyForm(style='margin-top: 10px; display: none;')
