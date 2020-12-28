@@ -13,6 +13,7 @@ import { WykopRequestQueue } from '../wykop'
 import { makeAPIResponse } from './apiV2'
 import { authentication } from './middleware/authentication'
 import { ISurvey } from 'src/models/survey'
+import { getPage } from './utils/pagination'
 
 export const confessionRouter = Router()
 
@@ -36,13 +37,15 @@ function getConfessionMiddleware(req: RequestWithConfession, res: Response, next
 
 confessionRouter.use(authentication)
 confessionRouter.get('/', async (req: RequestWithUser, res) => {
-	confessionModel
+	const query = confessionModel
 		.find({}, ['_id', 'text', 'status', 'embed', 'auth', 'entryID', 'survey'])
 		.sort({ _id: -1 })
+
+	const { pageQuery, count } = await getPage(req, confessionModel, query)
+	pageQuery
 		.lean()
-		.limit(100)
 		.then(confessions => {
-			res.json(makeAPIResponse(res, confessions))
+			res.json(makeAPIResponse(res, { data: { confessions, count } }))
 		}).catch(err => {
 			logger.error(err.toString())
 			res.status(500).send(500)
@@ -186,7 +189,7 @@ confessionRouter.put('/confession/:id/tags',
 				tags: newTags,
 			},
 			$push: { actions: action._id },
-		}).then(updateResult => {
+		}).then(() => {
 			return res.status(200).json(makeAPIResponse(res, { patchObject: { tags: newTags }, action }))
 		}).catch(err => {
 			return res.status(500).json(makeAPIResponse(res, null, { message: err.toString() }))
@@ -217,7 +220,7 @@ confessionRouter.get('/confession/:id/otherFromIp',
 			.sort({ _id: -1 })
 			.then(confessions => {
 				return res.json(makeAPIResponse(res, { confessions }))
-			}).catch(err => {
+			}).catch(() => {
 				return res.status(500).json(makeAPIResponse(res, null, { message: 'internal server error' }))
 			})
 	},
