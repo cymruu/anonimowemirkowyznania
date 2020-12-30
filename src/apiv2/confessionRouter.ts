@@ -40,18 +40,17 @@ confessionRouter.get('/', async (req: RequestWithUser, res) => {
 	const query = confessionModel
 		.find({}, ['_id', 'text', 'status', 'embed', 'auth', 'entryID', 'survey'])
 		.sort({ _id: -1 })
-
-	const { pageQuery, count } = await getPage(req, confessionModel, query)
-	pageQuery
 		.lean()
-		.then(confessions => {
-			res.json(makeAPIResponse(res, { data: { confessions, count } }))
-		}).catch(err => {
+
+	getPage(req, confessionModel, query)
+		.then(paginationObject => {
+			res.json(makeAPIResponse(res, paginationObject))
+		})
+		.catch(err => {
 			logger.error(err.toString())
 			res.status(500).send(500)
 		})
 })
-
 
 confessionRouter.get('/confession/:id',
 	accessMiddleware('viewDetails'),
