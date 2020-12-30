@@ -7,14 +7,16 @@ import EmbedIcon from '@material-ui/icons/Attachment';
 import SurveyIcon from '@material-ui/icons/Poll';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import React, {
-  useContext, useEffect, useState, useReducer,
+  useContext, useEffect, useState, useReducer, useCallback, useMemo,
 } from 'react';
 import { APIContext } from '../App';
 import { AbsoluteLink } from '../components/AbsoluteLink';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import ShortEmebed from '../components/ShortEmbed';
 import StyledTableRow from '../components/StyledTableRow';
+import usePagination from '../components/pagination';
 import { noOpFn, replaceInArray, toggleStatus } from '../utils';
+import { HTTPClient } from '../service/HTTPClient';
 
 export type IConfession = any
 
@@ -32,6 +34,10 @@ function confessionsReducer(state: State, action:Action) {
     default: return state;
   }
 }
+const getPage = (httpClient: HTTPClient) =>
+  (page: number, perPage: number) =>
+    Promise.resolve({ pageItems: [], count: 0 });
+// httpClient.swallow(httpClient.get(`/confessions?page=${page}&perPage=${perPage}`));
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Confessions(props: RouteComponentProps) {
@@ -39,15 +45,18 @@ export default function Confessions(props: RouteComponentProps) {
   const [dataLoaded, setDataLoaded] = useState(false);
   const { httpClient, apiClient } = useContext(APIContext);
 
-  useEffect(() => {
-    httpClient.swallow(httpClient.get('/confessions'))
-      .then((fetchedConfessions) => {
-        setConfessions({ type: 'set', confessions: fetchedConfessions });
-      })
-      .finally(() => {
-        setDataLoaded(true);
-      });
-  }, [httpClient]);
+  const getPageMemoized = useMemo(() => getPage(httpClient), [httpClient]);
+
+  const paginationComponent = usePagination(getPageMemoized);
+  // useEffect(() => {
+  //   httpClient.swallow(httpClient.get('/confessions'))
+  //     .then((fetchedConfessions) => {
+  //       setConfessions({ type: 'set', confessions: fetchedConfessions });
+  //     })
+  //     .finally(() => {
+  //       setDataLoaded(true);
+  //     });
+  // }, [httpClient]);
 
   const addEntry = (confession: IConfession, options?) => apiClient.confessions.add(confession, options)
     .then((response) => {
@@ -67,6 +76,7 @@ export default function Confessions(props: RouteComponentProps) {
 
   return (
     <Container>
+      {paginationComponent}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
