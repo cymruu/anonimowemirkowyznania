@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import { Model, Query } from 'mongoose'
 
-const DEFAULT_PER_PAGE = 100
+const DEFAULT_PER_PAGE = 10
 
 export type PaginationQueryParams = {
     page?: string
