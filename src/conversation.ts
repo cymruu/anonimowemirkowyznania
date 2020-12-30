@@ -19,10 +19,11 @@ conversationRouter.use(auth(false))
 conversationRouter.get('/:parent/new', csrfProtection, (req: RequestWithUser, res, next) => {
 	if (req.params.parent.substr(0, 2) === 'U_') {
 		const username = req.params.parent.substr(2)
-		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function(err, userObject) {
-			if (err) { return res.sendStatus(503) }
+		userModel.findOne({ username: username }, { _id: 1, username: 1 }).then(userObject => {
 			if (!userObject) { return res.sendStatus(404) }
 			return renderConversationRoute(req, res, { type: 'user', userObject })
+		}).catch(err => {
+			return res.sendStatus(500)
 		})
 	} else {
 		confessionModel.findById(req.params.parent, (err, confession) => {
@@ -44,11 +45,12 @@ conversationRouter.post('/:parent/new', csrfErrorHander, (req: RequestWithUser, 
 	if (!req.body.text) { return res.sendStatus(400) }
 	if (req.params.parent.substr(0, 2) === 'U_') {
 		const username = req.params.parent.substr(2)
-		userModel.findOne({ username: username }, { _id: 1, username: 1 }, function(err, userObject) {
-			if (err) { return res.sendStatus(503) }
+		userModel.findOne({ username: username }, { _id: 1, username: 1 }).then(userObject => {
 			if (!userObject) { return res.sendStatus(404) }
 			res.locals.conversationParent = userObject
 			return next()
+		}).catch(err => {
+			return res.sendStatus(500)
 		})
 	} else {
 		confessionModel.findById(req.params.parent, (err, confession) => {

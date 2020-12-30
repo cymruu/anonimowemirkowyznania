@@ -13,7 +13,7 @@
         "sourceMap": true,
         "outDir": "dist",
         "baseUrl": "./",
-        "esModuleInterop": true,
+        "esModuleInterop": true
     },
     "include": [
         "src/**/*"

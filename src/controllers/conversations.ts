@@ -84,10 +84,8 @@ export function newMessage(conversationId, auth, text, IPAdress, cb) {
 			conversationModel.findOneAndUpdate({ _id: conversationId },
 				{ $push:
 					{ messages: { time: new Date(), text: text, IPAdress: IPAdress, OP: isOP, user: userObject } },
-				},
-				(err) => {
-					if (err) { return cb(err) }
-					cb(null, isOP)
 				})
+				.then(() => {cb(null, isOP)})
+				.catch((err) => {cb(err)})
 		})
 }

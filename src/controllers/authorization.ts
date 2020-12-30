@@ -12,8 +12,8 @@ export default function(loginRequired: boolean) {
 					if (loginRequired) {return res.render('./admin/login.pug', { user: {}, error: 'Sesja wygasła' })}
 					return next()
 				} else {
-					userModel.findById(decoded._id, { _id: 1, username: 1, flags: 1 }, (err, user) => {
-						if (!err && user) {req.user = user}
+					userModel.findById(decoded._id, { _id: 1, username: 1, flags: 1 }).then(user => {
+						req.user = user
 						return next()
 					})
 				}

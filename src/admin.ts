@@ -14,20 +14,18 @@ import DonationModel from './models/donation'
 import donationIntent from './models/donationIntent'
 import bodyBuildier from './controllers/bodyBuildier'
 import { service } from './wykop'
-//authoriztion
+
 adminRouter.get('/login', (req: RequestWithUser, res) => {
 	res.render('./admin/login.pug', { user: {} })
 })
 adminRouter.post('/login', (req: RequestWithUser, res) => {
 	userModel.findOne({
 		username: req.body.username,
-	}, { _id: 1, username: 1, password: 1, flags: 1 }, (err, user) => {
-		if (err) { throw err }
+	}, { _id: 1, username: 1, password: 1, flags: 1 }).then(user => {
 		if (!user) {
 			return res.render('./admin/login.pug', { user: {}, error: 'Nie znaleziono uzytkownia' })
 		}
 		if (user.password === req.body.password) {
-			//success login
 			delete user.password
 			const token = jwt.sign({
 				_id: user._id,
@@ -40,6 +38,8 @@ adminRouter.post('/login', (req: RequestWithUser, res) => {
 		} else {
 			return res.render('./admin/login.pug', { user: {}, error: 'Błędne hasło' })
 		}
+	}).catch(err => {
+		return res.sendStatus(500)
 	})
 })
 adminRouter.get('/logout', (req: RequestWithUser, res) => {

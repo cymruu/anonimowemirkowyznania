@@ -26,7 +26,7 @@ mongoose.connect(config.mongoURL,
 			process.exit(1)
 		}
 	})
-mongoose.Promise = global.Promise
+
 interface RequestWithUser extends Request {
 	user: any;
 }
@@ -64,7 +64,8 @@ apiRouter.route('/confession/accept/:confession_id').get(
 			const adultMedia = confession.tags.map(x => x[0]).includes('#nsfw')
 			let promise
 			if (confession.survey) {
-				promise = WykopHTTPClient.acceptSurvey(confession.survey as ISurvey, entryBody, confession.embed, adultMedia)
+				promise = WykopHTTPClient.acceptSurvey(
+					confession.survey as ISurvey, entryBody, confession.embed, adultMedia)
 			} else {
 				promise = wykopController.acceptConfession(entryBody, confession.embed, adultMedia)
 			}
