@@ -6,77 +6,50 @@ import {
 import EmbedIcon from '@material-ui/icons/Attachment';
 import SurveyIcon from '@material-ui/icons/Poll';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
-import React, {
-  useContext, useEffect, useState, useReducer, useCallback, useMemo,
-} from 'react';
+import React, { useContext, useMemo } from 'react';
 import { APIContext } from '../App';
 import { AbsoluteLink } from '../components/AbsoluteLink';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
+import usePagination from '../components/pagination';
 import ShortEmebed from '../components/ShortEmbed';
 import StyledTableRow from '../components/StyledTableRow';
-import usePagination from '../components/pagination';
-import { noOpFn, replaceInArray, toggleStatus } from '../utils';
 import { HTTPClient } from '../service/HTTPClient';
+import { noOpFn, toggleStatus } from '../utils';
 
 export type IConfession = any
 
-type State = IConfession[]
-type Action =
-  | {type: 'set', confessions: State}
-  | {type: 'replace', id: string, patchObject: object}
-
-function confessionsReducer(state: State, action:Action) {
-  switch (action.type) {
-    case 'set':
-      return action.confessions;
-    case 'replace':
-      return replaceInArray(state, action.id, action.patchObject);
-    default: return state;
-  }
-}
 const getPage = (httpClient: HTTPClient) =>
   (page: number, perPage: number) =>
-    Promise.resolve({ pageItems: [], count: 0 });
-// httpClient.swallow(httpClient.get(`/confessions?page=${page}&perPage=${perPage}`));
+    httpClient.swallow(httpClient.get(`/confessions?page=${page}&perPage=${perPage}`));
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Confessions(props: RouteComponentProps) {
-  const [confessions, setConfessions] = useReducer(confessionsReducer, []);
-  const [dataLoaded, setDataLoaded] = useState(false);
   const { httpClient, apiClient } = useContext(APIContext);
 
   const getPageMemoized = useMemo(() => getPage(httpClient), [httpClient]);
 
-  const paginationComponent = usePagination(getPageMemoized);
-  // useEffect(() => {
-  //   httpClient.swallow(httpClient.get('/confessions'))
-  //     .then((fetchedConfessions) => {
-  //       setConfessions({ type: 'set', confessions: fetchedConfessions });
-  //     })
-  //     .finally(() => {
-  //       setDataLoaded(true);
-  //     });
-  // }, [httpClient]);
+  const {
+    data: confessions, isLoading, paginationComponent, setData,
+  } = usePagination(getPageMemoized);
 
   const addEntry = (confession: IConfession, options?) => apiClient.confessions.add(confession, options)
     .then((response) => {
-      setConfessions({ type: 'replace', id: confession._id, patchObject: response.patchObject });
+      setData({ type: 'replace', id: confession._id, patchObject: response.patchObject });
     }).catch(noOpFn);
 
   const setStatusFn = (confession: IConfession, note?: string) =>
     apiClient.confessions.setStatus(confession, { status: toggleStatus(confession.status), note })
       .then((response) => {
-        setConfessions({ type: 'replace', id: confession._id, patchObject: response.patchObject });
+        setData({ type: 'replace', id: confession._id, patchObject: response.patchObject });
       }).catch(noOpFn);
 
   const deleteEntryFn = (confession: IConfession) => apiClient.confessions.delete(confession)
     .then((response) => {
-      setConfessions({ type: 'replace', id: confession._id, patchObject: response.patchObject });
+      setData({ type: 'replace', id: confession._id, patchObject: response.patchObject });
     }).catch(noOpFn);
 
   return (
     <Container>
-      {paginationComponent}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -129,8 +102,9 @@ export default function Confessions(props: RouteComponentProps) {
             ))}
           </TableBody>
         </Table>
-        {!dataLoaded && <LinearProgress />}
+        {isLoading && <LinearProgress />}
       </TableContainer>
+      {paginationComponent}
     </Container>
   );
 }

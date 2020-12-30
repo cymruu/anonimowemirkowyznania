@@ -24,5 +24,5 @@ export async function getPage(
 	const pageItems = await query
 		.limit(perPage)
 		.skip(page * perPage)
-	return { page: pageItems, count }
+	return { pageItems, count }
 }

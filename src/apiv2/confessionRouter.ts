@@ -48,7 +48,7 @@ confessionRouter.get('/', async (req: RequestWithUser, res) => {
 		})
 		.catch(err => {
 			logger.error(err.toString())
-			res.status(500).send(500)
+			res.sendStatus(500)
 		})
 })
 
