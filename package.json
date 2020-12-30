@@ -11,6 +11,8 @@
     "start": "node dist/app.js",
     "lint": "npx eslint . --ext .ts",
     "lint-fix": "npx eslint . --ext .ts --fix",
+    "gcp-build": "tsc -p . && cd frontend && npm install && npm run-script build",
+    "deploy": "gcloud app deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "sokytsinolop",

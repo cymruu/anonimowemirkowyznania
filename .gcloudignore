@@ -1,0 +1,9 @@
+#!include:.gitignore
+.gcloudignore
+.git
+.gitignore
+
+# Node.js dependencies:
+node_modules/
+!config.ts
+frontend/build/*

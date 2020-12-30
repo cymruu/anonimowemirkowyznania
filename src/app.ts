@@ -1,11 +1,5 @@
-declare let PhusionPassenger: any
 if (!process.env.NODE_ENV) {
 	process.env.NODE_ENV = 'production'
-}
-let _port: number | string = 1337
-if (typeof (PhusionPassenger) !== 'undefined') {
-	PhusionPassenger.configure({ autoInstall: false })
-	_port = 'passenger'
 }
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
@@ -219,7 +213,10 @@ app.get('/link/:linkId/:from', function(req, res) {
 		res.redirect(ad.out)
 	})
 })
-const server = http.createServer(app)
+export const server = http.createServer(app)
+
+const _port = (process.env.NODE_ENV === 'development') ? 1337 : (process.env.PORT || 8080)
+
 server.listen(_port, () => {
 	logger.info(`Server started on port: ${_port} [${process.env.NODE_ENV}]`)
 })
