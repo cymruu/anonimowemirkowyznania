@@ -9,6 +9,7 @@ import replyModel, { IReply } from '../models/reply'
 import { RequestWithUser } from '../utils'
 import { makeAPIResponse } from './apiV2'
 import { authentication } from './middleware/authentication'
+import { getPage } from './utils/pagination'
 
 export const replyRouter = Router()
 
@@ -30,18 +31,20 @@ function getReplyMiddleware(req: RequestWithReply, res: Response, next) {
 
 replyRouter.use(authentication)
 replyRouter.get('/', async (req: RequestWithUser, res) => {
+	const query =
 	replyModel
 		.find({}, ['_id', 'text', 'status', 'alias', 'embed', 'auth', 'commentID', 'addedBy'])
 		.populate('parentID', 'entryID')
 		.sort({ _id: -1 })
 		.lean()
-		.limit(100)
-		.then(replies => {
-			res.json(makeAPIResponse(res, replies))
-		}).catch(err => {
-			logger.error(err.toString())
-			res.status(500).send(500)
-		})
+
+	getPage(req, replyModel, query).then(paginationObject => {
+		res.json(makeAPIResponse(res, paginationObject))
+
+	}).catch(err => {
+		logger.error(err.toString())
+		res.sendStatus(500)
+	})
 })
 
 replyRouter.get('/reply/:id/accept',
