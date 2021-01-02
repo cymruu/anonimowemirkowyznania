@@ -40,9 +40,10 @@ export default function usePagination(getPage: GetPageFunction) {
 
   useEffect(() => {
     setIsLoading(true);
-    getPage(page, perPage).then((pageResponse) => {
-      setData({ type: 'set', page: pageResponse });
-    })
+    getPage(page, perPage)
+      .then((pageResponse) => {
+        setData({ type: 'set', page: pageResponse });
+      })
       .finally(() => {
         setIsLoading(false);
       });

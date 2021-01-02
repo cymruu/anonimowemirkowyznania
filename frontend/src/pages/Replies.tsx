@@ -6,64 +6,49 @@ import {
 import EmbedIcon from '@material-ui/icons/Attachment';
 import { RouteComponentProps } from '@reach/router';
 import React, {
-  useContext, useEffect, useReducer, useState,
+  useContext, useMemo,
 } from 'react';
 import { APIContext } from '../App';
 import ActionButtons from '../components/ActionButtons';
 import ShortEmebed from '../components/ShortEmbed';
 import StyledTableRow from '../components/StyledTableRow';
-import { noOpFn, replaceInArray, toggleStatus } from '../utils';
+import { noOpFn, toggleStatus } from '../utils';
+import usePagination from '../components/pagination';
+import { HTTPClient } from '../service/HTTPClient';
 
 export type IReply = any
 
-type State = IReply[]
-type Action =
-  | {type: 'set', replies: State}
-  | {type: 'replace', id: string, patchObject: object}
-
-function repliesReducer(state: State, action:Action) {
-  switch (action.type) {
-    case 'set':
-      return action.replies;
-    case 'replace':
-      return replaceInArray(state, action.id, action.patchObject);
-    default: return state;
-  }
-}
+const getPage = (httpClient: HTTPClient) =>
+  (page: number, perPage: number) =>
+    httpClient.swallow(httpClient.get(`/replies?page=${page}&perPage=${perPage}`));
 
 const buildCommentLink = (reply: IReply) =>
   `https://wykop.pl/wpis/${reply.parentID.entryID}/${reply.commentID ? `#comment-${reply.commentID}` : ''}`;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Replies(props: RouteComponentProps) {
-  const [replies, setReplies] = useReducer(repliesReducer, []);
-  const [dataLoaded, setDataLoaded] = useState(false);
   const { httpClient, apiClient } = useContext(APIContext);
 
+  const getPageMemoized = useMemo(() => getPage(httpClient), [httpClient]);
+
+  const {
+    data: replies, isLoading, paginationComponent, setData,
+  } = usePagination(getPageMemoized);
+
   const addReply = (reply: IReply) => apiClient.replies.add(reply).then((response) => {
-    setReplies({ type: 'replace', id: reply._id, patchObject: response.patchObject });
+    setData({ type: 'replace', id: reply._id, patchObject: response.patchObject });
   }).catch(noOpFn);
 
   const setStatusFn = (reply: IReply) =>
     apiClient.replies.setStatus(reply, { status: toggleStatus(reply.status) })
       .then((response) => {
-        setReplies({ type: 'replace', id: reply._id, patchObject: response.patchObject });
+        setData({ type: 'replace', id: reply._id, patchObject: response.patchObject });
       }).catch(noOpFn);
 
   const deleteReplyFn = (reply: IReply) => apiClient.replies.delete(reply)
     .then((response) => {
-      setReplies({ type: 'replace', id: reply._id, patchObject: response.patchObject });
+      setData({ type: 'replace', id: reply._id, patchObject: response.patchObject });
     }).catch(noOpFn);
-
-  useEffect(() => {
-    httpClient.swallow(httpClient.get('/replies'))
-      .then((fetchedReplies) => {
-        setReplies({ type: 'set', replies: fetchedReplies });
-      })
-      .finally(() => {
-        setDataLoaded(true);
-      });
-  }, [httpClient]);
 
   return (
     <Container>
@@ -129,8 +114,9 @@ export default function Replies(props: RouteComponentProps) {
             ))}
           </TableBody>
         </Table>
-        {!dataLoaded && <LinearProgress />}
+        {isLoading && <LinearProgress />}
       </TableContainer>
+      {paginationComponent}
     </Container>
   );
 }
