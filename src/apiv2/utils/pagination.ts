@@ -17,7 +17,7 @@ export async function getPage(
 	model: Model<any>,
 	query: Query<any, any>,
 ) {
-	const page = Math.max(Number(req.query.page) - 1, 0)
+	const page = Math.max(Number(req.query.page), 0)
 	const perPage = Number(req.query.perPage) || DEFAULT_PER_PAGE
 	const count: number = await model.estimatedDocumentCount()
 

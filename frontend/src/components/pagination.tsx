@@ -23,7 +23,7 @@ function paginationReducer(state: PageResponse, action: PaginationReducerAction)
 }
 
 export default function usePagination(getPage: GetPageFunction) {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [perPage, setPerPage] = useState(10);
   const [data, setData] = useReducer(paginationReducer, { pageItems: [], count: 0 });
 
