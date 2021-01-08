@@ -35,7 +35,7 @@ export default function usePagination(getPage: GetPageFunction) {
 
   const handleChangeRowsPerPage = (event) => {
     setPerPage(parseInt(event.target.value, 10));
-    setPage(1);
+    setPage(0);
   };
 
   useEffect(() => {
