@@ -24,7 +24,7 @@ function paginationReducer(state: PageResponse, action: PaginationReducerAction)
 
 export default function usePagination(getPage: GetPageFunction) {
   const [page, setPage] = useState(0);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(25);
   const [data, setData] = useReducer(paginationReducer, { pageItems: [], count: 0 });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +51,7 @@ export default function usePagination(getPage: GetPageFunction) {
   const paginationComponent = (
     data.pageItems.length ? (
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50, 100]}
+        rowsPerPageOptions={[25, 50, 100]}
         component="div"
         count={data.count}
         rowsPerPage={perPage}
