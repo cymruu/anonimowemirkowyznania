@@ -75,7 +75,6 @@ apiRouter.route('/confession/accept/:confession_id').get(
 				confession.status = ConfessionStatus.ACCEPTED
 				confession.addedBy = req.user.username
 				confession.save().then(() => {
-					WykopRequestQueue.addTask(() => wykopController.addNotificationComment(confession, req.user))
 					return res.json(
 						{ success: true, response: {
 							message: 'Wpis został dodany', status: 'success' },

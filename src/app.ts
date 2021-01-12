@@ -139,18 +139,6 @@ app.post('/reply/:confessionid', csrfProtection, csrfErrorHander, (req, res) => 
 		}
 	})
 })
-app.get('/followers/:confessionid', (req, res) => {
-	confessionModel.findById(req.params.confessionid, ['notificationCommentId']).then(confession => {
-		if (!confession) { return res.sendStatus(404) }
-		wykopController.getFollowers(confession.notificationCommentId)
-			.then(result => {
-				res.send(result.map(x => `@${x.author.login}`).join(', '))
-			})
-	}).catch(err => {
-		logger.log(err.toString())
-		res.sendStatus(500)
-	})
-})
 app.get('/about', (req, res) => {
 	res.render('about')
 })

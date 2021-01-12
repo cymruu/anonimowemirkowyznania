@@ -131,7 +131,6 @@ confessionRouter.post('/confession/:id/accept',
 					confession.status = ConfessionStatus.ACCEPTED
 					confession.addedBy = req.user.username
 					confession.save().then(() => {
-						WykopRequestQueue.addTask(() => wykopController.addNotificationComment(confession, req.user))
 						const { status, addedBy, entryID } = confession
 						return res.json(makeAPIResponse(res, {
 							patchObject: { status, addedBy, entryID },

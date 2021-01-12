@@ -7,7 +7,7 @@ const actionTypes = {
 	3: 'Zmieniono status na: oczekujące',
 	4: 'Dodano odpowiedź',
 	5: 'Usunięto z wykopu',
-	6: 'Dodano komentarz obsługujący powiadomienia o nowych odpowiedziach',
+	6: 'Dodano komentarz obsługujący powiadomienia o nowych odpowiedziach', //deprecated
 	7: 'Usunięto odpowiedź',
 	8: 'Zaakceptowano nową odpowiedź',
 	9: 'Zmodyfikowano tagi wpisu',
