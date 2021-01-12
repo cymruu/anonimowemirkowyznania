@@ -8,7 +8,6 @@ import auth from './controllers/authorization'
 import { accessMiddleware } from './controllers/access'
 import config from './config'
 import confessionModel, { ConfessionStatus } from './models/confession'
-import statsModel from './models/stats'
 import replyModel from './models/reply'
 import logger from './logger'
 import { guardMiddleware } from './utils/apiGuard'
@@ -77,7 +76,6 @@ apiRouter.route('/confession/accept/:confession_id').get(
 				confession.addedBy = req.user.username
 				confession.save().then(() => {
 					WykopRequestQueue.addTask(() => wykopController.addNotificationComment(confession, req.user))
-					statsModel.addAction('confessions_accepted', req.user.username)
 					return res.json(
 						{ success: true, response: {
 							message: 'Wpis został dodany', status: 'success' },
@@ -125,7 +123,6 @@ apiRouter.route('/confession/danger/:confession_id/:reason?')
 				confession.actions.push(action)
 				confession.save((err) => {
 					if (err) { return res.json({ success: false, response: { message: err } }) }
-					if (confession.status === -1) { statsModel.addAction('declined_confessions', req.user.username) }
 					res.json({ success: true, response: { message: 'Zaaktualizowano status', status: newStatusStr } })
 				})
 			})
@@ -161,7 +158,6 @@ apiRouter.route('/confession/delete/:confession_id')
 					confession.actions.push(action)
 					confession.save((err) => {
 						if (err) { return res.json({ success: false, response: { message: err } }) }
-						statsModel.addAction('deleted_confessions', req.user.username)
 						res.json({ success: true, response: { message: `Usunięto wpis ID: ${confession.entryID}` } })
 						//TODO: handle response
 						WykopRequestQueue.addTask(() => wykopController.sendPrivateMessage(
@@ -230,7 +226,6 @@ apiRouter.route('/reply/danger/:reply_id/').get(
 			reply.parentID.save()
 			reply.save((err) => {
 				if (err) { res.json({ success: false, response: { message: err } }) }
-				if (reply.status === -1) { statsModel.addAction('replies_declined', req.user.username) }
 				res.json({ success: true, response: { message: 'Status zaaktualizowany', status: newStatusStr } })
 			})
 		})
