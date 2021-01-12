@@ -215,7 +215,7 @@ app.get('/link/:linkId/:from', function(req, res) {
 })
 export const server = http.createServer(app)
 
-const _port = (process.env.NODE_ENV === 'development') ? 1337 : (process.env.PORT || 8080)
+const _port = process.env.PORT || 8080
 
 server.listen(_port, () => {
 	logger.info(`Server started on port: ${_port} [${process.env.NODE_ENV}]`)
