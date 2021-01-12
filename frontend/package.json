@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:1337/",
+  "proxy": "http://localhost:8080/",
   "homepage": "/admin2",
   "dependencies": {
     "@material-ui/core": "^4.11.2",
