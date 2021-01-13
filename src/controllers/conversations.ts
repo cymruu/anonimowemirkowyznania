@@ -1,7 +1,7 @@
-import conversationModel from '../models/conversation'
-import * as wykopController from '../controllers/wykop'
 import config from '../config'
-import logger from '../logger'
+import * as wykopController from '../controllers/wykop'
+import conversationModel from '../models/conversation'
+import { WykopRequestQueue } from '../wykop'
 
 export function createNewConversation(parentObject, cb) {
 	let userFlag: boolean
@@ -21,11 +21,10 @@ export function createNewConversation(parentObject, cb) {
 				cb(null, conversation._id)
 			})
 		} else {
-			//TODO: handle response
-			wykopController.sendPrivateMessage(
+			WykopRequestQueue.addTask(() => wykopController.sendPrivateMessage(
 				parentObject.username,
-				`Nowa wiadomość na anonimowychmirkowyznaniach ${config.siteURL}/admin/messages`,
-			).then().catch(_ => {})
+				`Nowa wiadomość na anonimowychmirkowyznaniach ${config.siteURL}/admin2/conversations`,
+			))
 			return cb(null, conversation._id)
 		}
 	})

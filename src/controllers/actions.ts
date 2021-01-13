@@ -29,6 +29,7 @@ export enum ActionType {
 }
 
 export function createAction(userId: string, actionType: ActionType, note?: string) {
+	//TODO: it should contain user: {username} so it can be displayed on frontend
 	return new actionModel({
 		action: actionTypes[actionType],
 		user: userId,

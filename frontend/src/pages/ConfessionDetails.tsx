@@ -32,8 +32,8 @@ export default function (props: RouteComponentProps & {id?: string}) {
   const { httpClient, apiClient } = useContext(APIContext);
   useEffect(() => {
     httpClient.swallow(httpClient.get(`/confessions/confession/${id}`))
-      .then(async (fetchedConfessions) => {
-        setConfession(fetchedConfessions);
+      .then(async (fetchedConfession) => {
+        setConfession(fetchedConfession);
       });
   }, [id, httpClient]);
 

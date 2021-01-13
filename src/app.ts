@@ -174,7 +174,7 @@ app.post('/donate', async (req, res) => {
 			message: req.body.message,
 			amount,
 		})
-		localIntent.save().then().catch((err => {
+		localIntent.save().catch((err => {
 			logger.error(err.toString())
 			throw err
 		}))

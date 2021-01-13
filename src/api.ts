@@ -158,11 +158,9 @@ apiRouter.route('/confession/delete/:confession_id')
 					confession.save((err) => {
 						if (err) { return res.json({ success: false, response: { message: err } }) }
 						res.json({ success: true, response: { message: `Usunięto wpis ID: ${confession.entryID}` } })
-						//TODO: handle response
 						WykopRequestQueue.addTask(() => wykopController.sendPrivateMessage(
 							'sokytsinolop', `${req.user.username} usunął wpis \n ${confession.entryID}`,
 						))
-
 					})
 				}).catch(err => {
 					return res.json({ success: false, response: { message: err.toString() } })

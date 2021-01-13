@@ -17,12 +17,12 @@ import { getPage } from './utils/pagination'
 export const confessionRouter = Router()
 
 type RequestWithConfession<T = any> = RequestWithUser<T> & { confession: IConfession }
-//TODO: add select fields
+//TODO: select only needed fields for list
 function getConfessionMiddleware(req: RequestWithConfession, res: Response, next) {
 	confessionModel.findById(req.params.id)
 		.then(confession => {
 			if (!confession) {
-				res.status(4040).json(makeAPIResponse(res, null, { message: 'not found' }))
+				res.status(404).json(makeAPIResponse(res, null, { message: 'not found' }))
 			}
 			req.confession = confession
 			return next()
@@ -31,8 +31,6 @@ function getConfessionMiddleware(req: RequestWithConfession, res: Response, next
 			return res.status(500)
 		})
 }
-
-//TODO: empty user in response action fields - populate username and send username
 
 confessionRouter.use(authentication)
 confessionRouter.get('/', async (req: RequestWithUser, res) => {
@@ -63,7 +61,6 @@ confessionRouter.get('/confession/:id',
 		]).execPopulate()
 			.then(confession => {
 				return res.json(makeAPIResponse(res, confession))
-
 			}).catch(err => {
 				logger.info(err.toString())
 			})
