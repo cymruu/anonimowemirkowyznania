@@ -8,12 +8,6 @@ import { ConfessionStatus, IConfession } from '../models/confession'
 import { IReply } from 'src/models/reply'
 import { IUser } from 'src/models/user'
 
-export const getFollowers = (notificationCommentId): Promise<CommentUpvoter[]> => {
-	if (!Number.isInteger(notificationCommentId)) {
-		return Promise.resolve([])
-	}
-	return service.Entries.CommentUpvoters(notificationCommentId)
-}
 
 export const getParticipants = (entryId) => {
 	if (!Number.isInteger(entryId)) {
@@ -50,24 +44,8 @@ export const acceptConfession = (entryBody: string, embed, adultmedia: boolean =
 	return service.Entries.Add({ body: entryBody, embed, adultmedia })
 }
 
-export const addNotificationComment = function(confession, user) {
-	return service.Entries.CommentAdd(confession.entryID, { body: bodyBuildier.getNotificationCommentBody(confession) })
-		.then(async (response) => {
-			confession.notificationCommentId = response.id
-			const action = await createAction(user._id, ActionType.ADD_NOTIFICATION_COMMENT).save()
-			confession.actions.push(action)
-			return confession.save()
-		})
-}
-
 export const acceptReply = async (reply: IReply, user: IUser) => {
-	let entryBody = bodyBuildier.getCommentBody(reply, user)
-	const entryFollowers = await getFollowers(reply.parentID.notificationCommentId)
-	if (entryFollowers.length > 0) {
-		if (entryFollowers.length > 0) {
-			entryBody += `\n! Wołam obserwujących: ${entryFollowers.map(x => `@${x.author.login}`).join(', ')}`
-		}
-	}
+	const entryBody = bodyBuildier.getCommentBody(reply, user)
 	return service.Entries.CommentAdd(
 		reply.parentID.entryID, { body: entryBody, embed: reply.embed },
 	).then(async (response) => {

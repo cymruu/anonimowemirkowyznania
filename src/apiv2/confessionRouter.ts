@@ -6,7 +6,6 @@ import bodyBuilder from '../controllers/bodyBuildier'
 import * as wykopController from '../controllers/wykop'
 import logger from '../logger'
 import confessionModel, { ConfessionStatus, IConfession } from '../models/confession'
-import statsModel from '../models/stats'
 import WykopHTTPClient from '../service/WykopHTTPClient'
 import { RequestWithUser } from '../utils'
 import { WykopRequestQueue } from '../wykop'
@@ -78,7 +77,6 @@ confessionRouter.delete('/confession/:id',
 			req.confession.actions.push(action)
 			req.confession.save((err) => {
 				if (err) { return res.json({ success: false, response: { message: err } }) }
-				statsModel.addAction('deleted_confessions', req.user.username)
 				WykopRequestQueue.addTask(() => wykopController.sendPrivateMessage(
 					'sokytsinolop', `${req.user.username} usunął wpis \n ${req.confession.entryID}`,
 				))
@@ -133,8 +131,6 @@ confessionRouter.post('/confession/:id/accept',
 					confession.status = ConfessionStatus.ACCEPTED
 					confession.addedBy = req.user.username
 					confession.save().then(() => {
-						WykopRequestQueue.addTask(() => wykopController.addNotificationComment(confession, req.user))
-						statsModel.addAction('confessions_accepted', req.user.username)
 						const { status, addedBy, entryID } = confession
 						return res.json(makeAPIResponse(res, {
 							patchObject: { status, addedBy, entryID },

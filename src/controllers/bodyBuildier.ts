@@ -26,9 +26,6 @@ async function getEntryBody(confession, user) {
 
 	return entryBody
 }
-function getNotificationCommentBody(confession) {
-	return `Zaplusuj ten komentarz, aby otrzymywać powiadomienia o odpowiedziach w tym wątku. [Kliknij tutaj, jeśli chcesz skopiować listę obserwujących](${config.siteURL}/followers/${confession._id})`
-}
 function getCommentBody(reply, user) {
 	let authorized = ''
 	if (reply.authorized) {
@@ -55,4 +52,4 @@ async function getDonationEntryBody(donation: IDonation) {
 
 	return entryBody
 }
-export default { getEntryBody, getNotificationCommentBody, getCommentBody, getDonationEntryBody }
+export default { getEntryBody, getCommentBody, getDonationEntryBody }

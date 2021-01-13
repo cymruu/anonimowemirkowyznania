@@ -17,7 +17,6 @@ export interface IConfession extends mongoose.Document {
 	entryID: number
 	status: number
 	addedBy: string
-	notificationCommentId: number
 	IPAdress: string
 	remotePort: string
 	actions: IAction[]
@@ -35,7 +34,6 @@ const confessionSchema = new Schema({
 	entryID: Number,
 	status: { type: Number, default: 0 },
 	addedBy: String,
-	notificationCommentId: Number,
 	IPAdress: String,
 	remotePort: String,
 	actions: [{ type: Schema.Types.ObjectId, ref: 'actions' }],

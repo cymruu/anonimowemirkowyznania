@@ -25,7 +25,6 @@ import advertismentModel from './models/ads'
 import confessionModel from './models/confession'
 import DonationIntent from './models/donationIntent'
 import replyModel from './models/reply'
-import statsModel from './models/stats'
 
 const stripe = new Stripe(config.stripe.secret,
 	{ apiVersion: '2020-08-27' })
@@ -77,9 +76,7 @@ app.post('/', csrfProtection, csrfErrorHander, async (req, res) => {
 		if (err) { return res.send(err) }
 		if (req.body.survey) {
 			surveyController.saveSurvey(confession, req.body.survey)
-			statsModel.addAction('new_surveys')
 		}
-		statsModel.addAction('new_confessions')
 		res.redirect(`confession/${confession._id}/${confession.auth}`)
 	})
 })
@@ -132,7 +129,6 @@ app.post('/reply/:confessionid', csrfProtection, csrfErrorHander, (req, res) => 
 			reply.parentID = confession._id
 			reply.save(async (err) => {
 				if (err) { res.send(err) }
-				statsModel.addAction('new_reply')
 				const action = await createAction(null, ActionType.NEW_REPLY).save()
 				confession.actions.push(action)
 				confession.save()
@@ -141,18 +137,6 @@ app.post('/reply/:confessionid', csrfProtection, csrfErrorHander, (req, res) => 
 		} else {
 			return res.sendStatus(404)
 		}
-	})
-})
-app.get('/followers/:confessionid', (req, res) => {
-	confessionModel.findById(req.params.confessionid, ['notificationCommentId']).then(confession => {
-		if (!confession) { return res.sendStatus(404) }
-		wykopController.getFollowers(confession.notificationCommentId)
-			.then(result => {
-				res.send(result.map(x => `@${x.author.login}`).join(', '))
-			})
-	}).catch(err => {
-		logger.log(err.toString())
-		res.sendStatus(500)
 	})
 })
 app.get('/about', (req, res) => {
