@@ -48,13 +48,17 @@ export const acceptReply = async (reply: IReply, user: IUser) => {
 	const entryBody = bodyBuildier.getCommentBody(reply, user)
 	return service.Entries.CommentAdd(
 		reply.parentID.entryID, { body: entryBody, embed: reply.embed },
-	).then(async (response) => {
-		reply.commentID = response.id
-		reply.status = ConfessionStatus.ACCEPTED
-		reply.addedBy = user.username
-		const action = await createAction(user._id, ActionType.ACCEPT_REPLY).save()
-		reply.parentID.actions.push(action)
+	)
+}
 
-		return Promise.all([reply.parentID.save(), reply.save()]).then(_ => reply)
-	})
+export const acceptReplyAndCreateAction = async (reply: IReply, user: IUser) => {
+	return acceptReply(reply, user)
+		.then(async (response) => {
+			reply.commentID = response.id
+			reply.status = ConfessionStatus.ACCEPTED
+			reply.addedBy = user.username
+			const action = await createAction(user._id, ActionType.ACCEPT_REPLY).save()
+			reply.parentID.actions.push(action)
+			return Promise.all([reply.parentID.save(), reply.save()]).then(_ => reply)
+		})
 }

@@ -137,7 +137,7 @@ app.post('/reply/:confessionid', csrfProtection, csrfErrorHander, (req, res) => 
 			reply.parentID = confession._id
 			return reply.save()
 				.then(async () => {
-					const action = await createAction(null, ActionType.NEW_REPLY).save()
+					const action = await createAction(null, ActionType.NEW_REPLY, reply._id).save()
 					confession.actions.push(action)
 					return confession.save()
 				})
