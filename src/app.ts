@@ -62,6 +62,7 @@ app.post('/', csrfProtection, csrfErrorHander, async (req, res) => {
 		delete req.body.survey
 	}
 	if (!req.body.text) {
+		//TODO: should display error - user does not know what happened and why request failed
 		return res.sendStatus(400)
 	}
 	confession.text = req.body.text || ''
@@ -119,32 +120,34 @@ app.get('/reply/:confessionid', csrfProtection, (req, res) => {
 	})
 })
 app.post('/reply/:confessionid', csrfProtection, csrfErrorHander, (req, res) => {
-	confessionModel.findById(req.params.confessionid, (err, confession) => {
-		if (err) { return res.sendStatus(404) }
-		if (confession) {
+	confessionModel.findById(req.params.confessionid)
+		.then((confession) => {
+			if (!confession) {return res.sendStatus(404)}
 			const reply = new replyModel()
 			reply.text = req.body.text
 			reply.IPAdress = req.ip
 			reply.remotePort = req.connection.remotePort.toString()
 			reply.embed = req.body.embed
-			reply.alias = req.body.alias || aliasGenerator(Math.random() >= 0.5)
+			reply.alias = req.body.alias || aliasGenerator()
 			if (reply.alias.trim() === confession.auth) {
 				reply.alias = 'OP'
 				reply.authorized = true
 			}
 			reply.auth = crypto.randomBytes(5).toString('hex')
 			reply.parentID = confession._id
-			reply.save(async (err) => {
-				if (err) { res.send(err) }
-				const action = await createAction(null, ActionType.NEW_REPLY).save()
-				confession.actions.push(action)
-				confession.save()
-				res.render('reply', { success: true, reply: reply, confession: confession })
-			})
-		} else {
-			return res.sendStatus(404)
-		}
-	})
+			return reply.save()
+				.then(async () => {
+					const action = await createAction(null, ActionType.NEW_REPLY).save()
+					confession.actions.push(action)
+					return confession.save()
+				})
+				.then(() => {
+					return res.render('reply', { success: true, reply, confession })
+				})
+		}).catch(err => {
+			logger.error(err.toString())
+			return res.sendStatus(500)
+		})
 })
 app.get('/about', (req, res) => {
 	res.render('about')

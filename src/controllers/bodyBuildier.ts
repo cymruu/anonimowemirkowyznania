@@ -27,11 +27,11 @@ async function getEntryBody(confession, user) {
 	return entryBody
 }
 function getCommentBody(reply, user) {
-	let authorized = ''
+	let authorizedMsg = ''
 	if (reply.authorized) {
-		authorized = '\n**Ten komentarz został dodany przez osobę dodającą wpis (OP)**'
+		authorizedMsg = '\n**Ten komentarz został dodany przez osobę dodającą wpis (OP)**'
 	}
-	return `**${reply.alias}**: ${reply.text}\n${authorized}\nZaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`
+	return `**${reply.alias}**: ${reply.text}\n${authorizedMsg}\nZaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`
 }
 
 async function getDonationEntryBody(donation: IDonation) {
