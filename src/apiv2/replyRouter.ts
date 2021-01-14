@@ -96,6 +96,7 @@ replyRouter.get('/reply/:id/accept',
 						reply.status = ConfessionStatus.ACCEPTED
 						reply.addedBy = req.user.username
 						const action = await createAction(req.user._id, ActionType.ACCEPT_REPLY, reply._id).save()
+						await reply.save()
 						await confession.updateOne({ _id: reply.parentID }, { $push: { actions: action } })
 						const { status, addedBy, commentID } = reply
 						return res.json(makeAPIResponse(res, {
