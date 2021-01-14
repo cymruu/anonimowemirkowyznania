@@ -5,7 +5,7 @@ import * as wykopController from './controllers/wykop'
 import { createAction, ActionType } from './controllers/actions'
 import * as tagController from './controllers/tags'
 import auth from './controllers/authorization'
-import { accessMiddleware } from './controllers/access'
+import { accessMiddlewareV1 } from './controllers/access'
 import config from './config'
 import confessionModel, { ConfessionStatus } from './models/confession'
 import replyModel from './models/reply'
@@ -36,7 +36,7 @@ apiRouter.get('/', (req, res) => {
 apiRouter.use(auth(true))
 apiRouter.route('/confession/accept/:confession_id').get(
 	guardMiddleware,
-	accessMiddleware('addEntry'),
+	accessMiddlewareV1('addEntry'),
 	async (req: RequestWithUser, res) => {
 		confessionModel.findById(req.params.confession_id).populate('survey').exec(async (err, confession) => {
 			if (err) { return res.send(err) }
@@ -101,7 +101,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 	})
 apiRouter.route('/confession/danger/:confession_id/:reason?')
 	.get(guardMiddleware,
-		accessMiddleware('setStatus'),
+		accessMiddlewareV1('setStatus'),
 		(req: RequestWithUser, res) => {
 			confessionModel.findById(req.params.confession_id, async (err, confession) => {
 				if (err) { return res.json(err) }
@@ -127,7 +127,7 @@ apiRouter.route('/confession/danger/:confession_id/:reason?')
 			})
 		})
 apiRouter.route('/confession/tags/:confession_id/:tag')
-	.get(guardMiddleware, accessMiddleware('updateTags'), (req: RequestWithUser, res) => {
+	.get(guardMiddleware, accessMiddlewareV1('updateTags'), (req: RequestWithUser, res) => {
 	//there's probably better way to do this.
 		confessionModel.findById(req.params.confession_id, async (err, confession) => {
 			if (err) { return res.send(err) }
@@ -147,7 +147,7 @@ apiRouter.route('/confession/tags/:confession_id/:tag')
 apiRouter.route('/confession/delete/:confession_id')
 	.get(
 		guardMiddleware,
-		accessMiddleware('deleteEntry'),
+		accessMiddlewareV1('deleteEntry'),
 		(req: RequestWithUser, res) => {
 			confessionModel.findById(req.params.confession_id, (err, confession) => {
 				if (err) { return res.sendStatus(500) }
@@ -169,7 +169,7 @@ apiRouter.route('/confession/delete/:confession_id')
 		})
 apiRouter.route('/reply/accept/:reply_id').get(
 	guardMiddleware,
-	accessMiddleware('addReply'),
+	accessMiddlewareV1('addReply'),
 	(req: RequestWithUser, res) => {
 		replyModel.findById(req.params.reply_id).populate('parentID').exec((err, reply) => {
 			if (err) { return res.json({ success: false, response: { message: err, status: 'warning' } }) }
@@ -203,7 +203,7 @@ apiRouter.route('/reply/accept/:reply_id').get(
 	})
 apiRouter.route('/reply/danger/:reply_id/').get(
 	guardMiddleware,
-	accessMiddleware('setStatus'),
+	accessMiddlewareV1('setStatus'),
 	(req: RequestWithUser, res) => {
 		replyModel.findById(req.params.reply_id).populate('parentID').exec(async (err, reply) => {
 			if (err) { return res.json({ success: false, response: { message: err, status: 'warning' } }) }
@@ -229,7 +229,7 @@ apiRouter.route('/reply/danger/:reply_id/').get(
 	})
 apiRouter.route('/reply/delete/:reply_id/').get(
 	guardMiddleware,
-	accessMiddleware('deleteReply'),
+	accessMiddlewareV1('deleteReply'),
 	(req: RequestWithUser, res) => {
 		replyModel.findOne({ _id: req.params.reply_id }).populate('parentID').then(reply => {
 			wykopController.deleteEntryComment(reply.commentID).then(async () => {

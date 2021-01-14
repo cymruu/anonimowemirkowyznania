@@ -1,14 +1,13 @@
 import { Router } from 'express'
-import userModel from '../models/user'
 import jwt from 'jsonwebtoken'
 import config from '../config'
-import { authentication } from './middleware/authentication'
-import { RequestWithUser } from '../utils'
-import { makeAPIResponse } from './apiV2'
-import { accessMiddleware, flipPermission, getFlagPermissions } from '../controllers/access'
-import user from '../models/user'
-import conversation from '../models/conversation'
+import { accessMiddlewareV2, flipPermission, getFlagPermissions } from '../controllers/access'
 import logger from '../logger'
+import conversation from '../models/conversation'
+import { default as user, default as userModel } from '../models/user'
+import { RequestWithUser } from '../utils'
+import { authentication } from './middleware/authentication'
+import { makeAPIResponse } from './utils/response'
 export const userRouter = Router()
 
 userRouter.get('/me', authentication, (req: RequestWithUser, res) => {
@@ -17,7 +16,7 @@ userRouter.get('/me', authentication, (req: RequestWithUser, res) => {
 })
 userRouter.get('/',
 	authentication,
-	accessMiddleware('accessModsList'),
+	accessMiddlewareV2('accessModsList'),
 	(req, res) => {
 		user.find({}, { username: 1, flags: 1 }).lean().then(userList => {
 			const userPermissionList = userList.map((user: any) => {
@@ -29,7 +28,7 @@ userRouter.get('/',
 	})
 userRouter.put('/:id/setPermission',
 	authentication,
-	accessMiddleware('canChangeUserPermissions'),
+	accessMiddlewareV2('canChangeUserPermissions'),
 	(req, res) => {
 		user.findOne({ _id: req.params.id }, { username: 1, flags: 1 }).then(target => {
 			target.flags = flipPermission(target.flags, req.body.permission)
@@ -43,7 +42,7 @@ userRouter.put('/:id/setPermission',
 
 userRouter.get('/conversations',
 	authentication,
-	accessMiddleware('accessMessages'),
+	accessMiddlewareV2('accessMessages'),
 	(req: RequestWithUser, res) => {
 		conversation.find(
 			{ 'userID': req.user._id }, { _id: 1 },

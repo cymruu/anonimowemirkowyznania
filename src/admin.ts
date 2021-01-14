@@ -5,7 +5,7 @@ import config from './config'
 import confessionModel from './models/confession'
 import conversationModel from './models/conversation'
 import auth from './controllers/authorization'
-import { accessMiddleware, getFlagPermissions, checkIfIsAllowed, flipPermission } from './controllers/access'
+import { getFlagPermissions, checkIfIsAllowed, flipPermission, accessMiddlewareV1 } from './controllers/access'
 import replyModel from './models/reply'
 import userModel from './models/user'
 import logger from './logger'
@@ -47,10 +47,10 @@ adminRouter.get('/logout', (req: RequestWithUser, res) => {
 	return res.render('./admin/login.pug', { user: {}, error: 'Wylogowano' })
 })
 adminRouter.use(auth(true))
-adminRouter.get('/', accessMiddleware('accessPanel'), (req: RequestWithUser, res) => {
+adminRouter.get('/', accessMiddlewareV1('accessPanel'), (req: RequestWithUser, res) => {
 	res.redirect('/admin/confessions')
 })
-adminRouter.get('/details/:confession_id', accessMiddleware('viewDetails'), (req: RequestWithUser, res) => {
+adminRouter.get('/details/:confession_id', accessMiddlewareV1('viewDetails'), (req: RequestWithUser, res) => {
 	confessionModel.findById(req.params.confession_id)
 		.populate([
 			{
@@ -78,8 +78,8 @@ adminRouter.get('/details/:confession_id', accessMiddleware('viewDetails'), (req
 })
 adminRouter
 	.get('/details/:confession_id/ip',
-		accessMiddleware('viewDetails'),
-		accessMiddleware('viewIP'),
+		accessMiddlewareV1('viewDetails'),
+		accessMiddlewareV1('viewIP'),
 		(req: RequestWithUser, res) => {
 			confessionModel.findById(req.params.confession_id, (err, confession) => {
 				if (err) { return res.send(err) }
@@ -87,7 +87,7 @@ adminRouter
 				res.send(confession.IPAdress)
 			})
 		})
-adminRouter.get('/confessions/:filter?', accessMiddleware('accessPanel'), (req: RequestWithUser, res) => {
+adminRouter.get('/confessions/:filter?', accessMiddlewareV1('accessPanel'), (req: RequestWithUser, res) => {
 	let search = {}
 	req.params.filter ? search = { status: req.params.filter } : search = {}
 	confessionModel.find(search).sort({ _id: -1 }).limit(100).exec((err, confessions) => {
@@ -95,13 +95,13 @@ adminRouter.get('/confessions/:filter?', accessMiddleware('accessPanel'), (req: 
 		res.render('./admin/confessions.pug', { user: req.user, confessions: confessions })
 	})
 })
-adminRouter.get('/replies', accessMiddleware('accessPanel'), (req: RequestWithUser, res) => {
+adminRouter.get('/replies', accessMiddlewareV1('accessPanel'), (req: RequestWithUser, res) => {
 	replyModel.find().populate('parentID').sort({ _id: -1 }).limit(100).exec((err, replies) => {
 		if (err) { res.send(err) }
 		res.render('./admin/replies.pug', { user: req.user, replies: replies })
 	})
 })
-adminRouter.get('/messages/', accessMiddleware('accessMessages'), (req: RequestWithUser, res) => {
+adminRouter.get('/messages/', accessMiddlewareV1('accessMessages'), (req: RequestWithUser, res) => {
 	conversationModel.find(
 		{ 'userID': req.user._id }, { _id: 1 },
 		{ sort: { 'messages.time': -1 }, limit: 200 },
@@ -110,7 +110,7 @@ adminRouter.get('/messages/', accessMiddleware('accessMessages'), (req: RequestW
 			res.render('./admin/messages.pug', { user: req.user, conversations })
 		})
 })
-adminRouter.get('/donations', accessMiddleware('accessDonations'), (req: RequestWithUser, res) => {
+adminRouter.get('/donations', accessMiddlewareV1('accessDonations'), (req: RequestWithUser, res) => {
 	Promise.all([DonationModel.find({}), donationIntent.find({})]).then(([donateList, donationIntents]) => {
 		res.render('./admin/donations.pug', {
 			user: req.user,
@@ -121,7 +121,7 @@ adminRouter.get('/donations', accessMiddleware('accessDonations'), (req: Request
 		res.json(err)
 	})
 })
-adminRouter.post('/donations', accessMiddleware('addDonations'), async (req: RequestWithUser, res) => {
+adminRouter.post('/donations', accessMiddlewareV1('addDonations'), async (req: RequestWithUser, res) => {
 	const donation = new DonationModel(req.body)
 	await donation.save().then(async () => {
 		const entryBody = await bodyBuildier.getDonationEntryBody(donation)
@@ -136,7 +136,7 @@ adminRouter.post('/donations', accessMiddleware('addDonations'), async (req: Req
 		res.send(err)
 	})
 })
-adminRouter.get('/mods/', accessMiddleware('accessModsList'), (req: RequestWithUser, res) => {
+adminRouter.get('/mods/', accessMiddlewareV1('accessModsList'), (req: RequestWithUser, res) => {
 	userModel.find({}, { username: 1, flags: 1 }).lean().then(userList => {
 		userList.forEach((user: any) => {
 			user.permissions = getFlagPermissions(user.flags)
@@ -152,7 +152,7 @@ adminRouter.get('/mods/', accessMiddleware('accessModsList'), (req: RequestWithU
 	})
 })
 adminRouter.get('/mods/flip/:targetId/:permission',
-	accessMiddleware('canChangeUserPermissions'),
+	accessMiddlewareV1('canChangeUserPermissions'),
 	(req: RequestWithUser, res) => {
 		userModel.findOne({ _id: req.params.targetId }, { username: 1, flags: 1 }).then(target => {
 			target.flags = flipPermission(target.flags, req.params.permission)

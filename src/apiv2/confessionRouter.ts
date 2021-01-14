@@ -1,18 +1,18 @@
 import { Response, Router } from 'express'
-import { prepareArrayRefactored } from '../controllers/tags'
-import { accessMiddleware } from '../controllers/access'
+import { ISurvey } from 'src/models/survey'
+import { accessMiddlewareV2 } from '../controllers/access'
 import { ActionType, createAction } from '../controllers/actions'
 import bodyBuilder from '../controllers/bodyBuildier'
+import { prepareArrayRefactored } from '../controllers/tags'
 import * as wykopController from '../controllers/wykop'
 import logger from '../logger'
 import confessionModel, { ConfessionStatus, IConfession } from '../models/confession'
 import WykopHTTPClient from '../service/WykopHTTPClient'
 import { RequestWithUser } from '../utils'
 import { WykopRequestQueue } from '../wykop'
-import { makeAPIResponse } from './apiV2'
 import { authentication } from './middleware/authentication'
-import { ISurvey } from 'src/models/survey'
 import { getPage } from './utils/pagination'
+import { makeAPIResponse } from './utils/response'
 
 export const confessionRouter = Router()
 
@@ -50,7 +50,7 @@ confessionRouter.get('/', async (req: RequestWithUser, res) => {
 })
 
 confessionRouter.get('/confession/:id',
-	accessMiddleware('viewDetails'),
+	accessMiddlewareV2('viewDetails'),
 	getConfessionMiddleware, (req: RequestWithConfession, res) => {
 		req.confession.populate([
 			{
@@ -66,7 +66,7 @@ confessionRouter.get('/confession/:id',
 			})
 	})
 confessionRouter.delete('/confession/:id',
-	accessMiddleware('deleteEntry'),
+	accessMiddlewareV2('deleteEntry'),
 	getConfessionMiddleware, (req: RequestWithConfession, res) => {
 		wykopController.deleteEntry(req.confession.entryID).then(async () => {
 			const action = await createAction(req.user._id, ActionType.DELETE_ENTRY).save()
@@ -94,7 +94,7 @@ export interface AcceptConfessionOptions {
 	isPlus18?: boolean
 }
 confessionRouter.post('/confession/:id/accept',
-	accessMiddleware('addEntry'),
+	accessMiddlewareV2('addEntry'),
 	getConfessionMiddleware,
 	(req: RequestWithConfession<AcceptConfessionOptions>, res) => {
 		req.confession.populate('survey').execPopulate()
@@ -144,7 +144,7 @@ confessionRouter.post('/confession/:id/accept',
 			})
 	})
 confessionRouter.put('/confession/:id/status',
-	accessMiddleware('setStatus'),
+	accessMiddlewareV2('setStatus'),
 	getConfessionMiddleware,
 	async (req: RequestWithConfession, res) => {
 		if (!Object.values(ConfessionStatus).includes(req.body.status)) {
@@ -169,7 +169,7 @@ confessionRouter.put('/confession/:id/status',
 			})
 	})
 confessionRouter.put('/confession/:id/tags',
-	accessMiddleware('updateTags'),
+	accessMiddlewareV2('updateTags'),
 	getConfessionMiddleware,
 	async (req: RequestWithConfession & {body :{tag: string, tagValue: boolean}}, res) => {
 		const tagValue = req.body.tagValue
@@ -191,8 +191,8 @@ confessionRouter.put('/confession/:id/tags',
 		})
 	})
 confessionRouter.get('/confession/:id/ip',
-	accessMiddleware('viewDetails'),
-	accessMiddleware('viewIP'),
+	accessMiddlewareV2('viewDetails'),
+	accessMiddlewareV2('viewIP'),
 	(req: RequestWithConfession, res) => {
 		confessionModel.findById(req.params.id)
 			.select('_id IPAdress')
@@ -207,7 +207,7 @@ confessionRouter.get('/confession/:id/ip',
 			})
 	})
 confessionRouter.get('/confession/:id/otherFromIp',
-	accessMiddleware('viewDetails'),
+	accessMiddlewareV2('viewDetails'),
 	getConfessionMiddleware,
 	(req: RequestWithConfession, res) => {
 		confessionModel

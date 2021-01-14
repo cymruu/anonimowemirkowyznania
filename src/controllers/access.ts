@@ -1,3 +1,5 @@
+import { makeAPIResponse } from '../apiv2/utils/response'
+
 const permissions = [
 	'addEntry', 'deleteEntry', 'addReply', 'deleteReply', 'setStatus', 'viewDetails', 'updateTags', 'accessPanel',
 	'accessMessages', 'accessModsList', 'canChangeUserPermissions', 'viewIP', 'accessDonations', 'addDonations',
@@ -32,11 +34,24 @@ export function getFlagPermissions(flag) {
 	})
 	return r
 }
-export function accessMiddleware(permission: permissionType) {
-	return function(req, res, next) {
-		if (!req.user || !checkIfIsAllowed(req.user.flags, permission)) {
-			return res.json({ success: false, response: { message: 'You\'re not allowed to perform this action' } })
-		}
-		next()
+
+type getErrorObjectT = (res)=>object
+const accessMiddleware = (permission: permissionType, getErrorObject: getErrorObjectT) => (req, res, next) => {
+	if (!req.user || !checkIfIsAllowed(req.user.flags, permission)) {
+		return res
+			.status(403)
+			.json(getErrorObject(res))
 	}
+	next()
+}
+
+const messageText = 'You\'re not allowed to perform this action'
+export function accessMiddlewareV1(permission: permissionType) {
+	const getErrorObject = () => ( { success: false, response: { message: messageText } })
+	return accessMiddleware(permission, getErrorObject)
+}
+
+export function accessMiddlewareV2(permission: permissionType) {
+	const getErrorObject = (res) => makeAPIResponse(res, null, { message: messageText })
+	return accessMiddleware(permission, getErrorObject)
 }

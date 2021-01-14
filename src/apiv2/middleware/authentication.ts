@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import config from '../../config'
 import { RequestWithUser } from 'src/utils'
-import { makeAPIResponse } from '../apiV2'
+import { makeAPIResponse } from '../utils/response'
 
 export function authentication(req: Request, res: Response, next) {
 	const token = req.cookies.token

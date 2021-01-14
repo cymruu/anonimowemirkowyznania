@@ -1,5 +1,5 @@
 import { Response, Router } from 'express'
-import { accessMiddleware } from '../controllers/access'
+import { accessMiddlewareV2 } from '../controllers/access'
 import { ActionType, createAction } from '../controllers/actions'
 import * as wykopController from '../controllers/wykop'
 import logger from '../logger'
@@ -7,7 +7,7 @@ import confession, { ConfessionStatus } from '../models/confession'
 import reply from '../models/reply'
 import replyModel, { IReply } from '../models/reply'
 import { RequestWithUser } from '../utils'
-import { makeAPIResponse } from './apiV2'
+import { makeAPIResponse } from './utils/response'
 import { authentication } from './middleware/authentication'
 import { getPage } from './utils/pagination'
 
@@ -48,7 +48,7 @@ replyRouter.get('/', async (req: RequestWithUser, res) => {
 })
 
 replyRouter.get('/reply/:id/accept',
-	accessMiddleware('addReply'),
+	accessMiddlewareV2('addReply'),
 	getReplyMiddleware,
 	(req: RequestWithReply, res) => {
 		const reply = req.reply
@@ -77,7 +77,7 @@ replyRouter.get('/reply/:id/accept',
 	})
 
 replyRouter.delete('/reply/:id/',
-	accessMiddleware('deleteReply'),
+	accessMiddlewareV2('deleteReply'),
 	getReplyMiddleware,
 	(req: RequestWithReply, res) => {
 		wykopController.deleteEntryComment(req.reply.commentID)
@@ -107,7 +107,7 @@ replyRouter.delete('/reply/:id/',
 	})
 
 replyRouter.get('/reply/:id/accept',
-	accessMiddleware('addEntry'),
+	accessMiddlewareV2('addEntry'),
 	getReplyMiddleware,
 	(req: RequestWithReply, res) => {
 		if (req.reply.commentID) {
@@ -134,7 +134,7 @@ replyRouter.get('/reply/:id/accept',
 	},
 )
 replyRouter.put('/reply/:id/status',
-	accessMiddleware('setStatus'),
+	accessMiddlewareV2('setStatus'),
 	getReplyMiddleware,
 	async (req: RequestWithReply, res) => {
 		if (!Object.values(ConfessionStatus).includes(req.body.status)) {
