@@ -72,13 +72,20 @@ app.post('/', csrfProtection, csrfErrorHander, async (req, res) => {
 	confession.auth = crypto.randomBytes(5).toString('hex')
 	const action = await createAction(null, ActionType.NEW_ENTRY).save()
 	confession.actions.push(action)
-	confession.save((err) => {
-		if (err) { return res.send(err) }
-		if (req.body.survey) {
-			surveyController.saveSurvey(confession, req.body.survey)
-		}
-		res.redirect(`confession/${confession._id}/${confession.auth}`)
-	})
+	confession.save()
+		.then(async () => {
+			if (req.body.survey) {
+				const survey = await surveyController.createSurvey(req.body.survey)
+				confession.survey = survey._id
+				return confession.save()
+			}
+		})
+		.then(() => {
+			res.redirect(`confession/${confession._id}/${confession.auth}`)
+		})
+		.catch(_ => {
+			res.sendStatus(500)
+		})
 })
 app.get('/confession/:confessionid/:auth', (req, res) => {
 	if (!req.params.confessionid || !req.params.auth) {

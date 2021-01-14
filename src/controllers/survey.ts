@@ -20,7 +20,7 @@ export function validateSurvey(survey) {
 	}
 	return { success: true }
 }
-export function saveSurvey(confession, surveyData) {
+export function createSurvey(surveyData) {
 	const survey = new surveyModel()
 	survey.question = surveyData.question
 	for (const i in surveyData.answers) {
@@ -28,13 +28,6 @@ export function saveSurvey(confession, surveyData) {
 			survey.answers.push(surveyData.answers[i])
 		}
 	}
-	survey.save((err) => {
-		if (err) { return }
-		confession.survey = survey._id
-		confession.save((err) => {
-			if (err) { return false }
-			return true
-		})
-	})
+	return survey.save()
 }
 

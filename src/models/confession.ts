@@ -38,6 +38,7 @@ const confessionSchema = new Schema({
 	remotePort: String,
 	actions: [{ type: Schema.Types.ObjectId, ref: 'actions' }],
 	conversations: [{ type: Schema.Types.ObjectId, ref: 'conversations' }],
+	//TODO: it does not need to be referenced document - confession can store survey as property
 	survey: { type: Schema.Types.ObjectId, ref: 'surveys' },
 }, { timestamps: true })
 
