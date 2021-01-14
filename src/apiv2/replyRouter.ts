@@ -53,12 +53,10 @@ replyRouter.get('/reply/:id/accept',
 	(req: RequestWithReply, res) => {
 		const reply = req.reply
 		if (reply.commentID) {
-			res.status(400)
-			return res.json(makeAPIResponse(res, null, { message: 'It\'s already added' }))
+			return res.status(400).json(makeAPIResponse(res, null, { message: 'It\'s already added' }))
 		}
 		if (reply.status === ConfessionStatus.DECLINED) {
-			res.status(400)
-			return res.json(makeAPIResponse(res, null, { message: 'The reply is marked declined' }))
+			return res.status(400).json(makeAPIResponse(res, null, { message: 'The reply is marked declined' }))
 		}
 		req.reply.populate([{ path: 'parentID', select: ['entryID', 'actions'] }]).execPopulate()
 			.then((reply) => {
@@ -141,6 +139,9 @@ replyRouter.put('/reply/:id/status',
 	async (req: RequestWithReply, res) => {
 		if (!Object.values(ConfessionStatus).includes(req.body.status)) {
 			return res.status(400).json(makeAPIResponse(res, null, { message: 'Wrong status' }))
+		}
+		if (req.reply.status === req.body.status) {
+			return res.status(200).json(makeAPIResponse(res, { patchObject: { status: req.reply.status } }))
 		}
 		req.reply.status = req.body.status
 		const actionType = ActionType.REPLY_CHANGE_STATUS

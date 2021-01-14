@@ -150,6 +150,9 @@ confessionRouter.put('/confession/:id/status',
 		if (!Object.values(ConfessionStatus).includes(req.body.status)) {
 			return res.status(400).json(makeAPIResponse(res, null, { message: 'Wrong status' }))
 		}
+		if (req.confession.status === req.body.status) {
+			return res.status(200).json(makeAPIResponse(res, { patchObject: { status: req.confession.status } }))
+		}
 		const note = req.body.note
 		req.confession.status = req.body.status
 		const actionType = req.body.status === ConfessionStatus.DECLINED ?
