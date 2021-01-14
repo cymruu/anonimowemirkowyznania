@@ -39,7 +39,8 @@ function femaleForm(string) {
 function getRandomItem(items) {
 	return items[Math.floor(Math.random() * items.length)]
 }
-function getAlias(isMale: boolean) {
+function getAlias() {
+	const isMale = Math.random() >= 0.5
 	let adj = capitalize(getRandomItem(adjectives))
 	if (isMale === false) {
 		adj = femaleForm(adj)

@@ -5,7 +5,7 @@ const actionTypes = {
 	1: 'Zaakceptowane i dodane na mikroblog',
 	2: 'Zmieniono status na: odrzucone',
 	3: 'Zmieniono status na: oczekujące',
-	4: 'Dodano odpowiedź',
+	4: 'Dodano anonimową odpowiedź',
 	5: 'Usunięto z wykopu',
 	6: 'Dodano komentarz obsługujący powiadomienia o nowych odpowiedziach', //deprecated
 	7: 'Usunięto odpowiedź',
@@ -29,12 +29,12 @@ export enum ActionType {
 }
 
 export function createAction(userId: string, actionType: ActionType, note?: string) {
-	//TODO: it should contain user: {username} so it can be displayed on frontend
+	//TODO: returned action should contain user: {username} so it can be displayed on frontend
 	return new actionModel({
 		action: actionTypes[actionType],
 		user: userId,
 		time: new Date(),
 		type: actionType,
-		note: note,
+		note,
 	})
 }

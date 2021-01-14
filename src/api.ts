@@ -192,7 +192,7 @@ apiRouter.route('/reply/accept/:reply_id').get(
 					},
 				})
 			}
-			wykopController.acceptReply(reply, req.user).then(reply => {
+			wykopController.acceptReplyAndCreateAction(reply, req.user).then(reply => {
 				res.json({ success: true, response: {
 					message: 'Reply added', commentID: reply.commentID, status: 'success' },
 				})
