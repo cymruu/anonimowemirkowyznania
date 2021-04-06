@@ -32,8 +32,10 @@ node_modules
 # Optional REPL history
 .node_repl_history
 
-config.ts
 dist/
 .vscode/
 certs/*
 !certs/generate_certs.sh
+
+.env*
+!.env.example
