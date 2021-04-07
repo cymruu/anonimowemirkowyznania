@@ -2,7 +2,7 @@
   "name": "anonimowemirkowyznania",
   "version": "5.0.6",
   "description": "AnonimoweMirkoWyznania #anonimowemirkowyznania",
-  "main": "app.js",
+  "main": "dist/app.js",
   "scripts": {
     "build": "npx tsc",
     "prestart": "npm run build",
