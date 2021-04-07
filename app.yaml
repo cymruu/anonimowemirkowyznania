@@ -3,3 +3,15 @@ instance_class: F1
 automatic_scaling:
   max_instances: 1
   min_instances: 0
+env_variables:
+  NODE_ENV: production
+  WYKOP_APPKEY:
+  WYKOP_SECRET:
+  WYKOP_CLIENT_ACCOUNTKEY:
+  WYKOP_CLIENT_USERNAME:
+  WYKOP_CLIENT_PASSWORD:
+  SITE_URL: https://mirkowyznania.eu
+  MONGO_URL: mongodb://root:password@db:27017/todo?authSource=admin
+  SECRET:
+  STRIPE_PUBLISHABLE:
+  STRIPE_SECRET:

@@ -39,3 +39,4 @@ certs/*
 
 .env*
 !.env.example
+app.production.yaml
