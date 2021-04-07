@@ -25,9 +25,9 @@
     "csurf": "^1.11.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.11.9",
-    "pug": "^3.0.1",
-    "stripe": "^8.129.0",
+    "mongoose": "^5.12.3",
+    "pug": "^3.0.2",
+    "stripe": "^8.142.0",
     "winston": "^3.3.3",
     "wypokjs": "^0.1.11"
   },
@@ -36,14 +36,14 @@
     "url": "git://github.com/cymruu/anonimowemirkowyznania.git"
   },
   "devDependencies": {
-    "@types/express": "^4.17.8",
-    "@types/jsonwebtoken": "^8.5.0",
-    "@types/node": "^13.13.32",
-    "@typescript-eslint/eslint-plugin": "^2.34.0",
-    "@typescript-eslint/parser": "^2.34.0",
-    "eslint": "^6.8.0",
+    "@types/express": "^4.17.11",
+    "@types/jsonwebtoken": "^8.5.1",
+    "@types/node": "^14.14.37",
+    "@typescript-eslint/eslint-plugin": "^4.21.0",
+    "@typescript-eslint/parser": "^4.21.0",
+    "eslint": "^7.23.0",
     "nodemon": "^2.0.7",
     "ts-node": "^9.1.1",
-    "typescript": "^3.9.7"
+    "typescript": "^4.2.3"
   }
 }
