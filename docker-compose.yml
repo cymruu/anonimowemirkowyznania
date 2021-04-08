@@ -30,4 +30,4 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URI: "mongodb://root:password@db:27017/todo?authSource=admin"
+      DATABASE_URI: "mongodb://root:password@db:27017/amw?authSource=admin"

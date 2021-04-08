@@ -11,7 +11,7 @@ env_variables:
   WYKOP_CLIENT_USERNAME:
   WYKOP_CLIENT_PASSWORD:
   SITE_URL: https://mirkowyznania.eu
-  MONGO_URL: mongodb://root:password@db:27017/todo?authSource=admin
+  MONGO_URL: mongodb://root:password@db:27017/amw?authSource=admin
   SECRET:
   STRIPE_PUBLISHABLE:
   STRIPE_SECRET:
