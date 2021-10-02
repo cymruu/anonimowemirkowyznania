@@ -7,7 +7,6 @@ import { prepareArrayRefactored } from '../controllers/tags'
 import * as wykopController from '../controllers/wykop'
 import logger from '../logger'
 import confessionModel, { ConfessionStatus, IConfession } from '../models/confession'
-import WykopHTTPClient from '../service/WykopHTTPClient'
 import { RequestWithUser } from '../utils'
 import { WykopRequestQueue } from '../wykop'
 import { authentication } from './middleware/authentication'
@@ -96,51 +95,43 @@ export interface AcceptConfessionOptions {
 confessionRouter.post('/confession/:id/accept',
 	accessMiddlewareV2('addEntry'),
 	getConfessionMiddleware,
-	(req: RequestWithConfession<AcceptConfessionOptions>, res) => {
-		req.confession.populate('survey').execPopulate()
-			.then(async (confession) => {
-				if (confession.entryID && confession.status === ConfessionStatus.ACCEPTED) {
-					return res
-						.status(409).json(
-							makeAPIResponse(res, null, { message: 'Entry is already added.' }),
-						)
-				}
-				if (confession.status === ConfessionStatus.DECLINED) {
-					return res
-						.status(409).json(
-							makeAPIResponse(res, null, { message: 'Cannot add declined entry.' }),
-						)
-				}
-				const entryBody = await bodyBuilder.getEntryBody(confession, req.user)
-				const adultMedia = req.body.isPlus18 || confession.tags.map(x => x[0]).includes('#nsfw')
-				const embed = req.body.includeEmbed ? confession.embed : undefined
+	async (req: RequestWithConfession<AcceptConfessionOptions>, res) => {
+		const confession = req.confession
+		if (confession.entryID && confession.status === ConfessionStatus.ACCEPTED) {
+			return res
+				.status(409).json(
+					makeAPIResponse(res, null, { message: 'Entry is already added.' }),
+				)
+		}
+		if (confession.status === ConfessionStatus.DECLINED) {
+			return res
+				.status(409).json(
+					makeAPIResponse(res, null, { message: 'Cannot add declined entry.' }),
+				)
+		}
+		const entryBody = await bodyBuilder.getEntryBody(confession, req.user)
+		const adultMedia = req.body.isPlus18 || confession.tags.map(x => x[0]).includes('#nsfw')
+		const embed = req.body.includeEmbed ? confession.embed : undefined
 
-				let promise
-				if (confession.survey && req.body.includeSurvey) {
-					promise = WykopHTTPClient.acceptSurvey(confession.survey as ISurvey, entryBody, embed, adultMedia)
-				} else {
-					promise = wykopController.acceptConfession(entryBody, embed, adultMedia)
-				}
-				promise.then(async (response) => {
-					confession.entryID = response.id
-					const action = await createAction(req.user._id, ActionType.ACCEPT_ENTRY).save()
-					confession.actions.push(action)
-					confession.status = ConfessionStatus.ACCEPTED
-					confession.addedBy = req.user.username
-					confession.save().then(() => {
-						const { status, addedBy, entryID } = confession
-						return res.json(makeAPIResponse(res, {
-							patchObject: { status, addedBy, entryID },
-							action,
-						}))
-					})
-				})
-					.catch(err => {
-						return res
-							.status(500).json(
-								makeAPIResponse(res, null, { message: err.toString() }),
-							)
-					})
+		wykopController.acceptConfession(entryBody, embed, adultMedia).then(async (response) => {
+			confession.entryID = response.id
+			const action = await createAction(req.user._id, ActionType.ACCEPT_ENTRY).save()
+			confession.actions.push(action)
+			confession.status = ConfessionStatus.ACCEPTED
+			confession.addedBy = req.user.username
+			confession.save().then(() => {
+				const { status, addedBy, entryID } = confession
+				return res.json(makeAPIResponse(res, {
+					patchObject: { status, addedBy, entryID },
+					action,
+				}))
+			})
+		})
+			.catch(err => {
+				return res
+					.status(500).json(
+						makeAPIResponse(res, null, { message: err.toString() }),
+					)
 			})
 	})
 confessionRouter.put('/confession/:id/status',

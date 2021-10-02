@@ -1,20 +1,18 @@
-import { Router, Request } from 'express'
-const apiRouter = Router()
+import { Request, Router } from 'express'
 import mongoose from 'mongoose'
-import * as wykopController from './controllers/wykop'
-import { createAction, ActionType } from './controllers/actions'
-import * as tagController from './controllers/tags'
-import auth from './controllers/authorization'
-import { accessMiddlewareV1 } from './controllers/access'
 import config from './config'
+import { accessMiddlewareV1 } from './controllers/access'
+import { ActionType, createAction } from './controllers/actions'
+import auth from './controllers/authorization'
+import bodyBuilder from './controllers/bodyBuildier'
+import * as tagController from './controllers/tags'
+import * as wykopController from './controllers/wykop'
+import logger from './logger'
 import confessionModel, { ConfessionStatus } from './models/confession'
 import replyModel from './models/reply'
-import logger from './logger'
 import { guardMiddleware } from './utils/apiGuard'
-import bodyBuilder from './controllers/bodyBuildier'
-import WykopHTTPClient from './service/WykopHTTPClient'
 import { WykopRequestQueue } from './wykop'
-import { ISurvey } from './models/survey'
+const apiRouter = Router()
 
 //TODO: move connnection to separate file
 mongoose.connect(config.mongoURL,
@@ -38,7 +36,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 	guardMiddleware,
 	accessMiddlewareV1('addEntry'),
 	async (req: RequestWithUser, res) => {
-		confessionModel.findById(req.params.confession_id).populate('survey').exec(async (err, confession) => {
+		confessionModel.findById(req.params.confession_id).exec(async (err, confession) => {
 			if (err) { return res.send(err) }
 			if (confession.entryID && confession.status === ConfessionStatus.ACCEPTED) {
 				return res.json({
@@ -61,14 +59,7 @@ apiRouter.route('/confession/accept/:confession_id').get(
 			}
 			const entryBody = await bodyBuilder.getEntryBody(confession, req.user)
 			const adultMedia = confession.tags.map(x => x[0]).includes('#nsfw')
-			let promise
-			if (confession.survey) {
-				promise = WykopHTTPClient.acceptSurvey(
-					confession.survey as ISurvey, entryBody, confession.embed, adultMedia)
-			} else {
-				promise = wykopController.acceptConfession(entryBody, confession.embed, adultMedia)
-			}
-			promise.then(async (response) => {
+			wykopController.acceptConfession(entryBody, confession.embed, adultMedia).then(async (response) => {
 				confession.entryID = response.id
 				const action = await createAction(req.user._id, ActionType.ACCEPT_ENTRY).save()
 				confession.actions.push(action)

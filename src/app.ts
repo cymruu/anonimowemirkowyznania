@@ -15,7 +15,6 @@ import config from './config'
 import { ActionType, createAction } from './controllers/actions'
 import aliasGenerator from './controllers/aliases'
 import auth from './controllers/authorization'
-import * as surveyController from './controllers/survey'
 import * as tagController from './controllers/tags'
 import * as wykopController from './controllers/wykop'
 import conversationRouter from './conversation'
@@ -54,13 +53,6 @@ app.get('/', csrfProtection, (req, res) => {
 })
 app.post('/', csrfProtection, csrfErrorHander, async (req, res) => {
 	const confession = new confessionModel()
-	if (req.body.survey && req.body.survey.question) {
-		req.body.survey.answers = req.body.survey.answers.filter((e) => { return e })
-		const validationResult = surveyController.validateSurvey(req.body.survey)
-		if (validationResult.success === false) { return res.send(validationResult.response.message) }
-	} else {
-		delete req.body.survey
-	}
 	if (!req.body.text) {
 		//TODO: should display error - user does not know what happened and why request failed
 		return res.sendStatus(400)
@@ -74,13 +66,6 @@ app.post('/', csrfProtection, csrfErrorHander, async (req, res) => {
 	const action = await createAction(null, ActionType.NEW_ENTRY).save()
 	confession.actions.push(action)
 	confession.save()
-		.then(async () => {
-			if (req.body.survey) {
-				const survey = await surveyController.createSurvey(req.body.survey)
-				confession.survey = survey._id
-				return confession.save()
-			}
-		})
 		.then(() => {
 			res.redirect(`confession/${confession._id}/${confession.auth}`)
 		})
@@ -100,8 +85,7 @@ app.get('/confession/:confessionid/:auth', (req, res) => {
 				{
 					path: 'actions', options: { sort: { _id: -1 } },
 					populate: { path: 'user', select: 'username' },
-				},
-				{ path: 'survey' }])
+				}])
 			.exec((err, confession) => {
 				if (err) { return res.send(err) }
 				if (!confession) { return res.sendStatus(404) }
