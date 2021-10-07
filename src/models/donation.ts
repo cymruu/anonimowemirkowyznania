@@ -18,7 +18,7 @@ const donationSchema = new Schema({
 	message: String,
 }, { timestamps: true })
 
-donationSchema.statics.totalInCurrentYear = function(this: mongoose.Model<IDonation>) {
+donationSchema.statics.totalInCurrentYear = function() {
 	const start = new Date(new Date().getFullYear(), 0, 1)
 	const end = new Date(new Date().getFullYear(), 11, 31)
 	return this.aggregate([ {
@@ -29,7 +29,7 @@ donationSchema.statics.totalInCurrentYear = function(this: mongoose.Model<IDonat
 	}]).then(res => res[0].sum)
 }
 
-donationSchema.statics.totalDonationSum = function(this: mongoose.Model<IDonation>) {
+donationSchema.statics.totalDonationSum = function() {
 	return this.aggregate([{ $group:
 		{ _id: null, sum: { $sum: '$amount' } },
 	}]).then(res => res[0].sum)
