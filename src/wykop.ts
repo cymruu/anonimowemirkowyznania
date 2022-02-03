@@ -1,10 +1,9 @@
 import config from './config'
-import { Wykop, Client, CreateWykopService } from 'wypokjs'
-import { WykopError } from 'wypokjs/dist/wykop'
+import { Wykop, Client, CreateWykopService, errorInterceptor } from 'wypokjs'
 import logger from './logger'
 import { WykopQueue } from './service/WykopQueue'
 
-const logInterceptor = (err: WykopError | any) => {
+const logInterceptor: errorInterceptor = (err) => {
 	logger.error(err.toString())
 	return err
 }
