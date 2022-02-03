@@ -28,7 +28,7 @@
     "pug": "^3.0.2",
     "stripe": "^8.201.0",
     "winston": "^3.5.1",
-    "wypokjs": "^0.1.11"
+    "wypokjs": "^0.1.13"
   },
   "repository": {
     "type": "git",
