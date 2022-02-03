@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.8'
 
 services:
   db:
@@ -17,16 +17,18 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
 
   amw:
-    build: .
-    env_file: [.env.dev]
-    command: ["/bin/sh", "-c", "npm run start:docker"]
+    build:
+      context: .
+      target: development
+    env_file: [ .env.dev ]
     ports:
       - 8080:8080
       - 5858:5858
     volumes:
       - .:/src
       - /src/node_modules/
-    depends_on: 
+      - /src/dist/
+    depends_on:
       db:
         condition: service_healthy
     environment:

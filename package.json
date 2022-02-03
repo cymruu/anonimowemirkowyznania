@@ -5,7 +5,6 @@
   "main": "dist/app.js",
   "scripts": {
     "build": "npx tsc",
-    "prestart": "npm run build",
     "development": "NODE_ENV=development npm start",
     "production": "NODE_ENV=production npm start",
     "start": "node dist/app.js",
