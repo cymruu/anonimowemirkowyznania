@@ -8,8 +8,6 @@ env_variables:
   WYKOP_APPKEY:
   WYKOP_SECRET:
   WYKOP_CLIENT_ACCOUNTKEY:
-  WYKOP_CLIENT_USERNAME:
-  WYKOP_CLIENT_PASSWORD:
   SITE_URL: https://mirkowyznania.eu
   MONGO_URL: mongodb://root:password@db:27017/amw?authSource=admin
   SECRET:
