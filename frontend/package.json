@@ -11,7 +11,7 @@
     "notistack": "^1.0.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "^4.0.3"
+    "react-scripts": "^5.0.0"
   },
   "scripts": {
     "start": "BROWSER=none react-scripts start",
@@ -20,48 +20,7 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "env": {
-      "browser": true
-    },
-    "extends": [
-      "airbnb",
-      "airbnb/hooks"
-    ],
-    "rules": {
-      "react/jsx-filename-extension": [
-        "off"
-      ],
-      "import/extensions": [
-        "off"
-      ],
-      "import/no-unresolved": [
-        "off"
-      ],
-      "no-underscore-dangle": [
-        "off"
-      ],
-      "no-unused-vars": [
-        "off"
-      ],
-      "@typescript-eslint/no-unused-vars": [
-        "error"
-      ],
-      "max-len": [
-        "error",
-        {
-          "code": 120
-        }
-      ],
-      "implicit-arrow-linebreak": "off",
-      "react/jsx-props-no-spreading": "off",
-      "react/require-default-props": [
-        "error",
-        {
-          "ignoreFunctionalComponents": true
-        }
-      ],
-      "max-classes-per-file": "off"
-    }
+    "root": true
   },
   "browserslist": {
     "production": [

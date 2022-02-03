@@ -25,7 +25,6 @@ const getPage = (httpClient: HTTPClient) =>
 const buildCommentLink = (reply: IReply) =>
   `https://wykop.pl/wpis/${reply.parentID.entryID}/${reply.commentID ? `#comment-${reply.commentID}` : ''}`;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Replies(props: RouteComponentProps) {
   const { httpClient, apiClient } = useContext(APIContext);
 
