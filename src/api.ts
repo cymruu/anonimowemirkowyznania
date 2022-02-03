@@ -16,7 +16,7 @@ const apiRouter = Router()
 
 //TODO: move connnection to separate file
 mongoose.connect(config.mongoURL,
-	{ useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false },
+	{},
 	(err) => {
 		if (err) {
 			logger.error(err)
