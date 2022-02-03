@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 export function replaceInArray<T>(arr: T[], _id: string, patchObject: object) {
   const arrCopy: any[] = [...arr];
   const index = arrCopy.findIndex((x) => x._id === _id);

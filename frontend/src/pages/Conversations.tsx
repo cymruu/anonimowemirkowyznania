@@ -6,7 +6,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { APIContext } from '../App';
 import { noOpFn } from '../utils';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Permissions(props: RouteComponentProps) {
   const { httpClient } = useContext(APIContext);
   const [conversations, setConversations] = useState<any[]>([]);

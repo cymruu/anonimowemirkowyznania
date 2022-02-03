@@ -22,7 +22,6 @@ const getPage = (httpClient: HTTPClient) =>
   (page: number, perPage: number) =>
     httpClient.swallow(httpClient.get(`/confessions?page=${page}&perPage=${perPage}`));
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Confessions(props: RouteComponentProps) {
   const { httpClient, apiClient } = useContext(APIContext);
 

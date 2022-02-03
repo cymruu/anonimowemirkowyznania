@@ -7,7 +7,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import DoneIcon from '@material-ui/icons/Done';
 import { APIContext } from '../App';
 import { noOpFn, replaceInArray } from '../utils';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 export default function Permissions(props: RouteComponentProps) {
   const { httpClient } = useContext(APIContext);
   const [mods, setMods] = useState<any[]>([]);
