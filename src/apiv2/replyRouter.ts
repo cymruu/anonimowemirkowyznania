@@ -52,7 +52,7 @@ replyRouter.delete('/reply/:id/',
 	(req: RequestWithReply, res) => {
 		wykopController.deleteEntryComment(req.reply.commentID)
 			.then(() => {
-				return req.reply.populate([{ path: 'parentID', select: ['entryID', 'actions'] }]).execPopulate()
+				return req.reply.populate([{ path: 'parentID', select: ['entryID', 'actions'] }])
 					.then(async reply => {
 						const action = await createAction(
 							req.user._id,
@@ -80,7 +80,7 @@ replyRouter.get('/reply/:id/accept',
 	accessMiddlewareV2('addReply'),
 	getReplyMiddleware,
 	(req: RequestWithReply, res) => {
-		req.reply.populate([{ path: 'parentID', select: ['entryID', 'actions'] }]).execPopulate()
+		req.reply.populate([{ path: 'parentID', select: ['entryID', 'actions'] }])
 			.then(reply => {
 				if (reply.commentID) {
 					return res.status(400).json(makeAPIResponse(res, null, { message: 'The reply is already added' }))
