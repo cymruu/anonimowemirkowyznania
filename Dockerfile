@@ -5,15 +5,11 @@ WORKDIR /src
 COPY package.json .
 COPY package-lock.json .
 
-RUN npm ci
-
+FROM base as build-production
+RUN npm ci --only=prod
 COPY . .
 
-FROM base as build-production
-RUN npm ci
-
 FROM build-production as production
-RUN npm ci
 RUN npm run build
 CMD ["npm", "start"]
 
