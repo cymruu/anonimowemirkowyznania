@@ -5,9 +5,6 @@
   "main": "dist/app.js",
   "scripts": {
     "build": "npx tsc",
-    "prestart": "npm run build",
-    "development": "NODE_ENV=development npm start",
-    "production": "NODE_ENV=production npm start",
     "start": "node dist/app.js",
     "start:docker": "npx nodemon --inspect=0.0.0.0:9229 --exec 'ts-node src/app.ts'",
     "lint": "npx eslint . --ext .ts",
