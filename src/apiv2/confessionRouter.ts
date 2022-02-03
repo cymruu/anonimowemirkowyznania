@@ -161,7 +161,7 @@ confessionRouter.put('/confession/:id/status',
 confessionRouter.put('/confession/:id/tags',
 	accessMiddlewareV2('updateTags'),
 	getConfessionMiddleware,
-	async (req: RequestWithConfession & {body :{tag: string, tagValue: boolean}}, res) => {
+	async (req: RequestWithConfession & {body: {tag: string, tagValue: boolean}}, res) => {
 		const tagValue = req.body.tagValue
 		const action = await createAction(
 			req.user._id,

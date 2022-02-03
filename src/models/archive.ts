@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
 export interface IArchive extends mongoose.Document {
-	item:any
+	item: any
 }
 
 const archiveSchema = new Schema({

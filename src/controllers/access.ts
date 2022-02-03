@@ -35,7 +35,7 @@ export function getFlagPermissions(flag) {
 	return r
 }
 
-type getErrorObjectT = (res)=>object
+type getErrorObjectT = (res) => object
 const accessMiddleware = (permission: permissionType, getErrorObject: getErrorObjectT) => (req, res, next) => {
 	if (!req.user || !checkIfIsAllowed(req.user.flags, permission)) {
 		return res

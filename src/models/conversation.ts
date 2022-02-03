@@ -3,8 +3,8 @@ import { IUser } from './user'
 import { IConfession } from './confession'
 const Schema = mongoose.Schema
 interface IMessage {
-	time:Date
-	text:string
+	time: Date
+	text: string
 	IPAdress: string
 	OP: boolean
 	user?: IUser
