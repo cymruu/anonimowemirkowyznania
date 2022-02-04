@@ -1,9 +1,8 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
-  AppBar, Button, CssBaseline, IconButton, Theme, Toolbar, Typography
+  AppBar, Button, IconButton, Toolbar, Typography
 } from '@mui/material';
-import { createStyles, makeStyles } from '@mui/styles';
 import { Link as RouterLink, Router } from '@reach/router';
 import { useSnackbar } from 'notistack';
 import React, {
@@ -20,22 +19,8 @@ import Permissions from './pages/Permissions';
 import Replies from './pages/Replies';
 import createAPIClient from './service/api';
 import { HTTPClient } from './service/HTTPClient';
+import theme from './theme';
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  root: {
-    flexGrow: 1,
-  },
-  header: {
-    backgroundColor: '#d2d2d2',
-    marginBottom: 10,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  }
-}))
 
 const defaultHTTPClient = new HTTPClient();
 export const APIContext = createContext<{
@@ -47,8 +32,6 @@ export const APIContext = createContext<{
 });
 
 function App() {
-  const classes = useStyles();
-
   const [user, setUser] = useState<any>(undefined);
   const { enqueueSnackbar } = useSnackbar();
   const httpClient = useMemo(() => new HTTPClient([
@@ -70,12 +53,15 @@ function App() {
 
   return (
     <>
-      <AppBar position="static" color="default" className={classes.header}>
+      <AppBar position="static" color="default" sx={{
+        backgroundColor: '#d2d2d2',
+        marginBottom: 10,
+      }}>
         <Toolbar>
-          <IconButton className={classes.menuButton} edge="start" color="inherit" aria-label="menu">
+          <IconButton sx={{ marginRight: theme.spacing(2) }} edge="start" color="inherit" aria-label="menu">
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Anonimowe Mirko Wyznania
           </Typography>
           <Button color="inherit">
