@@ -33,3 +33,14 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URI: "mongodb://root:password@db:27017/amw?authSource=admin"
+
+  mongoclient:
+    image: mongoclient/mongoclient
+    ports:
+      - 5151:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MONGO_URL: "mongodb://root:password@db:27017/mongoclient?authSource=admin"
+      MONGOCLIENT_DEFAULT_CONNECTION_URL: "mongodb://root:password@db:27017/amw?authSource=admin"
