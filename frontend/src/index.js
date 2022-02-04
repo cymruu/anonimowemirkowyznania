@@ -3,11 +3,18 @@ import ReactDOM from 'react-dom';
 import { SnackbarProvider } from 'notistack';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { ThemeProvider } from '@mui/styles';
+import theme from './theme';
+import { CssBaseline } from '@mui/material';
+
 
 ReactDOM.render(
-  <SnackbarProvider>
-    <App />
-  </SnackbarProvider>,
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <SnackbarProvider>
+      <App />
+    </SnackbarProvider>,
+  </ThemeProvider>,
   // eslint-disable-next-line no-undef
   document.getElementById('root'),
 );

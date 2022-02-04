@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { TablePagination } from '@material-ui/core';
+import { TablePagination } from '@mui/material';
 import { replaceInArray } from '../utils';
 
 type PageResponse = {pageItems: any[], count: number}
@@ -52,12 +52,11 @@ export default function usePagination(getPage: GetPageFunction) {
     data.pageItems.length ? (
       <TablePagination
         rowsPerPageOptions={[25, 50, 100]}
-        component="div"
         count={data.count}
         rowsPerPage={perPage}
         page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
       />
     ) : null
   );

@@ -1,7 +1,7 @@
 import {
   Box,
   Chip, Dialog, DialogContent, DialogTitle,
-} from '@material-ui/core';
+} from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import DoneIcon from '@mui/icons-material/Done';
 import React, { useContext } from 'react';

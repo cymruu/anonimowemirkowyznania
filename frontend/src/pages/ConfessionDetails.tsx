@@ -7,7 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import EmbedIcon from '@mui/icons-material/Attachment';
 import SurveyIcon from '@mui/icons-material/Poll';
 import RadioIcon from '@mui/icons-material/RadioButtonUnchecked';

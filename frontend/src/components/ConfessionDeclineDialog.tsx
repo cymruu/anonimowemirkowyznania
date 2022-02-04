@@ -1,7 +1,7 @@
 import {
   Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
   FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import React, {
   Dispatch, SetStateAction, SyntheticEvent, useState,
 } from 'react';

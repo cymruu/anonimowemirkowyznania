@@ -1,7 +1,8 @@
 import {
   Box,
-  Card, CardContent, createStyles, makeStyles, Theme, Typography,
-} from '@material-ui/core';
+  Card, CardContent, Theme, Typography,
+} from '@mui/material';
+import { makeStyles, createStyles } from '@mui/styles';
 import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -16,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-export default function Action({ action, index }: {action:any, index: number}) {
+export default function Action({ action, index }: { action: any, index: number }) {
   const classes = useStyles();
   const {
     time, action: actionText, note, user,

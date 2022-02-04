@@ -1,6 +1,7 @@
 import {
-  Button, Container, makeStyles, TextField,
-} from '@material-ui/core';
+  Button, Container, TextField, Theme,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { RouteComponentProps } from '@reach/router';
 import React, {
   Dispatch, useCallback, useContext, useState,
@@ -8,7 +9,7 @@ import React, {
 import { APIContext } from '../App';
 import { absoluteNavigate } from '../components/AbsoluteLink';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   form: {
     marginTop: theme.spacing(1),
   },

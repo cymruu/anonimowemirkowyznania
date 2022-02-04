@@ -1,6 +1,6 @@
 import {
   Box, Chip, Container, Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';

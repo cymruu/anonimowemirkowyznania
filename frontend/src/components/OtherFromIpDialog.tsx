@@ -1,6 +1,6 @@
 import {
   Box, Dialog, DialogContent, DialogTitle,
-} from '@material-ui/core';
+} from '@mui/material';
 import { Close as CloseIcon, HourglassEmpty as HourglassEmptyIcon, Check as CheckIcon } from '@mui/icons-material';
 import React, { useContext, useEffect, useState } from 'react';
 import { Link as RouterLink } from '@reach/router';

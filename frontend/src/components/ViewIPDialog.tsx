@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle } from '@material-ui/core';
+import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { APIContext } from '../App';
 import { IConfession } from '../pages/Confessions';

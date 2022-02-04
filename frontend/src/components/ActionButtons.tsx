@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Grid } from '@material-ui/core';
+import { Button, CircularProgress, Grid } from '@mui/material';
 import React, { useState } from 'react';
 import { IConfession } from '../pages/Confessions';
 import { IReply } from '../pages/Replies';

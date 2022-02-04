@@ -1,13 +1,13 @@
-import {
-  AppBar, Button, IconButton, makeStyles, Toolbar, Typography,
-} from '@material-ui/core';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
+import {
+  AppBar, Button, CssBaseline, IconButton, Theme, Toolbar, Typography
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { Link as RouterLink, Router } from '@reach/router';
 import { useSnackbar } from 'notistack';
 import React, {
-  createContext, useEffect, useMemo, useState,
+  createContext, useEffect, useMemo, useState
 } from 'react';
 import { AbsoluteLink } from './components/AbsoluteLink';
 import ConfessionDetails from './pages/ConfessionDetails';
@@ -15,13 +15,13 @@ import Confessions from './pages/Confessions';
 import Conversations from './pages/Conversations';
 import Index from './pages/Index';
 import Login from './pages/Login';
-import Permissions from './pages/Permissions';
 import Logout from './pages/Logout';
+import Permissions from './pages/Permissions';
 import Replies from './pages/Replies';
 import createAPIClient from './service/api';
 import { HTTPClient } from './service/HTTPClient';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
   },
@@ -70,7 +70,6 @@ function App() {
 
   return (
     <>
-      <CssBaseline />
       <AppBar position="static" color="default" className={classes.header}>
         <Toolbar>
           <IconButton className={classes.menuButton} edge="start" color="inherit" aria-label="menu">

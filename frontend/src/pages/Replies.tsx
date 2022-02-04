@@ -2,7 +2,7 @@ import {
   Container, LinearProgress, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow,
   Tooltip,
-} from '@material-ui/core';
+} from '@mui/material';
 import EmbedIcon from '@mui/icons-material/Attachment';
 import { RouteComponentProps } from '@reach/router';
 import React, {
