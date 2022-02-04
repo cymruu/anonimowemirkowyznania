@@ -1,29 +1,17 @@
 import {
   Box,
-  Card, CardContent, Theme, Typography,
+  Card, CardContent, Typography
 } from '@mui/material';
-import { makeStyles, createStyles } from '@mui/styles';
 import React from 'react';
+import theme from '../theme';
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  root: {
-    marginBottom: 5,
-  },
-  actionNumber: {
-    marginLeft: theme.spacing(2),
-    backgroundColor: theme.palette.grey[500],
-    borderRadius: 50,
-    padding: 10,
-  },
-}));
 
 export default function Action({ action, index }: { action: any, index: number }) {
-  const classes = useStyles();
   const {
     time, action: actionText, note, user,
   } = action;
   return (
-    <Card className={classes.root} variant="outlined">
+    <Card sx={{ marginBottom: 5 }} variant="outlined">
       <CardContent>
         <Box display="flex">
           <Box flexGrow={1}>
@@ -44,7 +32,12 @@ export default function Action({ action, index }: { action: any, index: number }
               </Typography>
             </Box>
           </Box>
-          <Box className={classes.actionNumber} alignSelf="center" alignContent="center" display="flex">
+          <Box sx={{
+            marginLeft: theme.spacing(2),
+            backgroundColor: theme.palette.grey[500],
+            borderRadius: 50,
+            padding: `10px`,
+          }} alignSelf="center" alignContent="center" display="flex">
             {index + 1}
           </Box>
         </Box>

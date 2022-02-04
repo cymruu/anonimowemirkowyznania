@@ -84,9 +84,9 @@ export default function Confessions(props: RouteComponentProps) {
                 </TableCell>
                 <TableCell>
                   {confession.entryID && (
-                  <Link href={`https://wykop.pl/wpis/${confession.entryID}`} rel="noopener" target="_blank">
-                    {confession.entryID}
-                  </Link>
+                    <Link href={`https://wykop.pl/wpis/${confession.entryID}`} rel="noopener" target="_blank">
+                      {confession.entryID}
+                    </Link>
                   )}
                 </TableCell>
                 <TableCell>
@@ -102,8 +102,8 @@ export default function Confessions(props: RouteComponentProps) {
           </TableBody>
         </Table>
         {isLoading && <LinearProgress />}
+        {paginationComponent}
       </TableContainer>
-      {paginationComponent}
     </Container>
   );
 }
