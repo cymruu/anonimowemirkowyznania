@@ -3,7 +3,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar, Button, CssBaseline, IconButton, Theme, Toolbar, Typography
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { createStyles, makeStyles } from '@mui/styles';
 import { Link as RouterLink, Router } from '@reach/router';
 import { useSnackbar } from 'notistack';
 import React, {
@@ -21,7 +21,7 @@ import Replies from './pages/Replies';
 import createAPIClient from './service/api';
 import { HTTPClient } from './service/HTTPClient';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
     flexGrow: 1,
   },
@@ -34,8 +34,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   title: {
     flexGrow: 1,
-  },
-}));
+  }
+}))
 
 const defaultHTTPClient = new HTTPClient();
 export const APIContext = createContext<{
@@ -85,14 +85,14 @@ function App() {
             <AbsoluteLink component={RouterLink} to="/replies" color="inherit">replies</AbsoluteLink>
           </Button>
           {hasPermission('accessModsList') && (
-          <Button color="inherit">
-            <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>
-          </Button>
+            <Button color="inherit">
+              <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>
+            </Button>
           )}
           {hasPermission('accessMessages') && (
-          <Button color="inherit">
-            <AbsoluteLink component={RouterLink} to="/conversations" color="inherit">conversations</AbsoluteLink>
-          </Button>
+            <Button color="inherit">
+              <AbsoluteLink component={RouterLink} to="/conversations" color="inherit">conversations</AbsoluteLink>
+            </Button>
           )}
           {user ? (
             <>
@@ -109,7 +109,7 @@ function App() {
             <Button color="inherit">
               <AbsoluteLink component={RouterLink} to="/login" color="inherit">login</AbsoluteLink>
             </Button>
-          ) }
+          )}
         </Toolbar>
       </AppBar>
       <APIContext.Provider value={{ httpClient, apiClient }}>
