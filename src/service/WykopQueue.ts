@@ -1,4 +1,4 @@
-import { WykopError } from 'wypokjs/dist/wykop'
+import { WykopError } from 'wypokjs'
 
 interface QueueTask {
 	taskConstructor: () => Promise<any>

@@ -79,6 +79,7 @@
         "no-unused-vars": "off",
         "eol-last": [
             "error"
-        ]
+        ],
+        "@typescript-eslint/type-annotation-spacing": 2
     }
 }

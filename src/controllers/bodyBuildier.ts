@@ -7,7 +7,7 @@ import { makeProgressBar } from '../utils/progressBar'
 import { IConfession } from '../models/confession'
 import { IUser } from '../models/user'
 
-const getBody = (confession:IConfession, user:IUser) => {
+const getBody = (confession: IConfession, user: IUser) => {
 	return process.env.NODE_ENV === 'development' ?
 		`${confession.text}\n\n ${confession._id}\n\n #wykopapitesty \n!dostałem ostrzeżenie za flood, to może nam dajcie testowe środowisko api?`
 		:

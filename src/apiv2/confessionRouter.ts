@@ -1,5 +1,4 @@
 import { Response, Router } from 'express'
-import { ISurvey } from 'src/models/survey'
 import { accessMiddlewareV2 } from '../controllers/access'
 import { ActionType, createAction } from '../controllers/actions'
 import bodyBuilder from '../controllers/bodyBuildier'
@@ -57,7 +56,7 @@ confessionRouter.get('/confession/:id',
 				populate: { path: 'user', select: 'username' },
 			},
 			{ path: 'survey' },
-		]).execPopulate()
+		])
 			.then(confession => {
 				return res.json(makeAPIResponse(res, confession))
 			}).catch(err => {
@@ -162,7 +161,7 @@ confessionRouter.put('/confession/:id/status',
 confessionRouter.put('/confession/:id/tags',
 	accessMiddlewareV2('updateTags'),
 	getConfessionMiddleware,
-	async (req: RequestWithConfession & {body :{tag: string, tagValue: boolean}}, res) => {
+	async (req: RequestWithConfession & {body: {tag: string, tagValue: boolean}}, res) => {
 		const tagValue = req.body.tagValue
 		const action = await createAction(
 			req.user._id,
