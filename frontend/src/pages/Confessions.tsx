@@ -11,7 +11,7 @@ import { APIContext } from '../App';
 import { AbsoluteLink } from '../components/AbsoluteLink';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import usePagination from '../components/pagination';
-import ShortEmebed from '../components/ShortEmbed';
+import ShortEmbed from '../components/ShortEmbed';
 import StyledTableRow from '../components/StyledTableRow';
 import { HTTPClient } from '../service/HTTPClient';
 import { noOpFn, toggleStatus } from '../utils';
@@ -70,14 +70,14 @@ export default function Confessions(props: RouteComponentProps) {
                   </AbsoluteLink>
                   <div>
                     {confession.survey && <Tooltip title="confession with survey"><SurveyIcon /></Tooltip>}
-                    {confession.embed && <Tooltip title="confession with embeded content"><EmbedIcon /></Tooltip>}
+                    {confession.embed && <Tooltip title="confession with embedded content"><EmbedIcon /></Tooltip>}
                   </div>
                 </TableCell>
                 <TableCell style={{ wordBreak: 'break-word', whiteSpace: 'pre-line' }}>
                   {confession.text}
                 </TableCell>
                 <TableCell style={{ maxWidth: 150, textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                  <ShortEmebed url={confession.embed} />
+                  <ShortEmbed url={confession.embed} />
                 </TableCell>
                 <TableCell>
                   {confession.auth}
