@@ -55,7 +55,6 @@ function App() {
     <>
       <AppBar position="static" color="default" sx={{
         backgroundColor: '#d2d2d2',
-        marginBottom: 10,
       }}>
         <Toolbar>
           <IconButton sx={{ marginRight: theme.spacing(2) }} edge="start" color="inherit" aria-label="menu">

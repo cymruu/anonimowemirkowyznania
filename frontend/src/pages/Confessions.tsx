@@ -101,9 +101,9 @@ export default function Confessions(props: RouteComponentProps) {
             ))}
           </TableBody>
         </Table>
+      </TableContainer>
         {isLoading && <LinearProgress />}
         {paginationComponent}
-      </TableContainer>
     </Container>
   );
 }

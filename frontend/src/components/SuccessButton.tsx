@@ -1,9 +1,9 @@
-import { Button, Theme} from '@mui/material';
-import { withStyles } from '@mui/styles';
 
-export default withStyles((theme: Theme) => ({
-  root: {
-    backgroundColor: theme.palette.success.main,
-    color: theme.palette.common.white,
-  },
-}))(Button);
+import { Button, Theme } from '@mui/material';
+import { styled } from '@mui/styles';
+
+export default styled(Button)<Theme>(({ theme }) => ({
+  backgroundColor: theme.palette.success.main,
+  color: theme.palette.common.white,
+  marginBottom: 5,
+}))

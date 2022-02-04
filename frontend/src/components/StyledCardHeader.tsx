@@ -1,28 +1,17 @@
-import { alpha, CardHeader, Theme } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { alpha, CardHeader } from '@mui/material';
 import React from 'react';
+import theme from '../theme';
 import statusToClass from '../utils/statusToClass';
+import { listStyleObject } from './listStyleObject';
 
-function StyledCardHeader(props: any) {
+const tableCardBgOpacity = 0.2;
+
+export default function StyledCardHeader(props: any) {
   const {
-    status, classes, children, ...rest
+    status, children, ...rest
   } = props;
-  return <CardHeader className={classes[statusToClass(status)]} {...rest}>{children}</CardHeader>;
+
+
+  return <CardHeader sx={{ marginBottom: '8px', backgroundColor: listStyleObject[statusToClass(status)] }} {...rest}>{children}</CardHeader>;
 }
 
-const tableBgOpacity = 0.2;
-
-export default withStyles((theme:Theme) => ({
-  root: {
-    marginBottom: '8px',
-  },
-  declined: {
-    backgroundColor: alpha(theme.palette.error.light, tableBgOpacity),
-  },
-  pending: {
-    backgroundColor: alpha(theme.palette.warning.light, tableBgOpacity),
-  },
-  added: {
-    backgroundColor: alpha(theme.palette.success.light, tableBgOpacity),
-  },
-}))(StyledCardHeader);

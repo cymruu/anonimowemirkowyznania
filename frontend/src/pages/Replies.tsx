@@ -88,14 +88,14 @@ export default function Replies(props: RouteComponentProps) {
                 </TableCell>
                 <TableCell>
                   {reply.parentID.entryID && (
-                  <Link href={buildCommentLink(reply)} rel="noopener" target="_blank">
-                    <div>
-                      {reply.parentID.entryID}
-                    </div>
-                    <div>
-                      {reply.commentID && `#${reply.commentID}`}
-                    </div>
-                  </Link>
+                    <Link href={buildCommentLink(reply)} rel="noopener" target="_blank">
+                      <div>
+                        {reply.parentID.entryID}
+                      </div>
+                      <div>
+                        {reply.commentID && `#${reply.commentID}`}
+                      </div>
+                    </Link>
                   )}
                 </TableCell>
                 <TableCell style={{ maxWidth: 50, textOverflow: 'ellipsis', overflow: 'hidden' }}>
@@ -113,8 +113,8 @@ export default function Replies(props: RouteComponentProps) {
             ))}
           </TableBody>
         </Table>
-        {isLoading && <LinearProgress />}
       </TableContainer>
+      {isLoading && <LinearProgress />}
       {paginationComponent}
     </Container>
   );

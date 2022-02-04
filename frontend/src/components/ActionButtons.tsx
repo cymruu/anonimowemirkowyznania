@@ -2,6 +2,7 @@ import { Button, CircularProgress, Grid } from '@mui/material';
 import React, { useState } from 'react';
 import { IConfession } from '../pages/Confessions';
 import { IReply } from '../pages/Replies';
+import theme from '../theme';
 import { noOpFn } from '../utils/index';
 import useLongPress from '../utils/longPress';
 import SuccessButton from './SuccessButton';
@@ -67,14 +68,13 @@ export default function ActionButtons(props: ActionButtonsProps) {
   return (
     <Grid container direction="column">
       <SuccessButton
-        style={{ marginBottom: 5 }}
         disabled={isSending || model.status !== 0}
         variant="contained"
         {...longPressAcceptHook}
       >
         {isSending ? <CircularProgress size={24} /> : 'Accept'}
       </SuccessButton>
-      <Button {...longPressDeclineHook} disabled={isSending} variant="contained" color="secondary">
+      <Button {...longPressDeclineHook} disabled={isSending} variant="contained" color='error'>
         {isSending ? <CircularProgress size={24} /> : text}
       </Button>
     </Grid>
