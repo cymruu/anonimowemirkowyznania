@@ -3,7 +3,7 @@ import {
   TableRow,
   Tooltip,
 } from '@material-ui/core';
-import EmbedIcon from '@material-ui/icons/Attachment';
+import EmbedIcon from '@mui/icons-material/Attachment';
 import { RouteComponentProps } from '@reach/router';
 import React, {
   useContext, useMemo,

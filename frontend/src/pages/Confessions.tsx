@@ -3,8 +3,8 @@ import {
   Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow, Tooltip,
 } from '@material-ui/core';
-import EmbedIcon from '@material-ui/icons/Attachment';
-import SurveyIcon from '@material-ui/icons/Poll';
+import EmbedIcon from '@mui/icons-material/Attachment';
+import SurveyIcon from '@mui/icons-material/Poll';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import React, { useContext, useMemo } from 'react';
 import { APIContext } from '../App';

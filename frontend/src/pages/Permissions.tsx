@@ -3,8 +3,8 @@ import {
 } from '@material-ui/core';
 import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
-import ClearIcon from '@material-ui/icons/Clear';
-import DoneIcon from '@material-ui/icons/Done';
+import ClearIcon from '@mui/icons-material/Clear';
+import DoneIcon from '@mui/icons-material/Done';
 import { APIContext } from '../App';
 import { noOpFn, replaceInArray } from '../utils';
 

@@ -2,8 +2,8 @@ import {
   AppBar, Button, IconButton, makeStyles, Toolbar, Typography,
 } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import MenuIcon from '@material-ui/icons/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import MenuIcon from '@mui/icons-material/Menu';
 import { Link as RouterLink, Router } from '@reach/router';
 import { useSnackbar } from 'notistack';
 import React, {
