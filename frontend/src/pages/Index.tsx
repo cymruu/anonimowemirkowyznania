@@ -4,7 +4,7 @@ import React from 'react';
 export default function Index(props: RouteComponentProps) {
   return (
     <div>
-      index
+      ( ͡° ͜ʖ ͡°) 
     </div>
   );
 }
