@@ -136,9 +136,6 @@ app.post('/reply/:confessionid', csrfProtection, csrfErrorHander, (req, res) => 
 app.get('/about', (req, res) => {
 	res.render('about')
 })
-app.get('/twojewyznania', (req, res) => {
-	res.render('confessionsList')
-})
 app.get('/contact', (req, res) => {
 	res.render('contact')
 })

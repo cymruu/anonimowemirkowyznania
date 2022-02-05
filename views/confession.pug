@@ -1,14 +1,15 @@
 extends ./base.pug
 block content
   .alert.alert-success
-    strong Dodano! &nbsp;
-    | Wyznanie pojawi się na mikroblogu po zaakceptowaniu. Na mikroblogu łatwo będziesz mógl je znaleźć pod tagiem 
-    a(href=`http://wykop.pl/tag/${confession._id}` target="_blank")  #{confession._id}
+    p 
+      strong Dodano! &nbsp;
+      | Wyznanie pojawi się na mikroblogu po zaakceptowaniu. Na mikroblogu łatwo będziesz mógl je znaleźć pod tagiem 
+      a(href=`http://wykop.pl/tag/${confession._id}` target="_blank")  ##{confession._id}
     br
-    | Kod autoryzacji: <strong>#{confession.auth}</strong> (dzięki niemu będziesz mogł odpowiadać w swoim wpisie jako OP).
-    b  Pamiętaj kod jest tajny, udostępnienie go spowoduje że każdy będzie mógł odpowiadać jako OP i zobaczyć prywatne konwersacje.
-    | Na stronie którą teraz widzisz pojawią się akcje moderatora dotyczące tego wyznania, oraz lista prywatnych wiadomości wysłanych do Ciebie. Jeśli chcesz odpowiadać jako OP,
-    | lub spodziewasz się otrzymać prywatne wiadomości to może warto dodać tę stronę do zakładek.
+    | Kod autoryzacji: <strong>#{confession.auth}</strong> (dzięki niemu będziesz mogł odpowiadać w swoim wpisie jako OP, będzie także wymagany w razie gdybyś zechciał usunąć wyznanie).
+    b  Pamiętaj kod jest tajny, udostępnienie go spowoduje że każdy będzie mógł odpowiadać jako OP i zobaczyć Twoje prywatne konwersacje.
+    p Na stronie którą teraz widzisz pojawią się akcje moderatora dotyczące tego wyznania, oraz lista prywatnych wiadomości wysłanych do Ciebie. Jeśli chcesz odpowiadać jako OP,
+    | lub spodziewasz się otrzymać prywatne wiadomości dodaj te strone do zakładek.
   .panel.panel-default
     .panel-heading
       |Wpis
