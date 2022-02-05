@@ -1,12 +1,5 @@
 extends ./base.pug
 block content
-  if success
-    .alert.alert-success
-      strong Dodano! &nbsp;
-      | Wyznanie pojawi się na mikroblogu po zaakceptowaniu
-      br
-      | Jeśli chcesz to zapisz ten kod: <strong>#{confession.auth}</strong> (dzięki niemu będziesz mogł odpowiadać w swoim wpisie jako OP).
-      | Pod tym linkiem możesz przeglądać co dzieje się z twoim wyznaniem i jakie akcje zostały podjęte niego podjęte, możesz także czytać wiadomości prywatne, jeśli jakieś się pojawią. Pamiętaj! Kod jest tajny i jeśli dostanie się w ręce osób trzecich, to uzyskają one dostęp do twoich prywatnych wiadomości i będą mogły odpowiadać w twoim imieniu.
   p.info Napisz co leży Ci na sercu, a następnie post zostanie opublikowany anonimowo (z konta @AnonimoweMirkoWyznania) na mikroblogu po zaakceptowaniu.
    .add-confession
     h1 Dodaj wyznanie
@@ -29,71 +22,6 @@ block content
           .btn-group
             button.btn.btn-default.btn-sm.lenny(type="button")
               a.editlenny(href="#", title="lennyface") ( ͡° ͜ʖ ͡°)
-            button.btn.btn-default.btn-sm.dropdown-toggle(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-              span.caret
-              span.sr-only Toggle Dropdown
-            ul.dropdown-menu
-              li
-                a.editlenny2(href="#", title="editlenny2")
-                  span ( ͡° ʖ̯ ͡°)
-              li
-                a.editlenny3(href="#", title="editlenny3")
-                  span ( ͡º ͜ʖ͡º)
-              li
-                a.editlenny4(href="#", title="editlenny4")
-                  span ( ͡°( ͡° ͜ʖ( ͡° ͜ʖ ͡°)ʖ ͡°) ͡°)
-              li
-                a.editlenny5(href="#", title="editlenny5")
-                  span (⌐ ͡■ ͜ʖ ͡■)
-              li
-                a.editlenny6(href="#", title="editlenny6")
-                  span (╥﹏╥)
-              li
-                a.editlenny7(href="#", title="editlenny7")
-                  span (╯︵╰,)
-              li
-                a.editlenny8(href="#", title="editlenny8")
-                  span (ʘ‿ʘ)
-              li
-                a.editlenny9(href="#", title="editlenny9")
-                  span (｡◕‿‿◕｡)
-              li
-                a.editlenny10(href="#", title="editlenny10")
-                  span ᕙ(⇀‸↼‶)ᕗ
-              li
-                a.editlenny11(href="#", title="editlenny11")
-                  span ᕦ(òóˇ)ᕤ
-              li
-                a.editlenny12(href="#", title="editlenny12")
-                  span (✌ ﾟ ∀ ﾟ)☞
-              li
-                a.editlenny13(href="#", title="editlenny13")
-                  span ʕ•ᴥ•ʔ
-              li
-                a.editlenny14(href="#", title="editlenny14")
-                  span ᶘᵒᴥᵒᶅ
-              li
-                a.editlenny15(href="#", title="editlenny15")
-                  span (⌒(oo)⌒)
-              li
-                a.editlenny16(href="#", title="editlenny16")
-                  span ᄽὁȍ ̪ őὀᄿ
-              li
-                a.editlenny17(href="#", title="editlenny17")
-                  span ( ͡€ ͜ʖ ͡€)
-              li
-                a.editlenny18(href="#", title="editlenny18")
-                  span ( ͡° ͜ʖ ͡°)
-              li
-                a.editlenny19(href="#", title="editlenny19")
-                  span ( ͡° ͜ʖ ͡°)ﾉ⌐■-■
-              li
-                a.editlenny20(href="#", title="editlenny20")
-                  span (⌐ ͡■ ͜ʖ ͡■)
-              li
-                a.editlenny21(href="#", title="editlenny21")
-                  span (・へ・)
-
 
       .form-group
         input.form-control(type="url", name="embed", placeholder="URL do obrazka", maxlength=3000)
@@ -102,9 +30,4 @@ block content
       input(name="_csrf", type="hidden", value=csrfToken)
       button.btn.btn-large.btn-success(type="submit") Wyślij
     p.info Wyznania zostaną opublikowane po zaakceptowaniu (pasta o serwerowni nie przejdzie ( ͡° ʖ̯ ͡°))
-    p.info 
-      b Uwaga! 
-      | Wyznania zapisują się w pamięci podręcznej przeglądarki, aby uniknąć zapisania wyznania dodaj wpis w trybie prywatnym, lub usuń zapisane wyznania na  
-      a(href="/twojewyznania") tej stronie
   script(src='/js/main.js')
-  script(src='/js/sweetalert.min.js')
