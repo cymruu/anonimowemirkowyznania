@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/app.js",
-    "start:docker": "npx nodemon --inspect=0.0.0.0:9229 --exec 'ts-node src/app.ts'",
+    "start:docker": "nodemon --watch 'src/**' --ext 'ts' --inspect=0.0.0.0:9229 --exec 'ts-node src/app.ts'",
     "lint": "npx eslint . --ext .ts",
     "lint-fix": "npx eslint . --ext .ts --fix",
     "gcp-build": "tsc -p . && cd frontend && npm ci && npm run build",
