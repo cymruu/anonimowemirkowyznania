@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { TablePagination } from '@material-ui/core';
+import { TablePagination } from '@mui/material';
 import { replaceInArray } from '../utils';
 
-type PageResponse = {pageItems: any[], count: number}
-type GetPageFunction = (page: number, perPage: number)=>Promise<PageResponse>
+type PageResponse = { pageItems: any[], count: number }
+type GetPageFunction = (page: number, perPage: number) => Promise<PageResponse>
 
 type PaginationReducerAction =
-  | {type: 'set', page: PageResponse}
-  | {type: 'replace', id: string, patchObject: object}
+  | { type: 'set', page: PageResponse }
+  | { type: 'replace', id: string, patchObject: object }
 
 function paginationReducer(state: PageResponse, action: PaginationReducerAction) {
   switch (action.type) {
@@ -48,19 +48,18 @@ export default function usePagination(getPage: GetPageFunction) {
         setIsLoading(false);
       });
   }, [getPage, page, perPage]);
-  const paginationComponent = (
+  const paginationComponent =
     data.pageItems.length ? (
       <TablePagination
-        rowsPerPageOptions={[25, 50, 100]}
         component="div"
+        rowsPerPageOptions={[25, 50, 100]}
         count={data.count}
         rowsPerPage={perPage}
         page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    ) : null
-  );
+    ) : null;
 
   return {
     paginationComponent, isLoading, data: data.pageItems, setData,

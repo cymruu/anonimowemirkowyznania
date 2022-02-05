@@ -1,25 +1,16 @@
 import {
-  Button, Container, makeStyles, TextField,
-} from '@material-ui/core';
+  Button, Container, TextField
+} from '@mui/material';
 import { RouteComponentProps } from '@reach/router';
 import React, {
-  Dispatch, useCallback, useContext, useState,
+  Dispatch, useCallback, useContext, useState
 } from 'react';
 import { APIContext } from '../App';
 import { absoluteNavigate } from '../components/AbsoluteLink';
 
-const useStyles = makeStyles((theme) => ({
-  form: {
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
 
-export default function Login(props: RouteComponentProps & {setUser: Dispatch<any>}) {
+export default function Login(props: RouteComponentProps & { setUser: Dispatch<any> }) {
   const { setUser } = props;
-  const classes = useStyles();
   const [inputs, setInputs] = useState({
     username: '',
     password: '',
@@ -46,7 +37,7 @@ export default function Login(props: RouteComponentProps & {setUser: Dispatch<an
   }
   return (
     <Container maxWidth="xs">
-      <form autoComplete="off" className={classes.form} onSubmit={handleSubmit}>
+      <form autoComplete="off" onSubmit={handleSubmit}>
         <div>
           <TextField
             label="Username"
@@ -77,7 +68,6 @@ export default function Login(props: RouteComponentProps & {setUser: Dispatch<an
           fullWidth
           variant="contained"
           color="primary"
-          className={classes.submit}
         >
           Login
         </Button>

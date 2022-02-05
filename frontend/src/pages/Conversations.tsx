@@ -1,6 +1,6 @@
 import {
   Container, List, ListItem, ListItemText,
-} from '@material-ui/core';
+} from '@mui/material';
 import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { APIContext } from '../App';

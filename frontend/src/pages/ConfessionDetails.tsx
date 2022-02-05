@@ -7,10 +7,10 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-} from '@material-ui/core';
-import EmbedIcon from '@material-ui/icons/Attachment';
-import SurveyIcon from '@material-ui/icons/Poll';
-import RadioIcon from '@material-ui/icons/RadioButtonUnchecked';
+} from '@mui/material';
+import EmbedIcon from '@mui/icons-material/Attachment';
+import SurveyIcon from '@mui/icons-material/Poll';
+import RadioIcon from '@mui/icons-material/RadioButtonUnchecked';
 import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { APIContext } from '../App';

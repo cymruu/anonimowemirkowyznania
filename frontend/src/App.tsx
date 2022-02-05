@@ -1,13 +1,12 @@
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import MenuIcon from '@mui/icons-material/Menu';
 import {
-  AppBar, Button, IconButton, makeStyles, Toolbar, Typography,
-} from '@material-ui/core';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import MenuIcon from '@material-ui/icons/Menu';
+  AppBar, Button, IconButton, Toolbar, Typography
+} from '@mui/material';
 import { Link as RouterLink, Router } from '@reach/router';
 import { useSnackbar } from 'notistack';
 import React, {
-  createContext, useEffect, useMemo, useState,
+  createContext, useEffect, useMemo, useState
 } from 'react';
 import { AbsoluteLink } from './components/AbsoluteLink';
 import ConfessionDetails from './pages/ConfessionDetails';
@@ -15,27 +14,13 @@ import Confessions from './pages/Confessions';
 import Conversations from './pages/Conversations';
 import Index from './pages/Index';
 import Login from './pages/Login';
-import Permissions from './pages/Permissions';
 import Logout from './pages/Logout';
+import Permissions from './pages/Permissions';
 import Replies from './pages/Replies';
 import createAPIClient from './service/api';
 import { HTTPClient } from './service/HTTPClient';
+import theme from './theme';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  header: {
-    backgroundColor: '#d2d2d2',
-    marginBottom: 10,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
-}));
 
 const defaultHTTPClient = new HTTPClient();
 export const APIContext = createContext<{
@@ -47,8 +32,6 @@ export const APIContext = createContext<{
 });
 
 function App() {
-  const classes = useStyles();
-
   const [user, setUser] = useState<any>(undefined);
   const { enqueueSnackbar } = useSnackbar();
   const httpClient = useMemo(() => new HTTPClient([
@@ -70,13 +53,15 @@ function App() {
 
   return (
     <>
-      <CssBaseline />
-      <AppBar position="static" color="default" className={classes.header}>
+      <AppBar position="static" color="default" sx={{
+        backgroundColor: '#d2d2d2',
+        marginBottom: 2
+      }}>
         <Toolbar>
-          <IconButton className={classes.menuButton} edge="start" color="inherit" aria-label="menu">
+          <IconButton sx={{ marginRight: theme.spacing(2) }} edge="start" color="inherit" aria-label="menu">
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Anonimowe Mirko Wyznania
           </Typography>
           <Button color="inherit">
@@ -86,14 +71,14 @@ function App() {
             <AbsoluteLink component={RouterLink} to="/replies" color="inherit">replies</AbsoluteLink>
           </Button>
           {hasPermission('accessModsList') && (
-          <Button color="inherit">
-            <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>
-          </Button>
+            <Button color="inherit">
+              <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>
+            </Button>
           )}
           {hasPermission('accessMessages') && (
-          <Button color="inherit">
-            <AbsoluteLink component={RouterLink} to="/conversations" color="inherit">conversations</AbsoluteLink>
-          </Button>
+            <Button color="inherit">
+              <AbsoluteLink component={RouterLink} to="/conversations" color="inherit">conversations</AbsoluteLink>
+            </Button>
           )}
           {user ? (
             <>
@@ -110,7 +95,7 @@ function App() {
             <Button color="inherit">
               <AbsoluteLink component={RouterLink} to="/login" color="inherit">login</AbsoluteLink>
             </Button>
-          ) }
+          )}
         </Toolbar>
       </AppBar>
       <APIContext.Provider value={{ httpClient, apiClient }}>

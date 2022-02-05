@@ -3,7 +3,7 @@ name: CI
 on: [push]
 
 jobs:
-  lint:
+  CI-backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +21,10 @@ jobs:
     - name: Run linter
       run: npm run lint
 
-  build-frontend:
+    - name: Build backend
+      run: npm run build
+
+  CI-frontend:
     runs-on: ubuntu-latest
 
     steps:

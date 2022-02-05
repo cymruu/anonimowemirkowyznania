@@ -1,7 +1,7 @@
 import {
   Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
   FormControlLabel, FormGroup, FormLabel,
-} from '@material-ui/core';
+} from '@mui/material';
 import React, {
   Dispatch, SetStateAction, SyntheticEvent, useState,
 } from 'react';

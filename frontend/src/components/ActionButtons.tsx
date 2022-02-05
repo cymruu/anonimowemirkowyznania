@@ -1,20 +1,20 @@
-import { Button, CircularProgress, Grid } from '@material-ui/core';
+import { Button, CircularProgress, Grid } from '@mui/material';
 import React, { useState } from 'react';
 import { IConfession } from '../pages/Confessions';
 import { IReply } from '../pages/Replies';
+import theme from '../theme';
 import { noOpFn } from '../utils/index';
 import useLongPress from '../utils/longPress';
-import SuccessButton from './SuccessButton';
 
 export type buttonActionFunction = (model: IConfession | IReply) => Promise<any>;
 export type setStatusFnT = (model: IConfession | IReply, note?: string) => Promise<any>
 export interface ActionButtonsProps {
-    model: IConfession | IReply
-    acceptFn: buttonActionFunction
-    setStatusFn: setStatusFnT
-    deleteFn: buttonActionFunction
-    longPressDeclineFn?: ()=>void
-    longPressAcceptFn?: ()=>void
+  model: IConfession | IReply
+  acceptFn: buttonActionFunction
+  setStatusFn: setStatusFnT
+  deleteFn: buttonActionFunction
+  longPressDeclineFn?: () => void
+  longPressAcceptFn?: () => void
 }
 
 const getRedButtonProps = (model: IConfession | IReply, setStatusFn: setStatusFnT, deleteFn: buttonActionFunction) => {
@@ -66,15 +66,16 @@ export default function ActionButtons(props: ActionButtonsProps) {
   const longPressDeclineHook = useLongPress(longPressDeclineFn || noOpFn, (event) => actionWrapper(fn, event)());
   return (
     <Grid container direction="column">
-      <SuccessButton
-        style={{ marginBottom: 5 }}
+      <Button
+        color='success'
         disabled={isSending || model.status !== 0}
         variant="contained"
+        sx={{ marginBottom: 1 }}
         {...longPressAcceptHook}
       >
         {isSending ? <CircularProgress size={24} /> : 'Accept'}
-      </SuccessButton>
-      <Button {...longPressDeclineHook} disabled={isSending} variant="contained" color="secondary">
+      </Button>
+      <Button {...longPressDeclineHook} disabled={isSending} variant="contained" color='error'>
         {isSending ? <CircularProgress size={24} /> : text}
       </Button>
     </Grid>

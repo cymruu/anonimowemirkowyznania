@@ -2,16 +2,16 @@ import {
   Container, LinearProgress,
   Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow, Tooltip,
-} from '@material-ui/core';
-import EmbedIcon from '@material-ui/icons/Attachment';
-import SurveyIcon from '@material-ui/icons/Poll';
+} from '@mui/material';
+import EmbedIcon from '@mui/icons-material/Attachment';
+import SurveyIcon from '@mui/icons-material/Poll';
 import { Link as RouterLink, RouteComponentProps } from '@reach/router';
 import React, { useContext, useMemo } from 'react';
 import { APIContext } from '../App';
 import { AbsoluteLink } from '../components/AbsoluteLink';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import usePagination from '../components/pagination';
-import ShortEmebed from '../components/ShortEmbed';
+import ShortEmbed from '../components/ShortEmbed';
 import StyledTableRow from '../components/StyledTableRow';
 import { HTTPClient } from '../service/HTTPClient';
 import { noOpFn, toggleStatus } from '../utils';
@@ -70,23 +70,23 @@ export default function Confessions(props: RouteComponentProps) {
                   </AbsoluteLink>
                   <div>
                     {confession.survey && <Tooltip title="confession with survey"><SurveyIcon /></Tooltip>}
-                    {confession.embed && <Tooltip title="confession with embeded content"><EmbedIcon /></Tooltip>}
+                    {confession.embed && <Tooltip title="confession with embedded content"><EmbedIcon /></Tooltip>}
                   </div>
                 </TableCell>
                 <TableCell style={{ wordBreak: 'break-word', whiteSpace: 'pre-line' }}>
                   {confession.text}
                 </TableCell>
                 <TableCell style={{ maxWidth: 150, textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                  <ShortEmebed url={confession.embed} />
+                  <ShortEmbed url={confession.embed} />
                 </TableCell>
                 <TableCell>
                   {confession.auth}
                 </TableCell>
                 <TableCell>
                   {confession.entryID && (
-                  <Link href={`https://wykop.pl/wpis/${confession.entryID}`} rel="noopener" target="_blank">
-                    {confession.entryID}
-                  </Link>
+                    <Link href={`https://wykop.pl/wpis/${confession.entryID}`} rel="noopener" target="_blank">
+                      {confession.entryID}
+                    </Link>
                   )}
                 </TableCell>
                 <TableCell>
@@ -101,9 +101,9 @@ export default function Confessions(props: RouteComponentProps) {
             ))}
           </TableBody>
         </Table>
-        {isLoading && <LinearProgress />}
       </TableContainer>
-      {paginationComponent}
+        {isLoading && <LinearProgress />}
+        {paginationComponent}
     </Container>
   );
 }
