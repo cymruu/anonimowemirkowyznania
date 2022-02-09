@@ -25,7 +25,7 @@ block content
         .form-group
             label(for='email') Email 
                 span.text-danger *
-            input.form-control#email(name='email', required)
+            input.form-control#email(name='email', type='email' required)
         .form-group
             label(for='username') Nick
             input.form-control#username(name='username')
@@ -102,7 +102,7 @@ block script
                 ).then(function (result) {
                     console.log(result)
                     if (result.error) {
-                        // Inform the customer that there was an error.
+                        alert(result.error.message)
                     }
                 });
             }
