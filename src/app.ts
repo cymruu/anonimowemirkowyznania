@@ -171,7 +171,7 @@ app.post('/donate', async (req, res) => {
 		}))
 		res.render('donate', {
 			client_secret: paymentIntent.client_secret,
-			email: req.body.email,
+			email: req.body.email.trim(),
 			stripe_pub: config.stripe.publishable,
 			return_url: `${config.siteURL}/donate/success`,
 		})
