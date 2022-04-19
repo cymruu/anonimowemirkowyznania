@@ -23,7 +23,6 @@ services:
     env_file: [ .env.dev ]
     ports:
       - 8080:8080
-      - 5858:5858
     volumes:
       - .:/src
       - /src/node_modules/

@@ -1,5 +1,5 @@
-node_modules
-certs
-frontend
-dist
-.github
+node_modules/
+certs/
+frontend/
+dist/
+.github/
