@@ -3,9 +3,8 @@ import ReactDOM from 'react-dom';
 import { SnackbarProvider } from 'notistack';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { ThemeProvider } from '@mui/styles';
 import theme from './theme';
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, ThemeProvider } from '@mui/material';
 
 
 ReactDOM.render(
