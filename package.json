@@ -7,8 +7,8 @@
     "build": "npx tsc",
     "start": "node dist/app.js",
     "start:docker": "ts-node-dev --transpile-only --watch 'src/' src/app.ts",
-    "lint": "npx eslint . --ext .ts",
-    "lint-fix": "npx eslint . --ext .ts --fix",
+    "lint": "npx eslint .",
+    "lint-fix": "npx eslint --fix .",
     "gcp-build": "tsc -p . && cd frontend && npm ci && npm run build",
     "deploy": "gcloud app deploy app.production.yaml",
     "test": "echo \"Error: no test specified\" && exit 1"
