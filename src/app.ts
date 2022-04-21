@@ -1,7 +1,6 @@
 if (!process.env.NODE_ENV) {
 	process.env.NODE_ENV = 'production'
 }
-import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import crypto from 'crypto'
 import express from 'express'
@@ -30,8 +29,8 @@ const stripe = new Stripe(config.stripe.secret,
 const app = express()
 
 app.enable('trust proxy')
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 app.use(cookieParser())
 app.use(express.static('public'))
 app.use('/api', apiRouter)
@@ -106,7 +105,7 @@ app.get('/reply/:confessionid', csrfProtection, (req, res) => {
 app.post('/reply/:confessionid', csrfProtection, csrfErrorHander, (req, res) => {
 	confessionModel.findById(req.params.confessionid)
 		.then((confession) => {
-			if (!confession) {return res.sendStatus(404)}
+			if (!confession) { return res.sendStatus(404) }
 			const reply = new replyModel()
 			reply.text = req.body.text
 			reply.IPAdress = req.ip
