@@ -4,6 +4,7 @@ if (!process.env.NODE_ENV) {
 import cookieParser from 'cookie-parser'
 import crypto from 'crypto'
 import express from 'express'
+import helmet from 'helmet'
 import http from 'http'
 import path from 'path'
 import Stripe from 'stripe'
@@ -29,6 +30,7 @@ const stripe = new Stripe(config.stripe.secret,
 const app = express()
 
 app.enable('trust proxy')
+app.use(helmet())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser())
