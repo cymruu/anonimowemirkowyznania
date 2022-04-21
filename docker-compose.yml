@@ -17,9 +17,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
 
   amw:
-    build:
-      context: .
-      target: development
+    build: ./
     env_file: [ .env.dev ]
     ports:
       - 8080:8080
