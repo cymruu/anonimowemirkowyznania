@@ -5,5 +5,9 @@
 
 # Node.js dependencies:
 node_modules/
+
+# Include config.ts - which is excluded in gitignore 
 !config.ts
+
+# exclude frontend build directory
 frontend/build/*
