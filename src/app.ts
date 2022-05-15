@@ -30,7 +30,12 @@ const stripe = new Stripe(config.stripe.secret,
 const app = express()
 
 app.enable('trust proxy')
-app.use(helmet())
+console.log('false');
+app.use( helmet({
+	contentSecurityPolicy: false,
+	crossOriginEmbedderPolicy: false,
+	crossOriginResourcePolicy:false
+}))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser())
