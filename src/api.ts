@@ -107,7 +107,7 @@ apiRouter.route('/confession/danger/:confession_id/:reason?')
 					ConfessionStatus.WAITING : ConfessionStatus.DECLINED
 				const newStatusStr = confession.status === ConfessionStatus.WAITING ? 'warning' : 'danger'
 				const actionType = confession.status === ConfessionStatus.WAITING ?
-					ActionType.REVERT_DECLINE : ActionType.DECLINE
+					ActionType.REVERT_ENTRY_DECLINE : ActionType.DECLINE_ENTRY
 				const reason = req.params.reason
 				const action = await createAction(req.user._id, actionType, reason).save()
 				confession.actions.push(action)
