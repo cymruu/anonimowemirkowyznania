@@ -146,8 +146,8 @@ confessionRouter.put('/confession/:id/status',
 		const note = req.body.note
 		req.confession.status = req.body.status
 		const actionType = req.body.status === ConfessionStatus.DECLINED ?
-			ActionType.DECLINE
-			: ActionType.REVERT_DECLINE
+			ActionType.DECLINE_ENTRY
+			: ActionType.REVERT_ENTRY_DECLINE
 		const action = await createAction(req.user._id, actionType, note).save()
 		req.confession.actions.push(action)
 		req.confession.save()
