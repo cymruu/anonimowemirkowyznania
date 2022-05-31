@@ -9,9 +9,9 @@ import { IUser } from '../models/user'
 
 const getBody = (confession: IConfession, user: IUser) => {
 	return process.env.NODE_ENV === 'development' ?
-		`${confession.text}\n\n ${confession._id}\n\n #wykopapitesty \n!dostałem ostrzeżenie za flood, to może nam dajcie testowe środowisko api?`
+		`${confession.text}\n\n ${confession._id}\n\n #wykopapitesty \n`
 		:
-		`#anonimowemirkowyznania \n${confession.text}\n\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nID: #${confession._id}\nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`
+		`#anonimowemirkowyznania \n${confession.text}\n\n---\n [Kliknij tutaj, aby odpowiedzieć w tym wątku anonimowo](${config.siteURL}/reply/${confession._id}) \n[Kliknij tutaj, aby wysłać OPowi anonimową wiadomość prywatną](${config.siteURL}/conversation/${confession._id}/new) \nID: #${confession._id}\nPost dodany za pomocą skryptu AnonimoweMirkoWyznania ( ${config.siteURL} ) Zaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`
 }
 
 async function getEntryBody(confession, user) {
@@ -27,11 +27,8 @@ async function getEntryBody(confession, user) {
 	return entryBody
 }
 function getCommentBody(reply, user) {
-	let authorizedMsg = ''
-	if (reply.authorized) {
-		authorizedMsg = '\n**Ten komentarz został dodany przez osobę dodającą wpis (OP)**'
-	}
-	return `**${reply.alias}**: ${reply.text}\n${authorizedMsg}\nZaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`
+	const authorizedMsg = reply.authorized ? '\n**Ten komentarz został dodany przez osobę dodającą wpis (OP)**' : ''
+	return `**${reply.alias}**: ${reply.text}\n---\n${authorizedMsg}\nZaakceptował: [${user.username}](${config.siteURL}/conversation/U_${user.username}/new)`
 }
 
 async function getDonationEntryBody(donation: IDonation) {
