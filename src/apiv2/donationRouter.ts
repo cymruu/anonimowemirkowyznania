@@ -8,14 +8,14 @@ import { service } from '../wykop';
 import { authentication } from './middleware/authentication';
 import { makeAPIResponse } from './utils/response';
 
-const donationRouter = Router();
+export const donationRouter = Router();
 
 
 donationRouter.use(authentication)
 
 donationRouter.get('/', accessMiddlewareV2('accessDonations'), async (req: RequestWithUser, res) => {
 	DonationModel.find({}).then((donations) => {
-		res.json(makeAPIResponse(res, { donateList: donations }))
+		res.json(makeAPIResponse(res, { donations }))
 	}).catch(err => {
 		res.status(500).json(err)
 	})
