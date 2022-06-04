@@ -12,7 +12,7 @@ import { AbsoluteLink } from './components/AbsoluteLink';
 import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
 import Conversations from './pages/Conversations';
-import Donations from './pages/Donations';
+import Donations from './pages/donations/Donations';
 import Index from './pages/Index';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
