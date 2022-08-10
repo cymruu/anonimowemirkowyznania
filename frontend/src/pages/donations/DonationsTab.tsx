@@ -23,7 +23,7 @@ export default function DonationsTab() {
                     <Typography><b>id:</b> {donation._id}</Typography>
                     <Typography><b>amount:</b> {donation.amount} </Typography>
                     <Typography><b>entryID:</b> {donation.entryID} </Typography>
-                    <Typography><b>username:</b> {donation.form} </Typography>
+                    <Typography><b>username:</b> {donation.from} </Typography>
                     <Typography><b>message:</b> {donation.message} </Typography>
                     <Typography><b>createdAt:</b> {donation.createdAt} </Typography>
                     <Divider />

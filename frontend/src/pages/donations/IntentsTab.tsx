@@ -22,7 +22,8 @@ export default function IntentTab() {
                 <Box key={i}>
                 <Typography><b>id:</b> {intent._id}</Typography>
                 <Typography><b>amount:</b> {intent.amount} </Typography>
-                <Typography><b>username:</b> {intent.form} </Typography>
+                <Typography><b>email:</b> {intent.email} </Typography>
+                <Typography><b>username:</b> {intent.username} </Typography>
                 <Typography><b>message:</b> {intent.message} </Typography>
                 <Typography><b>createdAt:</b> {intent.createdAt} </Typography>
                 <Divider />
