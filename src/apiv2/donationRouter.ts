@@ -14,7 +14,7 @@ export const donationRouter = Router();
 donationRouter.use(authentication)
 
 donationRouter.get('/', accessMiddlewareV2('accessDonations'), async (req: RequestWithUser, res) => {
-	DonationModel.find({}).then((donations) => {
+	DonationModel.find({}).sort({ _id: -1 }).limit(50).then((donations) => {
 		res.json(makeAPIResponse(res, { donations }))
 	}).catch(err => {
 		res.status(500).json(err)
@@ -22,7 +22,7 @@ donationRouter.get('/', accessMiddlewareV2('accessDonations'), async (req: Reque
 })
 
 donationRouter.get('/intents', accessMiddlewareV2('accessDonations'), async (req: RequestWithUser, res) => {
-	DonationIntent.find({}).then((donationIntents) => {
+	DonationIntent.find({}).sort({ _id: -1 }).limit(50).then((donationIntents) => {
 		res.json(makeAPIResponse(res, { donationIntents }))
 	}).catch(err => {
 		return res.status(500).json(makeAPIResponse(res, null, err))
