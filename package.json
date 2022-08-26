@@ -21,7 +21,7 @@
     "express": "^4.17.3",
     "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.3.0",
+    "mongoose": "^6.4.6",
     "pug": "^3.0.2",
     "stripe": "^8.218.0",
     "winston": "^3.7.2",
