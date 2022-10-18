@@ -24,7 +24,7 @@
     "mongoose": "^6.6.5",
     "pug": "^3.0.2",
     "stripe": "^10.14.0",
-    "winston": "^3.7.2",
+    "winston": "^3.8.2",
     "wypokjs": "^0.1.20"
   },
   "repository": {
