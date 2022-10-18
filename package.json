@@ -6,7 +6,6 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/app.js",
-    "start:docker": "ts-node-dev --transpile-only --watch 'src/' src/app.ts",
     "lint": "npx eslint .",
     "lint-fix": "npx eslint --fix .",
     "gcp-build": "tsc -p . && cd frontend && npm ci && npm run build",
@@ -38,7 +37,6 @@
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.10.2",
     "eslint": "^8.13.0",
-    "ts-node-dev": "^1.1.8",
     "typescript": "^4.6.3"
   }
 }
