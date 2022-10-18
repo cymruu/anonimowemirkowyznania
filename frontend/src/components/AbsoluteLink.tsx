@@ -1,5 +1,5 @@
 import { Link } from '@mui/material';
-import { navigate } from '@reach/router';
+import { useNavigate } from 'react-router-dom';
 import React from 'react';
 
 export const BASEPATH = process.env.PUBLIC_URL;
@@ -15,6 +15,7 @@ export const AbsoluteLink = ({ to = '', children, ...props }: any) => {
 };
 
 export const absoluteNavigate = (to: any) => {
+  const navigate = useNavigate()
   const absoluteTo = BASEPATH + to;
   return navigate(absoluteTo);
 };

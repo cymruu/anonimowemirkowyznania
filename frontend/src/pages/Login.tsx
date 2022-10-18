@@ -1,15 +1,14 @@
 import {
   Button, Container, TextField
 } from '@mui/material';
-import { RouteComponentProps } from '@reach/router';
-import React, {
+import {
   Dispatch, useCallback, useContext, useState
 } from 'react';
 import { APIContext } from '../App';
 import { absoluteNavigate } from '../components/AbsoluteLink';
 
 
-export default function Login(props: RouteComponentProps & { setUser: Dispatch<any> }) {
+export default function Login(props: { setUser: Dispatch<any> }) {
   const { setUser } = props;
   const [inputs, setInputs] = useState({
     username: '',
@@ -21,9 +20,7 @@ export default function Login(props: RouteComponentProps & { setUser: Dispatch<a
     httpClient.swallow(httpClient.post('/users/login', inputs))
       .then((user) => {
         absoluteNavigate('/confessions')
-          .then(() => {
-            setUser(user);
-          });
+        setUser(user);
       });
   }, [inputs, httpClient, setUser]);
 

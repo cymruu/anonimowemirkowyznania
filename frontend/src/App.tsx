@@ -3,7 +3,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar, Button, IconButton, Toolbar, Typography
 } from '@mui/material';
-import { Link as RouterLink, Router } from '@reach/router';
+import { Link as RouterLink, Routes, Route } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import React, {
   createContext, useEffect, useMemo, useState
@@ -81,7 +81,7 @@ function App() {
               <AbsoluteLink component={RouterLink} to="/conversations" color="inherit">conversations</AbsoluteLink>
             </Button>
           )}
-           {hasPermission('accessDonations') && (
+          {hasPermission('accessDonations') && (
             <Button color="inherit">
               <AbsoluteLink component={RouterLink} to="/donations" color="inherit">donations</AbsoluteLink>
             </Button>
@@ -105,17 +105,17 @@ function App() {
         </Toolbar>
       </AppBar>
       <APIContext.Provider value={{ httpClient, apiClient }}>
-        <Router basepath={process.env.PUBLIC_URL}>
-          <Index path="/" />
-          <Confessions path="/confessions" />
-          <ConfessionDetails path="/confessions/:id" />
-          <Replies path="/replies" />
-          <Permissions path="/permissions" />
-          <Conversations path="/conversations" />
-          <Donations path="/donations" />
-          <Login path="/login" setUser={setUser} />
-          <Logout path="/logout" setUser={setUser} />
-        </Router>
+        <Routes>
+          <Route path="/" element={<Index />}></Route>
+          <Route path="/confessions" element={<Confessions />}></Route>
+          <Route path="/confessions/:id" element={<ConfessionDetails />}></Route>
+          <Route path="/replies" element={<Replies />}></Route>
+          <Route path="/permissions" element={<Permissions />}></Route>
+          <Route path="/conversations" element={<Conversations />}></Route>
+          <Route path="/donations" element={<Donations />}></Route>
+          <Route path="/login" element={<Login setUser={setUser} />}></Route>
+          <Route path="/logout" element={<Logout setUser={setUser} />}></Route>
+        </Routes>
       </APIContext.Provider>
     </>
   );

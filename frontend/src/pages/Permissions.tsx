@@ -1,14 +1,13 @@
 import {
   Box, Chip, Container, Typography,
 } from '@mui/material';
-import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import DoneIcon from '@mui/icons-material/Done';
 import { APIContext } from '../App';
 import { noOpFn, replaceInArray } from '../utils';
 
-export default function Permissions(props: RouteComponentProps) {
+export default function Permissions() {
   const { httpClient } = useContext(APIContext);
   const [mods, setMods] = useState<any[]>([]);
 

@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import { SnackbarProvider } from 'notistack';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import theme from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import { BrowserRouter } from 'react-router-dom'
 
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <SnackbarProvider>
-      <App />
-    </SnackbarProvider>
+    <BrowserRouter>
+        <CssBaseline />
+        <SnackbarProvider>
+          <App />
+        </SnackbarProvider>
+    </BrowserRouter>
   </ThemeProvider>,
   // eslint-disable-next-line no-undef
   document.getElementById('root')

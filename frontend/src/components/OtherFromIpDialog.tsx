@@ -3,7 +3,7 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon, HourglassEmpty as HourglassEmptyIcon, Check as CheckIcon } from '@mui/icons-material';
 import React, { useContext, useEffect, useState } from 'react';
-import { Link as RouterLink } from '@reach/router';
+import { Link as RouterLink } from 'react-router-dom';
 import { APIContext } from '../App';
 import { IConfession } from '../pages/Confessions';
 import { noOpFn } from '../utils';

@@ -1,12 +1,11 @@
 import {
   Container, List, ListItem, ListItemText,
 } from '@mui/material';
-import { RouteComponentProps } from '@reach/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { APIContext } from '../App';
 import { noOpFn } from '../utils';
 
-export default function Permissions(props: RouteComponentProps) {
+export default function Permissions() {
   const { httpClient } = useContext(APIContext);
   const [conversations, setConversations] = useState<any[]>([]);
 

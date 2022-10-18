@@ -4,7 +4,6 @@ import {
   Tooltip,
 } from '@mui/material';
 import EmbedIcon from '@mui/icons-material/Attachment';
-import { RouteComponentProps } from '@reach/router';
 import React, {
   useContext, useMemo,
 } from 'react';
@@ -25,7 +24,7 @@ const getPage = (httpClient: HTTPClient) =>
 const buildCommentLink = (reply: IReply) =>
   `https://wykop.pl/wpis/${reply.parentID.entryID}/${reply.commentID ? `#comment-${reply.commentID}` : ''}`;
 
-export default function Replies(props: RouteComponentProps) {
+export default function Replies() {
   const { httpClient, apiClient } = useContext(APIContext);
 
   const getPageMemoized = useMemo(() => getPage(httpClient), [httpClient]);

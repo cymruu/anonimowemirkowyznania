@@ -2,13 +2,12 @@ import {
   Container, Tab, Tabs
 } from '@mui/material';
 import { Box } from '@mui/system';
-import { RouteComponentProps } from '@reach/router';
 import { useState } from 'react';
 import AddDonationForm from './AddDonationForm';
 import DonationsTab from './DonationsTab';
 import IntentTab from './IntentsTab';
 
-export default function Donations(props: RouteComponentProps) {
+export default function Donations() {
   const [currentTab, setTab] = useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {

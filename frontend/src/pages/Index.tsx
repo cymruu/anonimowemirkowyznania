@@ -1,10 +1,9 @@
-import { RouteComponentProps } from '@reach/router';
 import React from 'react';
 
-export default function Index(props: RouteComponentProps) {
+export default function Index() {
   return (
     <div>
-      ( ͡° ͜ʖ ͡°) 
+      ( ͡° ͜ʖ ͡°)
     </div>
   );
 }
