@@ -31,7 +31,7 @@
     "url": "git://github.com/cymruu/anonimowemirkowyznania.git"
   },
   "devDependencies": {
-    "@types/express": "^4.17.13",
+    "@types/express": "^4.17.14",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^17.0.25",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
