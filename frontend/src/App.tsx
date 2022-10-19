@@ -106,7 +106,6 @@ function App() {
       </AppBar>
       <APIContext.Provider value={{ httpClient, apiClient }}>
         <Routes>
-          <Route path="/" element={<Index />}></Route>
           <Route path="/confessions" element={<Confessions />}></Route>
           <Route path="/confessions/:id" element={<ConfessionDetails />}></Route>
           <Route path="/replies" element={<Replies />}></Route>
@@ -115,6 +114,7 @@ function App() {
           <Route path="/donations" element={<Donations />}></Route>
           <Route path="/login" element={<Login setUser={setUser} />}></Route>
           <Route path="/logout" element={<Logout setUser={setUser} />}></Route>
+          <Route path="*" element={<Index />}></Route>
         </Routes>
       </APIContext.Provider>
     </>

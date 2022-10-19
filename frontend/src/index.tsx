@@ -9,14 +9,14 @@ import { BrowserRouter } from 'react-router-dom'
 
 
 ReactDOM.render(
-  <ThemeProvider theme={theme}>
-    <BrowserRouter>
-        <CssBaseline />
-        <SnackbarProvider>
-          <App />
-        </SnackbarProvider>
-    </BrowserRouter>
-  </ThemeProvider>,
+  <BrowserRouter basename={process.env.PUBLIC_URL}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <SnackbarProvider>
+        <App />
+      </SnackbarProvider>
+    </ThemeProvider>
+  </BrowserRouter>,
   // eslint-disable-next-line no-undef
   document.getElementById('root')
 );
