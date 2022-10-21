@@ -3,11 +3,10 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon, HourglassEmpty as HourglassEmptyIcon, Check as CheckIcon } from '@mui/icons-material';
 import React, { useContext, useEffect, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { APIContext } from '../App';
 import { IConfession } from '../pages/Confessions';
 import { noOpFn } from '../utils';
-import { AbsoluteLink } from './AbsoluteLink';
 
 export default function ViewIPDialog({
   confession, open, onClose,
@@ -35,9 +34,9 @@ export default function ViewIPDialog({
 
   const confessionList = confessions.map((x) => (
     <Box m={1} key={x._id}>
-      <AbsoluteLink component={RouterLink} to={`/confessions/${x._id}`} onClick={onClose}>
+      <Link to={`/confessions/${x._id}`} onClick={onClose}>
         {x._id}
-      </AbsoluteLink>
+      </Link>
       {getIcon(x.status)}
     </Box>
   ));

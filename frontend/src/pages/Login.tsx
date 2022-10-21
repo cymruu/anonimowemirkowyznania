@@ -4,12 +4,12 @@ import {
 import {
   Dispatch, useCallback, useContext, useState
 } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { APIContext } from '../App';
-import { absoluteNavigate } from '../components/AbsoluteLink';
-
 
 export default function Login(props: { setUser: Dispatch<any> }) {
   const { setUser } = props;
+  const navigate = useNavigate()
   const [inputs, setInputs] = useState({
     username: '',
     password: '',
@@ -19,7 +19,7 @@ export default function Login(props: { setUser: Dispatch<any> }) {
   const loginRequest = useCallback(() => {
     httpClient.swallow(httpClient.post('/users/login', inputs))
       .then((user) => {
-        absoluteNavigate('/confessions')
+        navigate('/confessions')
         setUser(user);
       });
   }, [inputs, httpClient, setUser]);

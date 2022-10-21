@@ -8,7 +8,6 @@ import SurveyIcon from '@mui/icons-material/Poll';
 import { Link as RouterLink, } from 'react-router-dom';
 import React, { useContext, useMemo } from 'react';
 import { APIContext } from '../App';
-import { AbsoluteLink } from '../components/AbsoluteLink';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import usePagination from '../components/pagination';
 import ShortEmbed from '../components/ShortEmbed';
@@ -65,9 +64,9 @@ export default function Confessions() {
             {confessions.map((confession: IConfession) => (
               <StyledTableRow key={confession._id} status={confession.status} hover>
                 <TableCell>
-                  <AbsoluteLink component={RouterLink} to={`/confessions/${confession._id}`}>
+                  <RouterLink to={`/confessions/${confession._id}`}>
                     {confession._id}
-                  </AbsoluteLink>
+                  </RouterLink>
                   <div>
                     {confession.survey && <Tooltip title="confession with survey"><SurveyIcon /></Tooltip>}
                     {confession.embed && <Tooltip title="confession with embedded content"><EmbedIcon /></Tooltip>}

@@ -3,12 +3,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar, Button, IconButton, Toolbar, Typography
 } from '@mui/material';
-import { Link as RouterLink, Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import React, {
   createContext, useEffect, useMemo, useState
 } from 'react';
-import { AbsoluteLink } from './components/AbsoluteLink';
 import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
 import Conversations from './pages/Conversations';
@@ -66,24 +65,24 @@ function App() {
             Anonimowe Mirko Wyznania
           </Typography>
           <Button color="inherit">
-            <AbsoluteLink component={RouterLink} to="/confessions" color="inherit">confessions</AbsoluteLink>
+            <Link to="/confessions" color="inherit">confessions</Link>
           </Button>
           <Button color="inherit">
-            <AbsoluteLink component={RouterLink} to="/replies" color="inherit">replies</AbsoluteLink>
+            <Link to="/replies" color="inherit">replies</Link>
           </Button>
           {hasPermission('accessModsList') && (
             <Button color="inherit">
-              <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>
+              <Link to="/permissions" color="inherit">permissions</Link>
             </Button>
           )}
           {hasPermission('accessMessages') && (
             <Button color="inherit">
-              <AbsoluteLink component={RouterLink} to="/conversations" color="inherit">conversations</AbsoluteLink>
+              <Link to="/conversations" color="inherit">conversations</Link>
             </Button>
           )}
           {hasPermission('accessDonations') && (
             <Button color="inherit">
-              <AbsoluteLink component={RouterLink} to="/donations" color="inherit">donations</AbsoluteLink>
+              <Link to="/donations" color="inherit">donations</Link>
             </Button>
           )}
           {user ? (
@@ -94,12 +93,12 @@ function App() {
                 <AccountCircleIcon />
               </IconButton>
               <Button color="inherit">
-                <AbsoluteLink component={RouterLink} to="/logout" color="inherit">logout</AbsoluteLink>
+                <Link to="/logout" color="inherit">logout</Link>
               </Button>
             </>
           ) : (
             <Button color="inherit">
-              <AbsoluteLink component={RouterLink} to="/login" color="inherit">login</AbsoluteLink>
+              <Link to="/login" color="inherit">login</Link>
             </Button>
           )}
         </Toolbar>
