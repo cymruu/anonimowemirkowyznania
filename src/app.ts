@@ -25,7 +25,7 @@ import DonationIntent from './models/donationIntent'
 import replyModel from './models/reply'
 
 const stripe = new Stripe(config.stripe.secret,
-	{ apiVersion: '2020-08-27' })
+	{ apiVersion: '2022-08-01' })
 const app = express()
 
 app.enable('trust proxy')

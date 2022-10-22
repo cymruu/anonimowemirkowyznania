@@ -3,12 +3,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar, Button, IconButton, Toolbar, Typography
 } from '@mui/material';
-import { Link as RouterLink, Router } from '@reach/router';
+import { Routes, Route, Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import React, {
   createContext, useEffect, useMemo, useState
 } from 'react';
-import { AbsoluteLink } from './components/AbsoluteLink';
 import ConfessionDetails from './pages/ConfessionDetails';
 import Confessions from './pages/Confessions';
 import Conversations from './pages/Conversations';
@@ -66,24 +65,24 @@ function App() {
             Anonimowe Mirko Wyznania
           </Typography>
           <Button color="inherit">
-            <AbsoluteLink component={RouterLink} to="/confessions" color="inherit">confessions</AbsoluteLink>
+            <Link to="/confessions" color="inherit">confessions</Link>
           </Button>
           <Button color="inherit">
-            <AbsoluteLink component={RouterLink} to="/replies" color="inherit">replies</AbsoluteLink>
+            <Link to="/replies" color="inherit">replies</Link>
           </Button>
           {hasPermission('accessModsList') && (
             <Button color="inherit">
-              <AbsoluteLink component={RouterLink} to="/permissions" color="inherit">permissions</AbsoluteLink>
+              <Link to="/permissions" color="inherit">permissions</Link>
             </Button>
           )}
           {hasPermission('accessMessages') && (
             <Button color="inherit">
-              <AbsoluteLink component={RouterLink} to="/conversations" color="inherit">conversations</AbsoluteLink>
+              <Link to="/conversations" color="inherit">conversations</Link>
             </Button>
           )}
-           {hasPermission('accessDonations') && (
+          {hasPermission('accessDonations') && (
             <Button color="inherit">
-              <AbsoluteLink component={RouterLink} to="/donations" color="inherit">donations</AbsoluteLink>
+              <Link to="/donations" color="inherit">donations</Link>
             </Button>
           )}
           {user ? (
@@ -94,28 +93,28 @@ function App() {
                 <AccountCircleIcon />
               </IconButton>
               <Button color="inherit">
-                <AbsoluteLink component={RouterLink} to="/logout" color="inherit">logout</AbsoluteLink>
+                <Link to="/logout" color="inherit">logout</Link>
               </Button>
             </>
           ) : (
             <Button color="inherit">
-              <AbsoluteLink component={RouterLink} to="/login" color="inherit">login</AbsoluteLink>
+              <Link to="/login" color="inherit">login</Link>
             </Button>
           )}
         </Toolbar>
       </AppBar>
       <APIContext.Provider value={{ httpClient, apiClient }}>
-        <Router basepath={process.env.PUBLIC_URL}>
-          <Index path="/" />
-          <Confessions path="/confessions" />
-          <ConfessionDetails path="/confessions/:id" />
-          <Replies path="/replies" />
-          <Permissions path="/permissions" />
-          <Conversations path="/conversations" />
-          <Donations path="/donations" />
-          <Login path="/login" setUser={setUser} />
-          <Logout path="/logout" setUser={setUser} />
-        </Router>
+        <Routes>
+          <Route path="/confessions" element={<Confessions />}></Route>
+          <Route path="/confessions/:id" element={<ConfessionDetails />}></Route>
+          <Route path="/replies" element={<Replies />}></Route>
+          <Route path="/permissions" element={<Permissions />}></Route>
+          <Route path="/conversations" element={<Conversations />}></Route>
+          <Route path="/donations" element={<Donations />}></Route>
+          <Route path="/login" element={<Login setUser={setUser} />}></Route>
+          <Route path="/logout" element={<Logout setUser={setUser} />}></Route>
+          <Route path="*" element={<Index />}></Route>
+        </Routes>
       </APIContext.Provider>
     </>
   );

@@ -5,10 +5,9 @@ import {
 } from '@mui/material';
 import EmbedIcon from '@mui/icons-material/Attachment';
 import SurveyIcon from '@mui/icons-material/Poll';
-import { Link as RouterLink, RouteComponentProps } from '@reach/router';
+import { Link as RouterLink, } from 'react-router-dom';
 import React, { useContext, useMemo } from 'react';
 import { APIContext } from '../App';
-import { AbsoluteLink } from '../components/AbsoluteLink';
 import ConfessionActionButtons from '../components/ConfessionActionButtons';
 import usePagination from '../components/pagination';
 import ShortEmbed from '../components/ShortEmbed';
@@ -22,7 +21,7 @@ const getPage = (httpClient: HTTPClient) =>
   (page: number, perPage: number) =>
     httpClient.swallow(httpClient.get(`/confessions?page=${page}&perPage=${perPage}`));
 
-export default function Confessions(props: RouteComponentProps) {
+export default function Confessions() {
   const { httpClient, apiClient } = useContext(APIContext);
 
   const getPageMemoized = useMemo(() => getPage(httpClient), [httpClient]);
@@ -65,9 +64,9 @@ export default function Confessions(props: RouteComponentProps) {
             {confessions.map((confession: IConfession) => (
               <StyledTableRow key={confession._id} status={confession.status} hover>
                 <TableCell>
-                  <AbsoluteLink component={RouterLink} to={`/confessions/${confession._id}`}>
+                  <RouterLink to={`/confessions/${confession._id}`}>
                     {confession._id}
-                  </AbsoluteLink>
+                  </RouterLink>
                   <div>
                     {confession.survey && <Tooltip title="confession with survey"><SurveyIcon /></Tooltip>}
                     {confession.embed && <Tooltip title="confession with embedded content"><EmbedIcon /></Tooltip>}

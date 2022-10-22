@@ -11,7 +11,7 @@ import {
 import EmbedIcon from '@mui/icons-material/Attachment';
 import SurveyIcon from '@mui/icons-material/Poll';
 import RadioIcon from '@mui/icons-material/RadioButtonUnchecked';
-import { RouteComponentProps } from '@reach/router';
+import { useParams } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
 import { APIContext } from '../App';
 import Action from '../components/Action';
@@ -23,8 +23,8 @@ import OtherFromIpDialog from '../components/OtherFromIpDialog';
 import { noOpFn, toggleStatus } from '../utils';
 import { IConfession } from './Confessions';
 
-export default function (props: RouteComponentProps & {id?: string}) {
-  const { id } = props;
+export default function () {
+  const { id } = useParams();
   const [confession, setConfession] = useState<any>(undefined);
   const [editTagsDialog, setEditTagsDialog] = useState<boolean>(false);
   const [viewIpDialog, setViewIpDialog] = useState<boolean>(false);
@@ -113,16 +113,16 @@ export default function (props: RouteComponentProps & {id?: string}) {
                   </Typography>
                 </Box>
               </Grid>
-)}
+            )}
             status={confession.status}
             action={(
               <Grid container alignItems="center">
-                { confession.entryID && (
-                <Box mx={1}>
-                  <Link href={`https://wykop.pl/wpis/${confession.entryID}`} target="_blank" rel="noreferrer">
-                    {confession.entryID}
-                  </Link>
-                </Box>
+                {confession.entryID && (
+                  <Box mx={1}>
+                    <Link href={`https://wykop.pl/wpis/${confession.entryID}`} target="_blank" rel="noreferrer">
+                      {confession.entryID}
+                    </Link>
+                  </Box>
                 )}
                 <Box>
                   <ConfessionActionButtons
@@ -133,7 +133,7 @@ export default function (props: RouteComponentProps & {id?: string}) {
                   />
                 </Box>
               </Grid>
-          )}
+            )}
           />
           <CardContent>
             <div style={{ whiteSpace: 'pre-line' }}>
@@ -141,21 +141,21 @@ export default function (props: RouteComponentProps & {id?: string}) {
             </div>
             <Divider variant="middle" />
             {confession.embed && (
-            <>
-              <Box display="flex" alignItems="center">
-                <Box mr={2}>
-                  <EmbedIcon />
+              <>
+                <Box display="flex" alignItems="center">
+                  <Box mr={2}>
+                    <EmbedIcon />
+                  </Box>
+                  <Typography variant="subtitle1">
+                    Embed:
+                    {' '}
+                    <Link href={confession.embed} rel="noopener" target="_blank">
+                      {confession.embed}
+                    </Link>
+                  </Typography>
                 </Box>
-                <Typography variant="subtitle1">
-                  Embed:
-                  {' '}
-                  <Link href={confession.embed} rel="noopener" target="_blank">
-                    {confession.embed}
-                  </Link>
-                </Typography>
-              </Box>
-              <Divider variant="middle" />
-            </>
+                <Divider variant="middle" />
+              </>
             )}
             {confession.survey && (
               <>
