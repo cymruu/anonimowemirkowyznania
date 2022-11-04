@@ -29,7 +29,6 @@ const stripe = new Stripe(config.stripe.secret,
 const app = express()
 
 app.enable('trust proxy')
-console.log('false');
 app.use( helmet({
 	contentSecurityPolicy: false,
 	crossOriginEmbedderPolicy: false,

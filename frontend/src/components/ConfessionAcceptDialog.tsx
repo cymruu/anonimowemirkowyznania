@@ -29,7 +29,6 @@ export default function ConfessionAcceptDialog(
   };
   const acceptWrapped = (event: SyntheticEvent) => {
     event.preventDefault();
-    console.log(state);
 
     return acceptFn(confession, state).then(() => {
       setAcceptDialogOpen(false);

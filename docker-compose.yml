@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   db:
-    image: mongo
+    image: mongo:6
     restart: always
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 10s
       timeout: 10s
       retries: 5
@@ -21,23 +21,8 @@ services:
     env_file: [ .env.dev ]
     ports:
       - 8080:8080
-    volumes:
-      - .:/src
-      - /src/node_modules/
-      - /src/dist/
     depends_on:
       db:
         condition: service_healthy
     environment:
       DATABASE_URI: "mongodb://root:password@db:27017/amw?authSource=admin"
-
-  mongoclient:
-    image: mongoclient/mongoclient
-    ports:
-      - 5151:3000
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      MONGO_URL: "mongodb://root:password@db:27017/mongoclient?authSource=admin"
-      MONGOCLIENT_DEFAULT_CONNECTION_URL: "mongodb://root:password@db:27017/amw?authSource=admin"
