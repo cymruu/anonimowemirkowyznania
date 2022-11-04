@@ -182,8 +182,8 @@ app.post('/donate', async (req, res) => {
 		res.render('donate', { error: error.message })
 	}
 })
-app.get('/link/:linkId/:from', function (req, res) {
-	advertismentModel.findOne({ _id: req.params.linkId }, function (err, ad) {
+app.get('/link/:linkId/:from', function(req, res) {
+	advertismentModel.findOne({ _id: req.params.linkId }, function(err, ad) {
 		if (err || !ad) { return res.sendStatus(404) }
 		ad.visits.push({ IPAdress: req.ip, from: req.params.from })
 		ad.save()
