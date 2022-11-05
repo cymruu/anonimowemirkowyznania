@@ -1,6 +1,7 @@
 if (!process.env.NODE_ENV) {
 	process.env.NODE_ENV = 'production'
 }
+import './database'
 import cookieParser from 'cookie-parser'
 import crypto from 'crypto'
 import express from 'express'
@@ -8,7 +9,6 @@ import helmet from 'helmet'
 import http from 'http'
 import path from 'path'
 import Stripe from 'stripe'
-import apiRouter from './api'
 import apiv2Router from './apiv2/apiV2'
 import config from './config'
 import { ActionType, createAction } from './controllers/actions'
@@ -29,16 +29,15 @@ const stripe = new Stripe(config.stripe.secret,
 const app = express()
 
 app.enable('trust proxy')
-app.use( helmet({
+app.use(helmet({
 	contentSecurityPolicy: false,
 	crossOriginEmbedderPolicy: false,
-	crossOriginResourcePolicy:false
+	crossOriginResourcePolicy: false
 }))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.static('public'))
-app.use('/api', apiRouter)
 app.use('/api2', apiv2Router)
 const frontendStaticPath = path.join(__dirname, '..', 'frontend', 'build', 'static')
 const frontendIndex = path.join(__dirname, '..', 'frontend', 'build', 'index.html')

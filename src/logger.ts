@@ -8,11 +8,9 @@ const logger = winston.createLogger({
 		winston.format.simple(),
 	),
 })
+
 logger.add(new winston.transports.Console({
 	level: LOG_LEVEL,
 }))
-if (process.env.NODE_EVN === 'production') {
-	logger.add(new winston.transports.File({ filename: 'error.log', level: 'error' }))
-	logger.add(new winston.transports.File({ filename: 'all.log' }))
-}
+
 export default logger
